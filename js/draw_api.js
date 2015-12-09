@@ -50,8 +50,6 @@ var currentTab,numBox = 0; // Open Tab and num of mailboxes opened at context
 
 function draw_tree_labels()
 {
-    console.log("function draw_tree_labels");
-
     labels = DataLayer.get('label');
 
     labels = orderLabel( labels );
@@ -4502,6 +4500,15 @@ function draw_new_message(border_ID){
 	}).click(function(){
 		check_input(content.find('[name="input_important_message"]'));
 		$(this).toggleClass("expressomail-button-icon-ative");
+	})
+	// botao de busca de usuarios (caso esteja habilitado)
+	.end().find(".search-user").button({
+		icons : {
+		       primary : "expressomail-icon-search_user"
+		}
+	}).click(function(){
+		check_input(content.find('[name="input_important_message"]'));
+		searchPersons.openDialog('email', ID , 0);
 	})
 	//BOTAO ASS. DIGITAL
 	.end().find(".return_digital").button({

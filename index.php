@@ -190,6 +190,12 @@
 	$save_in_folder = @preg_replace('/INBOX./i', "INBOX".$_SESSION['phpgw_info']['expressomail']['email_server']['imapDelimiter'], $save_in_folder);
 	$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['save_in_folder'] = $save_in_folder;
 	// End Fix.
+
+       $users_search_function = 'emQuickSearch(Element(\'em_message_search\').value, \'null\', \'null\', \'expressoMail\');';
+       if (LDAP_ENTRY_CONFIG)
+       {
+               $users_search_function = 'quickSearchPersons(Element(\'em_message_search\').value);';
+       }
 	
 	$acc = CreateObject('phpgwapi.accounts');
 	$template->set_var("txt_loading",lang("Loading"));
@@ -200,6 +206,7 @@
     $template->set_var("tools", lang("Tools"));	
 	$template->set_var("lang_Open_Search_Window", lang("Open search window") . '...');
 	$template->set_var("lang_search_user", lang("Search user") . '...'); 
+	$template->set_var('users_search_function', $users_search_function);
 	$template->set_var("upload_max_filesize",ini_get('upload_max_filesize'));
 	$template->set_var("msg_folder",(isset($_GET['msgball']['folder'])?$_GET['msgball']['folder']:""));
 	$template->set_var("msg_number",(isset($_GET['msgball']['msgnum']) ? $_GET['msgball']['msgnum'] : (isset($_GET['to'])?$_GET['to']:"")));
@@ -346,8 +353,25 @@
     {	
 		echo '<script type="text/javascript"> write_msg(get_lang("Attention, you are in out of office mode."), true);   </script>';
     }
+
+       echo '<script>';
+       echo 'window.expresso = {};';
+       echo 'window.expresso.release = 2.6;';
+       echo '</script>';
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	echo '<script type="text/javascript" src="scripts.php?lang='.$GLOBALS['phpgw_info']['user']['preferences']['common']['lang'].'" charset="UTF-8" ></script>';
+	if (LDAP_ENTRY_CONFIG)
+	{
+		echo '<script>';
+		echo 'window.expresso.ldap_entry_config = false';
+		echo '</script>';
+		echo '<script type="text/javascript" src="../contactcenter/js/search_persons.js"></script>';
+		echo '<link rel="stylesheet" type="text/css" href="../contactcenter/styles/search_persons.css"/>';
+	}
+
+
+
 	
 	if ( isset($GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['use_shortcuts']) ) //usar teclas de atalho ?
 	{

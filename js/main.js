@@ -5612,6 +5612,11 @@ DataLayer.codec( "message", "detail", {
 			else 
 				var user_selected_email = User.me.mail;
 			
+
+            /*
+            Este trecho de código está comentado pois:
+            o usuário logado deve salvar os rascunhos em seu próprio folder de rascunhos
+
 			if(user_selected_email == User.me.mail){
 				var prefix = 'INBOX';
 			}else{
@@ -5626,6 +5631,9 @@ DataLayer.codec( "message", "detail", {
 					create_new_folder(draftsfolder, prefix);
 				}
 			}
+            */
+
+            var prefix = 'INBOX';
 			
             var folder_id = (openTab.imapBox[border_id] && openTab.type[border_id] < 6) ? openTab.imapBox[border_id]: prefix + cyrus_delimiter + draftsfolder;
             form.folder = folder_id;
