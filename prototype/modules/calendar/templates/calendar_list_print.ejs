@@ -1,0 +1,42 @@
+<% //CASE
+	var valid = {
+		title : '_[[Untitled]]',
+		class : '_[[no-class]]'
+	};
+	switch (data.type){
+		case 'event-detail':
+			valid.title = '_[[Event Detail]]';
+			valid.class = "detail";
+			break;
+		case 'task-detail':
+			valid.title = '_[[Task Detail]]';
+			valid.class = "detail";
+			break;
+		case 'event-list':
+			valid.title = '_[[List of Events]]';
+			valid.class = "list";
+			break;
+		case 'task-list':
+			valid.title = '_[[List of Tasks]]';
+			valid.class = "list";
+			break;
+		case 'search':
+			valid.title = '_[[Results List]]';
+			valid.class = "list";
+			break;
+	}
+%>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+		<title><%= valid.title %></title>
+		<link rel="stylesheet" type="text/css" href="../prototype/modules/calendar/css/reset.css" />
+		<link rel="stylesheet" type="text/css" href="../prototype/modules/calendar/css/style.css" />
+		<link rel="stylesheet" type="text/css" href="../prototype/modules/calendar/css/layout.css" />
+		<link rel="stylesheet" type="text/css" href="../prototype/modules/calendar/css/print.css" />
+	</head>
+	<body class="<%= valid.class %>">
+		<div class="title_print"> <img src="../prototype/modules/calendar/img/navbar.png"> <%= data.InfoPage %> </div>			
+		<%= data.html %>
+	</body>
+</html>

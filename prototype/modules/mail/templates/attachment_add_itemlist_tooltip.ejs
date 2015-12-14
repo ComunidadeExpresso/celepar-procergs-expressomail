@@ -1,0 +1,18 @@
+<div>
+	<div style="word-wrap: break-word;">
+		<b><%= '_[[File name]]' %>: </b>
+		<%=data.attach.fullFileName%>
+	</div>
+	<div>
+		<b><%=  '_[[Size]]' %>: </b>
+		<%=data.attach.fileSize%>
+	</div>
+	<div>
+		<b><%= '_[[Status]]' %>: </b>
+		<% if( typeof(data.attach.error) == "boolean" ){ %>
+	        <%= (data.attach.error ? '_[[Loading]]' : '_[[Success]]' )%>
+	    <%}else{%>
+	        <%= data.attach.error %>
+	    <%}%>
+	</div>
+</div>
