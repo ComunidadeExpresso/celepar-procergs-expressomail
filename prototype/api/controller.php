@@ -39,6 +39,9 @@
  * @since      Arquivo disponibilizado na versão 2.4
  */
 
+if(!defined('LDAP_ENTRY_CONFIG'))
+	define('LDAP_ENTRY_CONFIG', true);
+
 if( !defined( 'ROOTPATH' ) )
     define( 'ROOTPATH', dirname(__FILE__).'/..' );
 
@@ -286,16 +289,60 @@ class Controller {
 	//TODO: Compatibilizar as configs relativas aos modulos, adicionando os mesmo nos parametros passados
 	public static function loadConfig( $className, $isService = false)
 	{
-	    $fileName = $className.'.'.($isService ? 'srv' : 'ini');
+		$config = array();
+		if( $isService === true && LDAP_ENTRY_CONFIG === true)
+		{
+			if($className == 'OpenLDAP')
+			{
+				$config['path']                 = 'services/OpenLDAP.php';
+                $config['class']                = 'OpenLDAP';
+				$config['config']['idAtribute'] = 'uidNumber';
+				$config['config']['host']       = $_SESSION['phpgw_info']['expressomail']['server']['ldap_host'];
+				$config['config']['context']    = $_SESSION['phpgw_info']['expressomail']['server']['ldap_context'];
+			}
+			else if($className == 'PostgreSQL')
+			{
+				$config['path']                 = 'services/PostgreSQL.php';
+                $config['class']                = 'PostgreSQL';
+				$config['config']['host']     = $_SESSION['phpgw_info']['expressomail']['server']['db_host'];
+				$config['config']['port']     = $_SESSION['phpgw_info']['expressomail']['server']['db_port'];
+				$config['config']['dbname']   = $_SESSION['phpgw_info']['expressomail']['server']['db_name'];
+				$config['config']['user']     = $_SESSION['phpgw_info']['expressomail']['server']['db_user'];
+				$config['config']['password'] = $_SESSION['phpgw_info']['expressomail']['server']['db_pass'];
+			}
+			else if($className == 'Imap')
+			{
+				$config['path']                 = 'services/ImapServiceAdapter.php';
+                $config['class']                = 'ImapServiceAdapter';
+				//$config['config']['host']     = $_SESSION['phpgw_info']['expressomail']['email_server']['imapServer'];
+				//$config['config']['port']     = $_SESSION['phpgw_info']['expressomail']['email_server']['imapPort'];
+				//$config['config']['user']     = $_SESSION['phpgw_info']['expressomail']['email_server']['imapUsername'];
+				//$config['config']['password'] = $_SESSION['phpgw_info']['expressomail']['email_server']['imapPassword'];
+			}
+			else if($className == 'Sieve')
+			{
+				$config['path']                = 'services/Sieve.php';
+                $config['class']               = 'Sieve';
+				$config['config']['host']      = $_SESSION['phpgw_info']['expressomail']['email_server']['imapSieveServer'];
+				$config['config']['port']      = $_SESSION['phpgw_info']['expressomail']['email_server']['imapSievePort'];
+				$config['config']['user']      = $_SESSION['phpgw_info']['expressomail']['email_server']['imapUsername'];
+				$config['config']['password']  = $_SESSION['phpgw_info']['expressomail']['email_server']['imapPassword'];
+				$config['config']['loginType'] = null;
+				$config['config']['useTLS']    = false;
+				$config['config']['options']   = null;
+			}
 
-	    $config = self::$cache->get( $fileName );
-        
-	    if( !$config )
-	    {
-                $config = parse_ini_file( ROOTPATH.'/config/'.$fileName, true );
-
-		self::$cache->put( $fileName, $config );
-	    }
+		}
+		else
+		{
+		    $fileName = $className.'.'.($isService ? 'srv' : 'ini');
+		    $config = self::$cache->get( $fileName );
+		    if( !$config )
+		    {
+	            $config = parse_ini_file( ROOTPATH.'/config/'.$fileName, true );
+				self::$cache->put( $fileName, $config );
+		    }
+		}
 
 	    return( $config );
 	}

@@ -25,6 +25,7 @@ span.ui-icon.expressomail-icon-encryption{ background-image: url(images/lock.png
 span.ui-icon.expressomail-icon-send { background-image: url(images/send.png) !important; background-position: -2px 2px; width: 25px; height: 16px; background-size: 19px;}
 span.ui-icon.expressomail-icon-save_and_send { background-image: url(images/save_and_send.png) !important; width: 25px; height: 16px; background-size: 17px;}
 span.ui-icon.expressomail-icon-important { background-image: url(images/important.png) !important; background-position: 7px 1px; width: 24px; height: 24px; background-size: 13px;}
+span.ui-icon.expressomail-icon-search_user { background-image: url(images/users.gif) !important; background-position: 7px 1px; width: 24px; height: 24px; background-size: 13px;}
 
 /* thumbs list on message screen */
 .expressomail-thumbs { font-size:11px; width:100%; max-width:100%; margin:20px 0 0 0; border-top:1px solid #AAA; float: left}

@@ -55,10 +55,20 @@ class MailService
 			
 			self::$configuration['host'] = $emailadmin['smtpServer'];
 			self::$configuration['port'] = $emailadmin['smtpPort'];
-	    self::$configuration['auth'] = $emailadmin['smtpAuth'] ? true : false;
-	    self::$configuration['username'] = $emailadmin['imapAdminUsername'];
-	    self::$configuration['password'] = $emailadmin['imapAdminPW'];
-		}
+		    self::$configuration['auth'] = $emailadmin['smtpAuth'] ? true : false;
+
+		    if(LDAP_ENTRY_CONFIG === true)
+		    {
+				self::$configuration['username'] = $emailadmin['imapUsername'];
+				self::$configuration['password'] = $emailadmin['imapPassword'];
+		    }
+		    else
+		    {
+				self::$configuration['username'] = $emailadmin['imapAdminUsername'];
+				self::$configuration['password'] = $emailadmin['imapAdminPW'];
+		    }
+		    //print_r(self::$configuration);die;
+			}
 		else
 			$this->configure( $config );
 

@@ -29,6 +29,14 @@
 			}
 		}
 		%>
+		<%
+		if (expresso.ldap_entry_config != undefined && expresso.ldap_entry_config)
+		{
+			%>
+			<button class="search-user button small msg-option" name="input_search_user" title="<%= '_[[Search User]]' %>">&nbsp;</button>
+			<%
+		}
+		%>
 	</div>
 	<div class="new-msg-head-right-buttons" style="float: right; margin: 3px; margin-rigth: 5px; white-space: nowrap;">
 		<button class="button small cc-button"><%= '_[[Add CC]]' %></button>

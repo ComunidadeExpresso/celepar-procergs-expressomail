@@ -1426,3 +1426,18 @@ function translateFolder(folderName){
 function useDesktopNotification(){
     return !!parseInt(preferences.notifications);
 }
+
+function quickSearchPersons(txtSearch)
+{
+    if (txtSearch.length > 0 && txtSearch.length < preferences.search_characters_number)
+    {
+        alert(get_lang('Your search argument must be longer than %1 characters. Use quotes to refine your search', preferences.search_characters_number));
+    }
+    else
+    {
+        $("#em_message_search").val("");
+        searchPersons.openDialog('email',null,0,txtSearch);
+    }
+
+    return false;
+}

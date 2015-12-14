@@ -960,11 +960,14 @@ function create_filter_dialog () {
 	//$(".ui-dialog-titlebar").find("span").
 
 	$(".ui-dialog-titlebar").after("<div class='dialog-head-buttonpane ui-dialog-buttonpane ui-widget-content ui-helper-clearfix' style='background-color: rgb(224, 238, 238); '><div class='ui-dialog-buttonset header-buttonpane'></div></div>"); 
-	$(".dialog-head-buttonpane").css("padding", "5px"). 
-	find(".header-buttonpane").html("<a href='#' class='button add' title='" + get_lang("Add new rule") + "'>" + get_lang("New rule") + "</a>" + (!outoffice ? "<a href='#' class='button add vacation' title='" + get_lang("Add rule out of office") + "'>" + get_lang("Out of office") + "</a>" : "")).find(".button").button(); 
-	$(".ui-dialog-buttonpane.ui-widget-content").css("background-color", "#E0EEEE"); 
+    if (!$('.dialog-head-buttonpane .header-buttonpane .button.add').length)
+    {
+		$(".dialog-head-buttonpane").css("padding", "5px").
+		find(".header-buttonpane").html("<a href='#' class='button add' title='" + get_lang("Add new rule") + "'>" + get_lang("New rule") + "</a>" + (!outoffice ? "<a href='#' class='button add vacation' title='" + get_lang("Add rule out of office") + "'>" + get_lang("Out of office") + "</a>" : "")).find(".button").button();
+	}
+    $(".ui-dialog-buttonpane.ui-widget-content").css("background-color", "#E0EEEE");
  
-	return dialog; 
+    return dialog;
 } 
  
 /* 

@@ -2621,6 +2621,7 @@ class imap_functions
 					'stream' => $v->name , 
 					'attributes' => $v->attributes , 
 					'name' => $nameArray[($nameCount-1)] , 
+					//'user' => $nameCount ,
 					'user' => $nameArray[1] ,
 					'parent' => $parent ,
 
@@ -2658,7 +2659,9 @@ class imap_functions
 			{
 				$append = array();				
 				$append['folder_id'] = $vv['id'];
-				$append['folder_name'] = (($uid2cn && isset($vv['user'])) && ($cn = $this->ldap->uid2cn($vv['user']))) ? $cn : $vv['name'];
+				//Nome da Pasta
+				$append['folder_name'] = (($uid2cn && isset($vv['user'])) && ($vv['name'] == $vv['user'])) ? $this->ldap->uid2cn($vv['user']) : $vv['name'];
+
 				$status = imap_status($mboxStream, $vv['stream'], SA_UNSEEN); //Resgata Numero de mensagens não lidas
 				$append['folder_unseen'] = isset($status->unseen) ? $status->unseen : 0 ;
 				$append['folder_hasChildren'] = (($vv['attributes'] == 32) && ($vv['name'] != 'INBOX')) ? 1 : 0;
@@ -3081,7 +3084,10 @@ class imap_functions
                 $mail->SignedBody = true;
             }
 
-			$from = $fromaddress ?  ('"' . $fromaddress[0] . '" <' . $fromaddress[1] . '>') : ('"' . $_SESSION['phpgw_info']['expressomail']['user']['firstname'] . ' ' . $_SESSION['phpgw_info']['expressomail']['user']['lastname'] . '" <' . $_SESSION['phpgw_info']['expressomail']['user']['email'] . '>');
+			$from = $fromaddress ?  ('"' . $fromaddress[0] . '" <' . $fromaddress[1] . '>') :
+					 ('"' . $_SESSION['phpgw_info']['expressomail']['user']['fullname'] .
+					  '" <' . $_SESSION['phpgw_info']['expressomail']['user']['email'] . '>');
+
 			$mailService->setFrom( mb_convert_encoding($from, "ISO-8859-1","UTF-8, ISO-8859-1"));
         
 			$mailService->addHeaderField('Reply-To', !!$replytoaddress ? $replytoaddress : $from);
