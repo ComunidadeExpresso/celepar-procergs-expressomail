@@ -1,0 +1,88 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+
+<link rel="stylesheet" type="text/css" href="<?= MODULESURL ?>/css/reset.css" />
+<link rel='stylesheet' type='text/css' href='<?= PLUGINSURL ?>/fullcalendar/fullcalendar.css' />
+<link rel='stylesheet' type='text/css' href='<?= PLUGINSURL ?>/fullcalendar/fullcalendar.print.css' media='print' />
+<link rel='stylesheet' type='text/css' href='<?= PLUGINSURL ?>/jquery/jquery-ui.css'/>
+<link rel="stylesheet" type="text/css" href="<?= PLUGINSURL ?>/fgmenu/fg.menu.css" media="screen"/>
+<link rel="Stylesheet" type="text/css" href="<?= PLUGINSURL ?>/farbtastic/farbtastic.css" />
+<link rel="stylesheet" type="text/css" href='<?= PLUGINSURL ?>/zebradialog/css/zebra_dialog.css'/>
+<link rel="stylesheet" type="text/css" href="<?= MODULESURL ?>/css/layout.css" />
+<link rel="stylesheet" type="text/css" href="<?= MODULESURL ?>/css/style.css" />
+
+<script type='text/javascript' src='<?= PLUGINSURL ?>/jquery/jquery.min.js'></script>
+<script type='text/javascript' src='<?= PLUGINSURL ?>/jquery/jquery.migrate.js'></script>
+<script type='text/javascript' src='<?= PLUGINSURL ?>/datejs/date-pt-BR.js'></script>
+<script type='text/javascript' src='<?= PLUGINSURL ?>/store/jquery.store.js'></script>
+<script type='text/javascript' src='<?= PLUGINSURL ?>/mask/jquery.maskedinput.js'></script>
+<script type='text/javascript' src='<?= PLUGINSURL ?>/../api/datalayer.js'></script>
+<script type='text/javascript' src='<?= PLUGINSURL ?>/datejs/sugarpak.js'></script>
+<script type='text/javascript' src='<?= PLUGINSURL ?>/datejs/parser.js'></script>
+<script type="text/javascript" src="<?= PLUGINSURL ?>/contextmenu/jquery.contextMenu.js"></script>
+<script type="text/javascript" src="<?= PLUGINSURL ?>/farbtastic/farbtastic.js"></script>
+    <script type="text/javascript">
+	DataLayer.dispatchPath = '<?= PLUGINSURL ?>/../';
+	DataLayer.templatePath = '<?= MODULESURL ?>/';
+</script>
+<!--<script type='text/javascript' src='<?= MODULESURL ?>/js/base64.js'></script>-->
+<script type='text/javascript' src='<?= MODULESURL ?>/js/calendar.date.js'></script>
+
+</head>
+
+<body>
+	<div id="wrap" class="expresso-calendar-container" style="text-align:left; visibility: hidden;">
+		<div title="_[[Settings]]" class="block-horizontal-toolbox">
+			<a class="button config-menu main-config-menu" href="#"></a>
+			<div class="main-config-menu-content hidden"> 
+				<ul>
+					<li><a href="#" onclick="add_tab_preferences();" class="menu-command configurations">_[[Preferences]]</a></li>
+					<li><a href="#" onclick="add_tab_configure_calendar(false, 0);" class="menu-command configurations">_[[Agendas settings]]</a></li>
+					<li><a href="#" onclick="add_tab_configure_calendar(false, 1);" class="menu-command configurations">_[[Groups settings]]</a></li>
+					<li><a href="#" onclick="show_modal_import_export(0, 3, 0);" class="menu-pass-through">_[[Import Events]]</a></li>
+					<li><a href="#" onclick="show_modal_import_export(1, 3, 0);" class="menu-pass-through">_[[Export Events]]</a></li>
+					<li><a href="#" onclick="show_modal_import_export(0, 4, 1);" class="menu-pass-through">_[[Import Tasks]]</a></li>
+					<li><a href="#" onclick="show_modal_import_export(1, 4, 1);" class="menu-pass-through">_[[Export Tasks]]</a></li>
+				</ul>
+			</div>		
+			<fieldset title="_[[Search]]" class="search-field main-search ui-corner-all">
+				<input class="search" type="text" />
+				<span class="ui-icon ui-icon-search"></span>
+			</fieldset>
+		</div>
+		
+		<div class="block-vertical-toolbox">
+			<a class="button add add-event" href="#">_[[Add event]]</a>
+			<a class="button add add-task" href="#">_[[Add task]]</a>
+			<a class="button add add-activity" href="#">_[[Add activity]]</a>
+			<!--<a class="button add" href="#" onclick="add_events_list();">Lista de Eventos</a>-->
+			<div class="mini-calendar"></div>
+
+			<div class="calendars-list"></div> 
+
+			<div id="trash" class="ui-corner-all empty hidden"  align="middle" valign="middle"><label>_[[Recycle Bin]]</label></div>
+		</div>
+
+		<div id="tabs"> 
+			<ul>
+				<li><a href="#calendar">_[[Agenda]]</a></li>
+				<li><a href="#tab_events_list_" onclick="add_events_list(false, 0);">_[[List of Events]]</a></li>
+				<li><a href="#tab_tasks_list_" onclick="add_events_list(false, 1);">_[[List of Tasks]]</a></li>
+				<!--<li><a href="#sandbox2">Sandbox</a></li>-->
+			</ul>
+			<div id="calendar"> </div>
+			<div id="tab_events_list_"> </div>
+			<div id="tab_tasks_list_"> </div>
+			<div id="sandbox2">	</div>
+			<div id="calendarShared">	</div>
+			<div id="context-menu-event">	</div>
+		</div>
+		
+		<div id="sandbox" class="expresso-calendar-container hidden"> </div>
+		<div id="div-import-export-calendar" class="expresso-calendar-container"> </div>
+		<div id="div-copy-move-calendar" class="expresso-calendar-container"> </div>
+		<div id="div-alarm" class="expresso-alarm-container"> </div>
+	</div>
+</body>
+</html>
