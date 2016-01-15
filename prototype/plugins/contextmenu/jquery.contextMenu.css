@@ -132,3 +132,8 @@
 .context-menu-accesskey {
     text-decoration: underline;
 }
+
+ul
+{
+	list-style-image: none;
+}

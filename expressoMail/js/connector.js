@@ -92,6 +92,19 @@ var handlerExecuteForm = null;
 			}								
 	}	
 //------------------------------------ BEGIN: Functions for Connector HTTPRequest  -------------------------------------------------//	
+	
+	cConnector.prototype.jsonEncode = function(data)
+	{
+		return JSON.stringify(data);
+	}
+	
+	
+	cConnector.prototype.jsonDecode = function(data)
+    { 
+		
+		return JSON.parse(data);
+    }
+	
 	// Serialize Data Method
 	cConnector.prototype.serialize = function(data)
 	{	var _thisObject = this;		

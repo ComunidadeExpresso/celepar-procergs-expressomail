@@ -692,6 +692,8 @@ you have to enter the name of the new folder	expressoMail	pt-br	Informe o nome d
 You must choose a file	expressoMail	pt-br	Você deve escolher um arquivo
 You must choose a folder	expressoMail	pt-br	Você deve escolher uma pasta
 You must wait while the messages will be exported...	expressoMail	pt-br	Aguarde enquanto as mensagens serão exportadas...
+You cannot export more than %1 messages.	expressoMail	pt-br	Você não pode exportar mais do que %1 mensagens.
+Export messages was disabled by your administrator.	expressoMail	pt-br	Exportar mensagens foi desabilitado pelo seu administrador.
 You must wait while the messages will be imported...	expressoMail	pt-br	Aguarde enquanto as mensagens serão importadas...
 you must unninstall html5 notifications	expressoMail	pt-br	Detectamos que você possui uma extensão que era utilizada em versões anteriores do expresso e que na versão atual precisa ser removida. Para isso, você deverá fazer essa remoção manualmente pressionando as teclas "ctrl+shift+a" e removendo o plugin HTML5 Notifications. Lembre-se ainda que é necessário reiniciar o navegador.
 You wrote "%1" in your message, but there are no files attached. Send it anyway?	expressoMail	pt-br	Você escreveu "%1" na sua mensagem, mas não há arquivos anexados. Enviar assim mesmo?

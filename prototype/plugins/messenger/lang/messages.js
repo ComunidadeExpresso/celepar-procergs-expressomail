@@ -1,7 +1,7 @@
 
-messages = 
+messages =
 {
-	'pt_br' : 
+	'pt_br' :
 	{
 		'ADD'						: "Adicionar",
 		'ADD_CONTACT'				: "Adicionar contato",
@@ -35,4 +35,4 @@ messages =
 		'WRITE_YOUR_MESSAGE_HERE'	: "Escreva sua mensagem aqui",
 		'YOUR_MESSAGE_TODAY' 		: "Sua mensagem de hoje"
 	}
-}
+};

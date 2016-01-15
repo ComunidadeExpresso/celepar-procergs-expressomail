@@ -13,4 +13,4 @@ function()
                     window.location = "../../login.php";
             }
         });
-},60000);
+},180000);

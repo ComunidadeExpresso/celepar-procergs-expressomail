@@ -40,7 +40,7 @@
 * @since      Arquivo disponibilizado na versão 2.4
 */
 
-define('ROOTPATH', dirname(__FILE__).'/../..');
-require_once ROOTPATH.'/api/controller.php';
+include_once(dirname(__FILE__).'/../../api/controller.php');
 Controller::deleteALL( array('concept' => 'mailAttachment'), false ,array( 'filter' => array( '<'  , 'dtstamp' , (gmmktime() - 86400 ))));
+
 ?>

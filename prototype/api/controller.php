@@ -304,11 +304,21 @@ class Controller {
 			{
 				$config['path']                 = 'services/PostgreSQL.php';
                 $config['class']                = 'PostgreSQL';
-				$config['config']['host']     = $_SESSION['phpgw_info']['expressomail']['server']['db_host'];
-				$config['config']['port']     = $_SESSION['phpgw_info']['expressomail']['server']['db_port'];
-				$config['config']['dbname']   = $_SESSION['phpgw_info']['expressomail']['server']['db_name'];
-				$config['config']['user']     = $_SESSION['phpgw_info']['expressomail']['server']['db_user'];
-				$config['config']['password'] = $_SESSION['phpgw_info']['expressomail']['server']['db_pass'];
+				$config['config']['host']     = isset($_SESSION['phpgw_info']['expressomail']['server']['db_host']) ? $_SESSION['phpgw_info']['expressomail']['server']['db_host'] : $GLOBALS['phpgw_domain']['default']['db_host'];
+				$config['config']['port']     = isset($_SESSION['phpgw_info']['expressomail']['server']['db_port']) ? $_SESSION['phpgw_info']['expressomail']['server']['db_port'] : $GLOBALS['phpgw_domain']['default']['db_port'];
+				$config['config']['dbname']   = isset($_SESSION['phpgw_info']['expressomail']['server']['db_name']) ? $_SESSION['phpgw_info']['expressomail']['server']['db_name'] : $GLOBALS['phpgw_domain']['default']['db_name'];
+				$config['config']['user']     = isset($_SESSION['phpgw_info']['expressomail']['server']['db_user']) ? $_SESSION['phpgw_info']['expressomail']['server']['db_user'] : $GLOBALS['phpgw_domain']['default']['db_user'];
+				$config['config']['password'] = isset($_SESSION['phpgw_info']['expressomail']['server']['db_pass']) ? $_SESSION['phpgw_info']['expressomail']['server']['db_pass'] : $GLOBALS['phpgw_domain']['default']['db_pass'];
+			}
+			else if($className == 'MySQL')
+			{
+				$config['path']                 = 'services/MySQL.php';
+                $config['class']                = 'MySQL';
+				$config['config']['host']     = $_SESSION['phpgw_info']['expressomail']['server']['loggerdb']['db_host'];
+				$config['config']['port']     = $_SESSION['phpgw_info']['expressomail']['server']['loggerdb']['db_port'];
+				$config['config']['dbname']   = $_SESSION['phpgw_info']['expressomail']['server']['loggerdb']['db_name'];
+				$config['config']['user']     = $_SESSION['phpgw_info']['expressomail']['server']['loggerdb']['db_user'];
+				$config['config']['password'] = $_SESSION['phpgw_info']['expressomail']['server']['loggerdb']['db_pass'];
 			}
 			else if($className == 'Imap')
 			{

@@ -11,7 +11,7 @@ function unorphanize(root, element) {
     var f = 0;
     for (var i=0; i<root.length; i++) {
         if (root[i].id == element.parentFolder) {
-            element.children = new Array(); 
+            element.children = new Array();
             root[i].children.push(element);
             return true;
         } else if (ok = unorphanize(root[i].children, element)) {
@@ -20,7 +20,7 @@ function unorphanize(root, element) {
     }
     return ok;
 }
-function mount_children_localfolders_list(folder){ 
+function mount_children_localfolders_list(folder){
     folder.children = new Array();
     folder.id_search = folder.id;
     folder.id = 'local_messages_'+folder.id,
@@ -47,11 +47,11 @@ function mount_children_localfolders_list(folder){
 function count_unseen_children(folder){
     if(folder.children.length){
         for(var i=0; i< folder.children.length; i++){
-            
+
                 if(folder.children[i].children.length)
-                folder.children[i]['children_unseen'] = (folder.children[i]['children_unseen'] ? folder.children[i]['children_unseen'] : 0) + count_unseen_children(folder.children[i]);    
-           
-            folder['children_unseen'] = (folder['children_unseen'] ? folder['children_unseen'] : 0)+ (folder.children[i]['children_unseen'] ? folder.children[i]['children_unseen'] : 0) + parseInt(folder.children[i].messageCount.unseen);            
+                folder.children[i]['children_unseen'] = (folder.children[i]['children_unseen'] ? folder.children[i]['children_unseen'] : 0) + count_unseen_children(folder.children[i]);
+
+            folder['children_unseen'] = (folder['children_unseen'] ? folder['children_unseen'] : 0)+ (folder.children[i]['children_unseen'] ? folder.children[i]['children_unseen'] : 0) + parseInt(folder.children[i].messageCount.unseen);
         }
         return folder['children_unseen'];
     } else {
@@ -70,7 +70,7 @@ function valid_tabs(children_of_this_folder, folder_to_move){
                 error = true;
                 write_msg('_[[One or more messages from any sub-folder are open]]');
                 return error;
-                
+
             }
         });
         if(error){
@@ -111,14 +111,14 @@ function refreshTreeview(){
     //Atualização e correção dos ícones expandir/contrair
     $.each($('.treeview').find('.expandable, .collapsable').filter(':not(.lastExpandable,.lastCollapsable)'),function(i,v){
       if ( $(v).find('ul').css('display') == "block" ){
-        $(v).removeClass().addClass('collapsable'); 
+        $(v).removeClass().addClass('collapsable');
         $(v).find('.hitarea:first').removeClass().addClass('hitarea collapsable-hitarea')
       }
     });
     //Última árvore de pastas
     $.each($('.treeview').find('.lastExpandable,.lastCollapsable'),function(i,v){
       if ( $(v).find('ul').css('display') == "block" ){
-        $(v).removeClass().addClass('collapsable lastCollapsable'); 
+        $(v).removeClass().addClass('collapsable lastCollapsable');
         $(v).find('.hitarea:first').removeClass('expandable-hitarea').addClass('collapsable-hitarea');
         $(v).find('.hitarea:first').removeClass('lastExpandable-hitarea').addClass('lastCollapsable-hitarea');
       }
@@ -160,10 +160,10 @@ function draw_new_tree_folder(callback, force)
     var tree1 = new Array();
     var tree2 = new Array();
     var tree3 = new Array();
-    
+
     for(var i = 0; i < folders.length; i++)
     {
-        
+
         if(/*/^INBOX/.test(folders[i].id)*/folders[i].id.substr(0,5) == "INBOX")
         {
             if(!unorphanize(tree1, folders[i]))
@@ -280,7 +280,7 @@ function draw_new_tree_folder(callback, force)
         $(this).addClass("folders-loading");
         selected = target.attr('id');
         change_folder(target.attr('id'), child.attr('title'));
-    
+
         $.ajax(
         {
             url: "controller.php?" + $.param(
@@ -303,9 +303,9 @@ function draw_new_tree_folder(callback, force)
     {
         search_emails("UNDELETED KEYWORD \"$Followupflagged\"");
     }).end().end();
-    
+
     refreshTreeview();
-    
+
     $('.upper').droppable(
     {
         over: function(event, ui)
@@ -396,7 +396,7 @@ function draw_new_tree_folder(callback, force)
         //DROP DE PASTAS
         over: function(a, b)
         {
-            //INICIO : SE A PASTA CONTER FILHAS EXPANDE 
+            //INICIO : SE A PASTA CONTER FILHAS EXPANDE
             $(b.helper).find(".draggin-folder,.draggin-mail").css("color", "green");
             over = $(this);
             $(this).addClass("folder-over");
@@ -411,7 +411,7 @@ function draw_new_tree_folder(callback, force)
                 }, 500);
 
             }
-            //FIM : SE A PASTA CONTER FILHAS EXPANDE           
+            //FIM : SE A PASTA CONTER FILHAS EXPANDE
             //SETA BORDA EM VOLTA DA PASTA
             //
         },
@@ -948,6 +948,12 @@ function draw_new_tree_folder(callback, force)
                 write_msg('_[[You must wait while the messages will be exported...]]', true);
             });
             //FUNÇÃO DO eventNU FLUTUANTE NOVA PASTA < END
+
+            // se alguma caixa nao possuir menu associado, remove ele
+            if (!$.trim($('.float-menu', $(this)).html()).length)
+            {
+            	$('.float-menu', $(this)).remove();
+            }
         }
         if(!$(".new_folder").length)
         {

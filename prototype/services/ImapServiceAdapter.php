@@ -697,6 +697,8 @@ class ImapServiceAdapter extends imap_functions/* implements Service*/
 
 					if($data['uidsSave'] )
 						$this->delete_msgs(array('folder'=> $folder , 'msgs_number' => $data['uidsSave']));
+
+					Logger::info('expressomail','SAVEMSG', 'ID: '.$return['id'].' # '.'Subject:'.$data['input_subject']);
 				}
 
 				return $return;

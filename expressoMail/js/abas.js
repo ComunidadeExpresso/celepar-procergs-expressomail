@@ -1,22 +1,22 @@
 var BordersArray = new Array();
 BordersArray[0] = new setBorderAttributes(0);
-var countBorders = 0; 
-var partMsgs = new Array(); 
+var countBorders = 0;
+var partMsgs = new Array();
 var msgAttachments = new Array();
-var uidsSave = new Array(); 
+var uidsSave = new Array();
 var zebraDiscardEventDialog = false;
-var saveBorderError = new Array(); 
+var saveBorderError = new Array();
 
 function setBorderAttributes(ID)
 {
     this.border_id = "border_id_"+ID;
-    this.sequence = ID; 
+    this.sequence = ID;
 }
 
 
 function alternate_border(ID)
 {
-	//Controle da seleção de mensagens   
+	//Controle da seleção de mensagens
 
     msg_selected = false;//Controle da seleção de mensagens
     if(isNaN(ID))
@@ -34,11 +34,11 @@ function alternate_border(ID)
                 node = node.nextSibling;
             }
         }
-        
+
         if( document.getElementById("span_paging"+ID) != null )
             document.getElementById("span_paging"+ID).style.display = "block";
     }
-    
+
     if ( typeof win == 'object' && win.close && win.close.constructor == Function ){
             var search_win = document.getElementById( 'window_QuickCatalogSearch' );
             if(search_win){
@@ -46,7 +46,7 @@ function alternate_border(ID)
             }
             win.close( );
         }
-        
+
     if (! Element('border_id_'+ID))
         return false; // Not possible to alternate
     show_hide_span_paging(ID);
@@ -54,15 +54,15 @@ function alternate_border(ID)
     if (spanD)
         spanD.style.display = (openTab.type[ID] == 0 ? '' : 'none');
 
-    var footer_menu = Element("footer_menu");   
+    var footer_menu = Element("footer_menu");
     var aba = Element('border_id_'+ID);
     if (footer_menu != null) {
         footer_menu.style.display = (openTab.type[ID] != 4 ? '' : 'none');
         var alternate_menu = document.getElementById('localOption');
-        
+
         if(alternate_menu != null && alternate_menu != 'undefined'){ //Quando Carregado o expresso mail
             if(openTab.imapBox[ID]!= null && openTab.imapBox[ID]!= 'undefined' ){ //Quando abrir uma Nova Mensagem
-                if((openTab.imapBox[ID].indexOf("local_") >= 0)){                       
+                if((openTab.imapBox[ID].indexOf("local_") >= 0)){
                         alternate_menu.title = get_lang("Unarchive");
                         alternate_menu.removeAttribute("onclick");
                         if(!is_ie)
@@ -73,26 +73,26 @@ function alternate_border(ID)
                             }
                         }
                         alternate_menu.innerHTML = get_lang("Unarchive");
-                        
+
                     }else{
                         alternate_menu.title = get_lang("Archive");
                         alternate_menu.removeAttribute("onclick");
                         if(!is_ie)
-                            alternate_menu.setAttribute("onclick", 'archive_msgs(\''+openTab.imapBox[ID]+'\', null)');      
+                            alternate_menu.setAttribute("onclick", 'archive_msgs(\''+openTab.imapBox[ID]+'\', null)');
                         else{
                             alternate_menu.onclick = function(){
                                 archive_msgs(openTab.imapBox[ID], null);
-                            }   
+                            }
                         }
                         alternate_menu.innerHTML = get_lang("Archive");
                     }
-                    
+
             }
         }
-        
+
         if((aba.id.indexOf("_r") < 0) && (aba.id.indexOf("_0") < 0) && (aba.id.indexOf("id_search_") < 0) && (aba.id.indexOf("_s") < 0)){
             spanD.style.display = 'none';
-            footer_menu.style.display = 'none';         
+            footer_menu.style.display = 'none';
         }
     }
 
@@ -107,7 +107,7 @@ function alternate_border(ID)
             c = document.getElementById("content_id_"+BordersArray[i].sequence);
             c.style.display = 'none';
             if(Element("font_border_id_"+BordersArray[i].sequence))
-                Element("font_border_id_"+BordersArray[i].sequence).className = 'font-menu';    
+                Element("font_border_id_"+BordersArray[i].sequence).className = 'font-menu';
 
         }
     }
@@ -147,10 +147,10 @@ function alternate_border(ID)
              }
          }
     currentTab=ID;
-    if( document.getElementById('to_'+ID) && document.getElementById('to_'+ID).type == "textarea"){ 
-        document.getElementById('to_'+ID).focus(); 
+    if( document.getElementById('to_'+ID) && document.getElementById('to_'+ID).type == "textarea"){
+        document.getElementById('to_'+ID).focus();
     }
-    if (ID == 0){ 
+    if (ID == 0){
         updateSelectedMsgs();
     }
     RichTextEditor.setEditable(ID);
@@ -162,7 +162,7 @@ function alternate_border(ID)
 function create_border(borderTitle, id_value, search)
 {
     borderTitle = ( ( borderTitle && borderTitle.constructor == String && borderTitle.length > 0 ) ? borderTitle : ' ' );
-    borderTitle = html_entities(borderTitle);    
+    borderTitle = html_entities(borderTitle);
     var resize = false;
         resize = resize_borders();
         if (!resize){
@@ -194,12 +194,12 @@ function create_border(borderTitle, id_value, search)
                     }
                 }
             }
-            }else{          
+            }else{
                 alert(get_lang('Reached maximum tab limit') + str_continue );
                 return 'maximo';
             }
         }
-    
+
     if (! id_value){ // Is new message?
         var ID = parseInt(BordersArray[(BordersArray.length-1)].sequence) + 1;
             if(isNaN(ID)){
@@ -210,7 +210,7 @@ function create_border(borderTitle, id_value, search)
     {
         if (Element("border_id_"+id_value)) // It's opened already!
             return alternate_border(id_value);
-        
+
         var ID = id_value;
         if(isNaN(ID) && ID.indexOf("search_local") >= 0){
             if(current_folder.indexOf("local") >= 0)
@@ -232,7 +232,7 @@ function create_border(borderTitle, id_value, search)
     }
     td = document.createElement("TD");
     td.id="border_id_" + ID;
-    if(resize) 
+    if(resize)
     {
         td.setAttribute("width", parseInt(resize)+"px");
         td.style.width = parseInt(resize)+"px";
@@ -252,7 +252,7 @@ function create_border(borderTitle, id_value, search)
 
     if ( resize )
         borderTitle = borderTitle.substring(0, resize*0.08);
-    
+
     var cc = search;
     if(!cc){
         if(isNaN(ID)){
@@ -274,8 +274,8 @@ function create_border(borderTitle, id_value, search)
                             "</div>\n\
                             <div style='float:right;'>\n\
                                 <img onmousedown='javascript:return false' style='cursor:pointer' onclick=delete_border('" + ID + "','false') src='templates/"+template+"/images/close_button.gif'/>\n\ " +
-                            "</div>\n\ " + 
-                            "<input type=\"hidden\" name=\""+ ID+"\" value=\""+cc+"\"></div>";      
+                            "</div>\n\ " +
+                            "<input type=\"hidden\" name=\""+ ID+"\" value=\""+cc+"\"></div>";
     bb = document.getElementById("border_blank");
     parent_bb = bb.parentNode; //Pego o tbody
     parent_bb.insertBefore(td, bb);
@@ -285,34 +285,34 @@ function create_border(borderTitle, id_value, search)
             start : function(){
                 $('.upper, .lower').show();
                 $(".lower").css("top", ($("#content_folders").height()-18) + $("#content_folders").offset().top);
-                /* Habilitar anexar mensagem por drag-and-drop, se a aba atual for editável,  
-                ou seja, nem de leitura (2), nem de lista de mensagens (0):*/ 
-                var current_tab_type = openTab.type[currentTab]; 
-                if (current_tab_type != 0 && current_tab_type != 2){ 
-                    var dropzone = $("#fileupload_msg" + currentTab + "_droopzone"); 
-                    dropzone.show(); 
-                    dropzone.prev().hide(); 
-                    dropzone.droppable({ 
-                        over: function (event, ui){ 
-                            dropzone.addClass('hover in'); 
-                            $(ui.helper).find(".draggin-folder,.draggin-mail").css("color", "green"); 
-                        }, 
-                        out: function (event, ui) { 
-                            dropzone.removeClass('hover in'); 
-                            $(ui.helper).find(".draggin-folder,.draggin-mail").css("color", ""); 
-                        }, 
-                        drop: function (event, ui) { 
-                            var border_id = ui.draggable.find("input[type=hidden]").attr("name"); 
-                            var id_msg = border_id.split("_")[0]; 
-                            var folder = $("#input_folder_"+border_id+"_r")[0] ? $("#input_folder_"+border_id+"_r").val() : (openTab.imapBox[border_id] ? openTab.imapBox[border_id]:get_current_folder()); 
-                            attach_message(folder, id_msg); /* Anexa a mensagem especificada (por folder e id_msg) 
-                                                               na mensagem sendo criada.*/ 
-                        } 
-                    }); 
-                } 
+                /* Habilitar anexar mensagem por drag-and-drop, se a aba atual for editável,
+                ou seja, nem de leitura (2), nem de lista de mensagens (0):*/
+                var current_tab_type = openTab.type[currentTab];
+                if (current_tab_type != 0 && current_tab_type != 2){
+                    var dropzone = $("#fileupload_msg" + currentTab + "_droopzone");
+                    dropzone.show();
+                    dropzone.prev().hide();
+                    dropzone.droppable({
+                        over: function (event, ui){
+                            dropzone.addClass('hover in');
+                            $(ui.helper).find(".draggin-folder,.draggin-mail").css("color", "green");
+                        },
+                        out: function (event, ui) {
+                            dropzone.removeClass('hover in');
+                            $(ui.helper).find(".draggin-folder,.draggin-mail").css("color", "");
+                        },
+                        drop: function (event, ui) {
+                            var border_id = ui.draggable.find("input[type=hidden]").attr("name");
+                            var id_msg = border_id.split("_")[0];
+                            var folder = $("#input_folder_"+border_id+"_r")[0] ? $("#input_folder_"+border_id+"_r").val() : (openTab.imapBox[border_id] ? openTab.imapBox[border_id]:get_current_folder());
+                            attach_message(folder, id_msg); /* Anexa a mensagem especificada (por folder e id_msg)
+                                                               na mensagem sendo criada.*/
+                        }
+                    });
+                }
                 if($(".shared-folders").length){
                     $(".shared-folders").parent().find('.folder:not(".shared-folders")').droppable({
-                        over : function(a, b){                      
+                        over : function(a, b){
                             //SETA BORDA EM VOLTA DA PASTA
                             $(b.helper).find(".draggin-folder,.draggin-mail").css("color", "green");
                             over = $(this);
@@ -324,7 +324,7 @@ function create_border(borderTitle, id_value, search)
                                             if(over.hasClass("folder-over"))
                                                 over.prev().trigger("click");
                                         }, 500);
-                                        
+
                                     }
                             //$("#content_folders").stop().scrollTo($(this), {axis:'y', margin:true, offset:-50, duration:400});
                         },
@@ -342,7 +342,7 @@ function create_border(borderTitle, id_value, search)
                             }else{
                                 var folder_to = $(this).parent().attr('id');
                                 var to_folder_title = $(this).attr('title');
-                            }       
+                            }
                             var folder_to_move = ui.draggable.parent().attr('id');
                             var border_id = ui.draggable.find("input[type=hidden]").attr("name");
                             if(folder_to_move == "border_tr"){
@@ -357,15 +357,15 @@ function create_border(borderTitle, id_value, search)
             },
             stop :function(){
                 $('.upper, .lower').hide();
-                $(".shared-folders").parent().find(".folder").droppable("destroy");
-                /* Habilitar anexar mensagem por drag-and-drop, se a aba atual for editável,  
-                ou seja, nem de leitura (2), nem de lista de mensagens (0):*/ 
-                var current_tab_type = openTab.type[currentTab]; 
-                if (current_tab_type != 0 && current_tab_type != 2){ 
-                    var dropzone = $("#fileupload_msg" + currentTab + "_droopzone"); 
-                    dropzone.hide(); 
-                    dropzone.prev().show(); 
-                } 
+                //$(".shared-folders").parent().find(".folder").droppable("destroy");
+                /* Habilitar anexar mensagem por drag-and-drop, se a aba atual for editável,
+                ou seja, nem de leitura (2), nem de lista de mensagens (0):*/
+                var current_tab_type = openTab.type[currentTab];
+                if (current_tab_type != 0 && current_tab_type != 2){
+                    var dropzone = $("#fileupload_msg" + currentTab + "_droopzone");
+                    dropzone.hide();
+                    dropzone.prev().show();
+                }
             },
             helper: function(event){
                 if( borderTitle.length > 18 )
@@ -390,7 +390,7 @@ function create_border(borderTitle, id_value, search)
 
     div.style.overflow = "hidden";
 
-    Element("exmail_main_body").insertBefore(div,Element("footer_menu"));       
+    Element("exmail_main_body").insertBefore(div,Element("footer_menu"));
     if (!is_ie)
         resizeWindow();
     alternate_border(ID);
@@ -462,8 +462,8 @@ function draftTests(ID, msg_sent){
         {
             close_delete(ID, msg_sent);
             delete(openTab.type[ID]);
-        }    
-        else  
+        }
+        else
         {
              var msg = '_[[There are unsaved changes in the message.]]';
              var buttons = ['_[[Discard changes]]', '_[[Save and close]]' ,'_[[cancel]]'];
@@ -484,10 +484,10 @@ function draftTests(ID, msg_sent){
                             'width' : width,
                             'onClose':  function(clicked) {
                                     if(clicked == '_[[cancel]]'){
-                                        if (RichTextEditor.plain[id] != true) 
-                                            setTimeout("RichTextEditor.focus("+ID+")",100);                  
-                                        else  
-                                            $('#body_'+ID).focus(); 
+                                        if (RichTextEditor.plain[id] != true)
+                                            setTimeout("RichTextEditor.focus("+ID+")",100);
+                                        else
+                                            $('#body_'+ID).focus();
                                     }
                                     if(clicked == '_[[Discard changes]]' || clicked == '_[[Discard changes and attachments]]' ) {
                                         if (openTab.imapBox[ID] && !openTab.toPreserve[ID])
@@ -495,43 +495,43 @@ function draftTests(ID, msg_sent){
 
                                         delete(openTab.type[ID]);
                                         close_delete(ID, msg_sent);
-                                       
+
                                     }
                                     else if(clicked == '_[[Save and close]]' || clicked == '_[[Save current state close]]')
                                     {
                                         save_msg(ID);
                                         openTab.toPreserve[ID] = false;
-                                    
+
                                         close_delete(ID, msg_sent);
                                         delete(openTab.type[ID]);
-                                    }    
+                                    }
                                     else{
 
-                                        Element("border_id_"+ID).onclick = function () {alternate_border(ID);}; 
+                                        Element("border_id_"+ID).onclick = function () {alternate_border(ID);};
                                         var setFocus = function(ID){
                                                         if ($.trim($("#to_"+ID).val()) == "")
                                                                 $("#to_"+ID).focus();
                                                         else if ($("#tr_cc_"+ID).css('display') != 'none' && $.trim($("#cc_"+ID).val()) == "")
                                                                 $("#cc_"+ID).focus();
                                                         else if ($("#tr_cco_"+ID).css('display') != 'none' && $.trim($("#cco_"+ID).val()) == "")
-                                                                $("#cco_"+ID).focus();      
+                                                                $("#cco_"+ID).focus();
                                                         else if ($.trim($("#subject_"+ID).val()) == "")
                                                                 $("#subject_"+ID).focus();
                                                         else{
-                                                                if (RichTextEditor.plain[id] != true) 
-                                                                        setTimeout("RichTextEditor.focus("+ID+")",100);                  
-                                                                else  
-                                                                        $('#body_'+ID).focus(); 
+                                                                if (RichTextEditor.plain[id] != true)
+                                                                        setTimeout("RichTextEditor.focus("+ID+")",100);
+                                                                else
+                                                                        $('#body_'+ID).focus();
                                                         }
                                                 }
-                                                setFocus(ID);  
+                                                setFocus(ID);
                                     }
                                     window.setTimeout(function() {
                                             zebraDiscardEventDialog = false;
                                     }, 500);
-                            }})}, 300);    
+                            }})}, 300);
         }
-    
+
 }
 
 function editTest(ID){
@@ -572,7 +572,7 @@ function delete_border(ID, msg_sent)
     delete(openTab.type[ID]);
     //refresh();
     return true;
-     
+
     /*var bolExecuteClose = true;
     var borderElem = Element("border_id_" + ID);
     if (borderElem){
@@ -588,15 +588,15 @@ function delete_border(ID, msg_sent)
                     return(draftTests(ID, msg_sent));
             }
     }
-    
-        
+
+
         if (bolExecuteClose)
         {
             close_delete(ID, msg_sent);
         }
         delete(openTab.type[ID]);
         return true;*/
-         
+
 }
 
 function close_delete(ID, msg_sent)
@@ -609,7 +609,7 @@ function close_delete(ID, msg_sent)
                 clearInterval(autoSaveControl.timer[ID]);
             }
         ////////////////////////////////
-        
+
     hold_session = false;
     if (exist_className(Element('border_id_'+ID),'menu-sel'))
     {
@@ -646,17 +646,17 @@ function close_delete(ID, msg_sent)
                 return;
             var id2 = ID.replace('_r','');
             for(var ii = 0; ii < partMsgs.length; ii++)
-               if(partMsgs[ii] == id2){           
+               if(partMsgs[ii] == id2){
                   isPartMsg = true;
                   partMsgs[ii] = null;
-               }     
+               }
 
             if(isPartMsg === true){
                 var handler_delete_msg = function(){};
                 cExecute ("$this.imap_functions.delete_msgs&folder=INBOX"+cyrus_delimiter+trashfolder+"&msgs_number="+id2,handler_delete_msg);
             }
         ///////////////////////////////////////////////////////////////////////////////////
-        
+
     return true;
 }
 
@@ -695,7 +695,7 @@ function addAttachment(ID, att)
 
 function delAttachment(ID, att)
 {
-    
+
 	if(msgAttachments[ID] == undefined) return;
     var len = msgAttachments[ID].length;
     for(var i = 0; i < len; i++)

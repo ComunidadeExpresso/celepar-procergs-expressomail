@@ -4,7 +4,9 @@ var	ccQuickAddOne = {
 		var email = data[4];
 		var handler = function (responseText)
 		{
-			var data = responseText;
+
+			var data = connector.jsonDecode(responseText);
+			console.log(data);
 			if (!data || typeof(data) != 'object'){
 				write_msg("Problema ao contactar servidor");
 				return;
@@ -33,8 +35,12 @@ var	ccQuickAddOne = {
 		var data2 = new Array();
 		for( var i in data )
 			data2[ data2.length ] = data[i];
+		console.log("data: "+data2);
+		console.log("connector.jsonEncode(data2)" + connector.jsonEncode(data2));
 		
-		var sdata	= 'add='+escape(connector.serialize(data2));
+		var dataPost = {apelido:data2[0], nome:data2[1],sobrenome:data2[2],email:data2[4],telefone:''};
+				
+		var sdata	= 'add='+(connector.jsonEncode(dataPost));
 		var CC_url	= '../index.php?menuaction=contactcenter.ui_data.data_manager&method=';
 		connector.newRequest('cQuickAdd.Send', CC_url+'quick_add', 'POST', handler, sdata);
 		updateDynamicPersonalContacts();

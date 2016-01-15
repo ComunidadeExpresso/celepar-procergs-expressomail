@@ -74,11 +74,11 @@ $fileDuck->add(__DIR__ .'/js/init.js' , 'ISO-8859-1' );
 $fileDuck->add(__DIR__ .'/js/checkSession.js' );
 $fileDuck->add(__DIR__ .'/../prototype/plugins/farbtastic/farbtastic.js');
 // Messenger
-$fileDuck->add(__DIR__ .'/../prototype/plugins/wijmo/jquery.wijmo.min.js');
-$fileDuck->add(__DIR__ .'/../prototype/plugins/wijmo/jquery.wijmo.wijdialog.js');	
-$fileDuck->add(__DIR__ .'/../prototype/plugins/jquery-xmpp/APIAjax.js');
-$fileDuck->add(__DIR__ .'/../prototype/plugins/jquery-xmpp/jquery.xmpp.js');
-$fileDuck->add(__DIR__ .'/../prototype/plugins/messenger/lang/messages.js');	
-$fileDuck->add(__DIR__ .'/../prototype/plugins/messenger/im.js');
+//$fileDuck->add(__DIR__ .'/../prototype/plugins/wijmo/jquery.wijmo.min.js');
+//$fileDuck->add(__DIR__ .'/../prototype/plugins/wijmo/jquery.wijmo.wijdialog.js');
+//$fileDuck->add(__DIR__ .'/../prototype/plugins/jquery-xmpp/APIAjax.js');
+//$fileDuck->add(__DIR__ .'/../prototype/plugins/jquery-xmpp/jquery.xmpp.js');
+//$fileDuck->add(__DIR__ .'/../prototype/plugins/messenger/lang/messages.js');
+//$fileDuck->add(__DIR__ .'/../prototype/plugins/messenger/im.js');
 
 $fileDuck->renderFile( 'text/javascript' );

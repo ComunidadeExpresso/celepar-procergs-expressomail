@@ -353,6 +353,18 @@ function loadSignature()
 }
 ');
 //}
+
+if ($type == 'user' || $type == ''){
+    require_once('class.ldap_functions.inc.php');
+    $ldap = new ldap_functions();
+    $aliases = $ldap->get_alternative_emails_ldap();
+    $default =  array();
+    foreach ($aliases as $alias) {
+        $default[$alias] = $alias;
+    }
+    create_select_box('Default e-mail','default_email',$default,'Select the default e-mail for sending your emails.');
+}
+
 $default = false;
 create_check_box('Do you want to show common name instead of UID?','uid2cn',$default,
 	'Do you want to show common name instead of UID?');
@@ -381,17 +393,21 @@ create_check_box('Preview message text within a tool-tip box','preview_msg_tip',
 create_check_box('View extended information about users','extended_info','This exhibits employeenumber and ou from LDAP in searchs');
 create_check_box('Save deleted messages in trash folder?','save_deleted_msg','When delete message, send it automatically to trash folder');
 $default = array(
-	'1'    => lang('1 day'),
-	'2'    => lang('2 days'),
-	'3'    => lang('3 days'),
-	'4'   => lang('4 days'),
-	'5'   => lang('5 days')
+    '1'  => lang('1 day'),
+    '2'  => lang('2 days'),
+    '3'  => lang('3 days'),
+    '4'  => lang('4 days'),
+    '5'  => lang('5 days'),
+    '10' => lang('10 days'),
+    '20' => lang('20 days'),
+    '30' => lang('30 days'),
+    '40' => lang('40 days')
 );
 
 $arquived_messages = array(true => lang("Copy"), false => lang("Move"));
 
-//Desbilitado limpeza de lixeira por request. Ticket #3253
-//create_select_box('Delete trash messages after how many days?','delete_trash_messages_after_n_days',$default,'Delete automatically the messages in trash folder in how many days');
+create_select_box('Delete trash messages after how many days?','delete_trash_messages_after_n_days',$default,'Delete automatically the messages in trash folder in how many days');
+create_select_box('Delete spam messages after how many days?','delete_spam_messages_after_n_days',$default,'Delete spam messages after how many days');
 create_check_box('Would you like to use local messages?','use_local_messages','Enabling this options you will be able to store messages in your local computer');
 create_select_box('Desired action to archive messages to local folders','keep_archived_messages',$arquived_messages,'After store email in your local computer delete it from server');
 create_check_box('Automaticaly create Default local folders?','auto_create_local','Enable this option if you want to automaticaly create the Inbox, Draft, Trash and Sent folders');

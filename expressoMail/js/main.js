@@ -9,10 +9,10 @@ var check_services_tryouts = 1;
 var check_services_tryouts_limit = 5;
 
 
-// tempo do auto save (em milisegundos) 
+// tempo do auto save (em milisegundos)
 // 20000 = 20 segundos
 var autosave_time = 40000;
-var results_search_messages = ""; 
+var results_search_messages = "";
 var cabecalho = '<h4>ExpressoLivre - ExpressoMail</h4>';
 var auxNotificationCriteriaVetor = [];
 var auxNotification;
@@ -26,15 +26,15 @@ var dynamicContacts = new Array();
 var topContact = 0;
 
 //Os IE's < 9 não possuem suporte a trim() introduzida no JavaScript 1.8.1
-if(!String.prototype.trim){  
+if(!String.prototype.trim){
 	String.prototype.trim = function(){
 		return this.replace(/^\s+|\s+$/g,'');
-	} 
+	}
 }
 
 function mount_url_folder(folders){
 	return folders.join(cyrus_delimiter);
-} 
+}
 
 function updateDynamicContact(userContacts){
 
@@ -118,13 +118,15 @@ function updateDynamicPersonalGroups(){
 
 function init()
 {
+
+	
 	if ( !is_ie ) Element('tableDivAppbox').width = '100%';
 
     //MailArchiver save offset to gmt user preference data to list correctly date/time from messages list
     var save_gmtoffset = function(data){
         gmtoffset = data;
     }
-		
+
     if(preferences.show_name_print_messages == "1") {
         var getUserName = document.getElementById("user_info");
         var userName = getUserName.innerHTML;
@@ -132,17 +134,41 @@ function init()
         var userName = userName.substring(3, position);
         cabecalho = '<h4>' + userName;
     }
-
+    
 	current_folder = "INBOX";
+	
+	
+	
+	
+    //guanch
+    
+    
+    // Get cyrus delimiter
+    cyrus_delimiter = Element('cyrus_delimiter').value;
+    
 
-    cExecute ("$this.imap_functions.get_range_msgs2&folder=INBOX&msg_range_begin=1&msg_range_end="+preferences.max_email_per_page+"&sort_box_type=SORTARRIVAL&search_box_type=ALL&sort_box_reverse=1", handler_draw_box);
+//    var handler_automatic_trash_cleanness = function(data)
+//    {
+//        if( data != false ) {
+//            write_msg(data.length +' '+ $("#txt_clear_trash_auto").val());
+//        }
+//    }
+//
+//    var handler_automatic_spam_cleanness = function(data)
+//    {
+//        if ( data != false ) {
+//            write_msg(data.length +' '+ $("#txt_clear_spam_auto").val());
+//        }
+//    }
+
+   
 
     // Insere a applet de criptografia
     if( preferences.use_signature_digital_cripto == '1' ){ loadApplet(); }
-    
+
     // Fim da inserção da applet
-    cExecute("$this.imap_functions.get_folders_list&onload=true", update_menu);
-    
+    //cExecute("$this.imap_functions.get_folders_list&onload=true", update_menu);
+
     if($.cookie('collapse_folders') == "true"){
         if(!is_ie)
             $("#folderscol").addClass( "hidden");
@@ -195,10 +221,6 @@ function init()
 
     if(parseInt(preferences.use_dynamic_contacts)){ updateDynamicContact(); }
 
-    var handler_automatic_trash_cleanness = function(data)
-    {
-		if( data != false ){ write_msg(data.length +' '+ $("#txt_clear_trash").val()); }
-	}
 
 	// Versão
 	$('#divAppboxHeader').html('<table height="16px" border=0 width=100% cellspacing=0 cellpadding=2><tr>'+
@@ -207,17 +229,18 @@ function init()
 	'<td width=33% id="div_menu_c3" align=right></td>'+
 	'</tr></table>');
 
-	// Get cyrus delimiter
-	cyrus_delimiter = Element('cyrus_delimiter').value;
+	cExecute ("$this.imap_functions.get_range_msgs2&folder=INBOX&msg_range_begin=1&msg_range_end="+preferences.max_email_per_page+"&sort_box_type=SORTARRIVAL&search_box_type=ALL&sort_box_reverse=1", handler_draw_box);
+	
 
-	cExecute("$this.imap_functions.get_folders_list&onload=true", update_menu);	
-	
 	setTimeout('auto_refresh()', time_refresh);
-	
+
 	$("#divAppbox").css("padding-left", "0px");
 
 	// Inicia Messenger
 	setTimeout( function(){ init_messenger(); }, 1000 );
+	
+	
+	
 }
 
 function init_offline(){
@@ -247,12 +270,14 @@ function init_offline(){
 
 function init_messenger()
 {
+	var inicio = new Date();
+	
 	 // Function Remove Plugin
 	 var remove_plugin_im = function()
 	 {
 		// Remove tr/td/div
 		$("#content_messenger").parent().parent().remove();
-	
+
 		// Remove Input
 		$("input[name=expresso_messenger_enabled]").remove();
 
@@ -264,11 +289,11 @@ function init_messenger()
 	 };
 
 	 if( $("input[name=expresso_messenger_enabled]").length > 0 )
-	 {	
+	 {
 		if( $("input[name=expresso_messenger_enabled]").attr("value") === "true" )
 		{
 			if( parseInt($.browser.version) > 7 )
-			{	
+			{
 				$.ajax({
 					"type"		: "POST",
 					"url"		: "../prototype/plugins/messenger/auth_messenger.php",
@@ -278,17 +303,17 @@ function init_messenger()
 						if( !data['error'] )
 						{
 							if( $.trim(data['dt__b']) != "" )
-							{	
+							{
 								// Append divs
 								$("#content_messenger").append("<div id='_plugin'></div>");
 								$("#content_messenger").append("<div id='_menu'></div>");
-								
+
 								// Div content_messenger#_menu
 								$("#content_messenger").find("div#_menu").css({"cursor":"pointer","text-align":"center"})
 								$("#content_messenger").find("div#_menu").append($("<img>").attr("src","templates/default/images/chat-icon-disabled.png")
 								.attr("title", get_lang("Expresso Messenger disabled"))
 								.attr("alt", get_lang("Expresso Messenger disabled")));
-								
+
 								// Div content_messenger#_plugin
 								$("#content_messenger").find("div#_plugin").css({"width":"225px","display":"none"});
 
@@ -312,7 +337,7 @@ function init_messenger()
 
 									//Full Name Expresso Messenger
 									var fullName = $("input[name=messenger_fullName]").val();
-									
+
 									$(".chat-title").find(".chat-name")
 										.html( fullName.substring(0,20) + "..." )
 										.attr("alt", fullName)
@@ -323,9 +348,9 @@ function init_messenger()
 										.css("bottom","1px");
 
 									$(this).off("click");
-									
+
 								});
-								
+
 								// Resize Window
 								resizeWindow();
 							}
@@ -333,7 +358,7 @@ function init_messenger()
 							{
 								// Error Load Plugin Jabber;
 								write_msg( get_lang("ERROR: The IM service, inform the administrator") );
-								
+
 								// Remove Plugin;
 								remove_plugin_im();
 							}
@@ -361,6 +386,7 @@ function init_messenger()
 		// Remove Plugin
 		remove_plugin_im();
 	}
+	 
 }
 
 /**
@@ -418,14 +444,14 @@ function loadApplet(){
 			'</noembed> ' +
 			'</embed> ';
 	}
-	
+
 	if( applet != null )
 	{
 		applet.style.top	= "-100px";
 		applet.style.left	= "-100px";
 		window.document.body.insertBefore( applet, document.body.lastChild );
 	}
-	
+
 }
 
 function disable_field(field,condition) {
@@ -478,7 +504,7 @@ function watch_changes_in_msg(border_id)
 			$(".header-button").button();
 		};
 		var content = $("#content_id_"+border_id);
-		
+
 		var subject_obj = content.find(".subject");
 		if ( subject_obj.addEventListener )
 				subject_obj.addEventListener('keypress', keypress_handler, false);
@@ -490,13 +516,13 @@ function watch_changes_in_msg(border_id)
 				to_obj.addEventListener('keypress', keypress_handler, false);
 		else if ( to_obj.attachEvent )
 			to_obj.attachEvent('onkeypress', keypress_handler);
-			
+
 		var cc_obj = content.find('[name="input_cc"]');
 		if ( cc_obj.addEventListener )
 				cc_obj.addEventListener('keypress', keypress_handler, false);
 		else if ( cc_obj.attachEvent )
 			cc_obj.attachEvent('onkeypress', keypress_handler);
-		
+
 		if(content.find('[name="input_cco"]').length){
 			var cco_obj = content.find('[name="input_cco"]');
 			if ( cco_obj.addEventListener )
@@ -504,7 +530,7 @@ function watch_changes_in_msg(border_id)
 			else if ( cco_obj.attachEvent )
 				cco_obj.attachEvent('onkeypress', keypress_handler);
 		}
-			
+
         var txtarea_obj = Element('body_'+border_id);
         if (txtarea_obj){
           if ((preferences.plain_text_editor == 1)||(Element('body_')+border_id).checked){
@@ -564,9 +590,9 @@ function show_msg(msg_info){
 		else
 		{
 			// Passa os dados para a applet
-			Element('cert_applet').doButtonClickAction('decript', msg_info.msg_number, msg_info.source, msg_info.msg_folder); 
+			Element('cert_applet').doButtonClickAction('decript', msg_info.msg_number, msg_info.source, msg_info.msg_folder);
 		}
-		
+
 		return;
 
 	}
@@ -582,32 +608,32 @@ function show_msg(msg_info){
 	}
 	else{
 		var ID = msg_info.original_ID ? msg_info.original_ID : msg_info.msg_number;
-		        
+
 		var folderName = msg_info.msg_folder;
 		folderName = Base64.encode(folderName);
 		folderName = folderName.replace(/=/gi, '');
 		var id_msg_read = ID+"_r_"+folderName;
-        
+
         //Evita a tentativa de criação de uma aba cujo ID já existe
-        if (Element("border_id_"+id_msg_read) && currentTab > 0) 
+        if (Element("border_id_"+id_msg_read) && currentTab > 0)
 		    id_msg_read += "n";
-    
-		if (preferences.use_shortcuts == '1') 
-	          select_msg(ID, 'null'); 
-			  
+
+		if (preferences.use_shortcuts == '1')
+	          select_msg(ID, 'null');
+
 		// Call function to draw message
 		// If needed, delete old border
                 var isPartMsg = false;
                 for(var ii = 0; ii < partMsgs.length; ii++)
-                     if(partMsgs[ii] == ID) isPartMsg = true;    
-					 
+                     if(partMsgs[ii] == ID) isPartMsg = true;
+
 					if(msg_info.alarm == false){
 						if ((openTab.type[currentTab] == 2 || openTab.type[currentTab] == 3) && isPartMsg === false && msg_info.openSameBorder == true){
                             delete_border(currentTab,'false');
                         }
-							
+
 					}
-					
+
 		if(Element("border_id_" + id_msg_read)) {
 			alternate_border(id_msg_read);
 			resizeWindow();
@@ -656,16 +682,16 @@ function show_msg(msg_info){
 						'custom_class': 'custom-zebra-filter',
 						'onClose':  function(caption) {
 							if(caption == get_lang("Yes"))
-								cExecute ("$this.imap_functions.send_notification&notificationto="+msg_info.DispositionNotificationTo+"&date="+msg_info.udate+"&subject="+url_encode(msg_info.subject), handler_sendNotification);								
-							else 
+								cExecute ("$this.imap_functions.send_notification&notificationto="+msg_info.DispositionNotificationTo+"&date="+msg_info.udate+"&subject="+url_encode(msg_info.subject), handler_sendNotification);
+							else
 								write_msg(get_lang("Confirmation message is not sent"));
 						}
 					});
 				}
 				else
-					cExecute ("$this.imap_functions.send_notification&notificationto="+msg_info.DispositionNotificationTo+"&date="+msg_info.udate+"&subject="+url_encode(msg_info.subject), handler_sendNotification);								
+					cExecute ("$this.imap_functions.send_notification&notificationto="+msg_info.DispositionNotificationTo+"&date="+msg_info.udate+"&subject="+url_encode(msg_info.subject), handler_sendNotification);
 			}
-				
+
 		}
 		if (msg_info.showImg)
 		{
@@ -680,7 +706,7 @@ function show_msg(msg_info){
                 expresso_mail_archive.drawdata = null //no draw action
                 var tl = expresso_mail_archive.pattern.tagConfig('unseen', ID, 1);
                 expresso_mail_archive.taglist = tl;
-                expresso_mail_archive.progressbar = window.setTimeout("expresso_mail_archive.tagMessage()",1);                            
+                expresso_mail_archive.progressbar = window.setTimeout("expresso_mail_archive.tagMessage()",1);
             }
             set_msg_as_read(ID, true);
 			if (msg_info.cacheHit || (!proxy_mensagens.is_local_folder(get_current_folder()) && msg_info.original_ID))
@@ -698,12 +724,12 @@ function auto_refresh(){
 }
 
 function notificationFilter(data, notifyCriteria){
-	
+
 	if(parseInt(notifyCriteria)  && data.length > 0 && !activePage ){
-	
+
 		var howManyCriteria = $('div.gray.filtersDeadline .message-list li').length;
 		var differenceOfNewCriteria = data.length - howManyCriteria;
-		
+
 		if(differenceOfNewCriteria > 0){
 			for(var i=data.length - differenceOfNewCriteria; i < data.length; i++){
                 var msg_folder = data[i].msg_folder;
@@ -747,7 +773,7 @@ function refresh(alert_new_msg, notifyPermission){
 		if(!verify_session(data))
 			return;
 		var total_messages_element = Element('tot_m');
-			
+
 		var box = Element("tbody_box");
 		if (box.childNodes.length == 0)
 			showEmptyBoxMsg(box);
@@ -775,8 +801,8 @@ function refresh(alert_new_msg, notifyPermission){
 			var box = Element("tbody_box");
 			//table_element.insertBefore(box, Element("colgroup_main_"+numBox)); // keeps colgroup as the last child
 			//table_element.appendChild(Element("colgroup_main_"+numBox));
-			
-			
+
+
 			if (!$("#colgroup_main_0").size()){
 				$(table_element).append(Element("colgroup_main_"+numBox));
 			}
@@ -790,7 +816,7 @@ function refresh(alert_new_msg, notifyPermission){
 			}
 			if (data[0] && data[0].msg_folder != current_folder) // Bad request
 				return false;
-				
+
 			for (var i=0; i<data.length; i++){
 				var existent = document.getElementById(data[i].msg_number);
 				if (!existent)
@@ -806,7 +832,7 @@ function refresh(alert_new_msg, notifyPermission){
                     		$(".lower").css("top", ($("#content_folders").height()-18) + $("#content_folders").offset().top);
 							if($(".shared-folders").length){
 								$(".shared-folders").parent().find('.folder:not(".shared-folders")').droppable({
-									over : function(a, b){						
+									over : function(a, b){
 										//SETA BORDA EM VOLTA DA PASTA
 										$(b.helper).find(".draggin-folder,.draggin-mail").css("color", "green");
 										over = $(this);
@@ -818,7 +844,7 @@ function refresh(alert_new_msg, notifyPermission){
 														if(over.hasClass("folder-over"))
 															over.prev().trigger("click");
 													}, 500);
-													
+
 												}
 									},
 									out : function(a,b){
@@ -836,7 +862,7 @@ function refresh(alert_new_msg, notifyPermission){
 										}else{
 											var folder_to = $(this).parent().attr('id');
 											var to_folder_title = $(this).attr('title');
-										}		
+										}
 										var folder_to_move = ui.draggable.parent().attr('id');
 										var border_id = ui.draggable.find("input[type=hidden]").attr("name");
 										// Mensagens : SE O DROP VIER DA LISTA DE MENSAGENS :
@@ -883,10 +909,10 @@ function refresh(alert_new_msg, notifyPermission){
 						}
 					});
 					//_dragArea.makeDragged(new_msg, data[i].msg_number, data[i].subject, true);
-					
+
 					if( data[i].next_msg_number != undefined && data[i].next_msg_number != null ){
 						try {
-							box.insertBefore(new_msg, box.childNodes[data[i].msg_key_position]);					
+							box.insertBefore(new_msg, box.childNodes[data[i].msg_key_position]);
 						}
 						catch (e){
 							box.insertBefore(new_msg, box.firstChild);
@@ -907,21 +933,21 @@ function refresh(alert_new_msg, notifyPermission){
 
 			if(parseInt(preferences.use_shortcuts))
 				select_msg("null","reload_msg","null");
-		
+
 			if(parseInt(alert_new_msg) && data.new_msgs > 0 && activePage)
 				alert(data['new_msgs'] > 1 ? get_lang("You have %1 new messages", data['new_msgs']) + "!" : get_lang("You have 1 new message") +"!");
-			
-			
+
+
 			if(parseInt(notifyPermission)  && (data.new_msgs > 0 || !!countNewMessage) && !activePage ){
-			
+
 				countNewMessage += data.length;
-				
+
                 param = (countNewMessage > 1 ? (get_lang("You have %1 new messages", countNewMessage) + "!") : (get_lang("You have 1 new message") + "!"));
 				desktopNotificationAux = desktopNotification.sentNotification("",get_lang("Notification"), param);
-				
+
 				if(!auxNotification)
 					desktopNotification.cancelByReference(auxNotification);
-				
+
 				desktopNotification.showNotification(function(){
 					countNewMessage = 0;
 				}, function(){
@@ -929,7 +955,7 @@ function refresh(alert_new_msg, notifyPermission){
 					this.cancel();
 					countNewMessage = 0;
 				});
-				
+
 				auxNotification = desktopNotificationAux;
 			}
 			build_quota(data['quota']);
@@ -944,17 +970,17 @@ function refresh(alert_new_msg, notifyPermission){
 		if(box.childNodes.length > 1){
 			updateBoxBgColor(box.childNodes);
 		}
-		
+
 		//Sincroniza mensagens lidas e não lidas em clientes de emails diferentes
 		if(data.unseens && data.unseens.length != 0)
 			synchronize(data.unseens);
-		
+
 		connector.purgeCache();
 		cExecute("$this.imap_functions.get_folders_list&onload=true", force_update_menu);
 		resizeMailList();
 
 	}
-	
+
 	msg_range_end = (current_page*preferences.max_email_per_page);
 	msg_range_begin = (msg_range_end-(preferences.max_email_per_page)+1);
 
@@ -986,7 +1012,7 @@ function refresh(alert_new_msg, notifyPermission){
 							      sort_box_reverse: sort_box_reverse } ),
 			  success: function( data ){
 			      data = connector.unserialize( data );
-			      
+
 			      if( data )
 				  handler_refresh( data );
 
@@ -997,7 +1023,7 @@ function refresh(alert_new_msg, notifyPermission){
 			  },
 			  complete: function( jqXHR, settings ){
 			  	connector.hideProgressBar();
-                
+
 			  }
 
 		});
@@ -1028,43 +1054,43 @@ function synchronize(unseens){
 	});
 }
 
-function delete_msgs(folder, msgs_number, border_ID, show_success_msg,archive, prev_message){	
+function delete_msgs(folder, msgs_number, border_ID, show_success_msg,archive, prev_message){
             if( preferences.use_local_messages == 1 && expresso_local_messages.isArchiving( msgs_number, folder ) ){
 		alert( get_lang("Impossible to delete messages that are still being archived.") );
 			  return;
 			}
-				
- 		        var userTrashFolder = ''; 
 
- 		        if (arguments.length <= 6 && typeof(show_success_msg) == "undefined") show_success_msg = true; 
- 		        if (folder == 'null') folder = current_folder; 
- 		 
- 		        if(folder.substr(0,4) == 'user') 
- 		        { 
-					var arrayFolder = folder.split(cyrus_delimiter); 
+ 		        var userTrashFolder = '';
+
+ 		        if (arguments.length <= 6 && typeof(show_success_msg) == "undefined") show_success_msg = true;
+ 		        if (folder == 'null') folder = current_folder;
+
+ 		        if(folder.substr(0,4) == 'user')
+ 		        {
+					var arrayFolder = folder.split(cyrus_delimiter);
 					userTrashFolder = 'user'+cyrus_delimiter+arrayFolder[1]+cyrus_delimiter+special_folders['Trash'];
 					var has_folder = false;//Folder.get( userTrashFolder, false );
 					var folders = DataLayer.get("folder");
 					$.each(folders,function(index,value){
-						if(value && value.id == userTrashFolder) 
+						if(value && value.id == userTrashFolder)
 							has_folder = true;
 					});
 
 					if(!has_folder){
 						create_new_folder(special_folders['Trash'], 'user'+cyrus_delimiter+arrayFolder[1]);
 					}
-					
- 		        } 
-				else userTrashFolder = mount_url_folder(["INBOX",special_folders["Trash"]]); 
- 	 
- 		        if(openTab.type[currentTab] == 1) 
-					return move_search_msgs('content_id_'+currentTab,userTrashFolder,special_folders['Trash']); 
-					
-				if(currentTab.toString().indexOf("_r") != -1) 
-					msgs_number = currentTab.toString().substr(0,currentTab.toString().indexOf("_r")); 
- 		         
- 		        if (!archive && (parseInt(preferences.save_deleted_msg)) && (folder != userTrashFolder)){ 
- 		            move_msgs2(folder, ""+msgs_number, border_ID, userTrashFolder,special_folders['Trash'],show_success_msg, undefined, prev_message ); 
+
+ 		        }
+				else userTrashFolder = mount_url_folder(["INBOX",special_folders["Trash"]]);
+
+ 		        if(openTab.type[currentTab] == 1)
+					return move_search_msgs('content_id_'+currentTab,userTrashFolder,special_folders['Trash']);
+
+				if(currentTab.toString().indexOf("_r") != -1)
+					msgs_number = currentTab.toString().substr(0,currentTab.toString().indexOf("_r"));
+
+ 		        if (!archive && (parseInt(preferences.save_deleted_msg)) && (folder != userTrashFolder)){
+ 		            move_msgs2(folder, ""+msgs_number, border_ID, userTrashFolder,special_folders['Trash'],show_success_msg, undefined, prev_message );
 					return;
 				}
 
@@ -1121,12 +1147,12 @@ function delete_msgs(folder, msgs_number, border_ID, show_success_msg,archive, p
 					if(previous_msg){
 						 $.ajax({
 							  url: 'controller.php?' + $.param( {action: '$this.imap_functions.get_info_msg',
-												  msg_number: previous_msg, 
+												  msg_number: previous_msg,
 												  msg_folder: current_folder,
 												  decoded: true } ),
 							  success: function( data ){
 								  data = connector.unserialize( data );
-								  
+
 								  if( data ){
 								  	data.openSameBorder = true;
 								  	show_msg( data );
@@ -1141,22 +1167,22 @@ function delete_msgs(folder, msgs_number, border_ID, show_success_msg,archive, p
 
 						});
 					}
- 				} 
+ 				}
 				else{
                     delete_border(currentTab,'false');
                 }
-					
+
 			}
 			else{
                 delete_border(currentTab,'false');
             }
-				
+
 		}
 		for (var i=0; i<data.msgs_number.length; i++){
 				var msg_to_delete = Element(data.msgs_number[i]);
 				if (msg_to_delete){
 						removeAll(msg_to_delete.id);
-						 delete selectedPagingMsgs[data.msgs_number[i]]; 
+						 delete selectedPagingMsgs[data.msgs_number[i]];
 				}
                 // removido decremento da variável pois estava decrementando em outros lugares
 				// totalFolderMsgs = totalFolderMsgs - data.msgs_number.length;
@@ -1171,7 +1197,7 @@ function delete_msgs(folder, msgs_number, border_ID, show_success_msg,archive, p
 		Element('tot_m').innerHTML = parseInt(Element('tot_m').innerHTML) - data.msgs_number.length;
 		refresh();
 	}
-	
+
 	if (msgs_number.length > 0 || parseInt(msgs_number) > 0){
 		params_to_delete = "&folder="+folder;
 		params_to_delete += "&msgs_number="+msgs_number;
@@ -1187,7 +1213,7 @@ function delete_msgs(folder, msgs_number, border_ID, show_success_msg,archive, p
 	}
 }
 
-  
+
 function move_search_msgs(border_id, new_folder, new_folder_name, action){
 
 	var msg_to_delete = "";
@@ -1205,12 +1231,12 @@ function move_search_msgs(border_id, new_folder, new_folder_name, action){
 	}
 
 	var delete_msg = false;
-	
+
 	if(new_folder_name == special_folders['Trash']){
 		delete_msg = true;
 		}
 	selected_messages = get_selected_messages_search();
-	
+
 	if( preferences.use_local_messages == 1 && expresso_local_messages.isArchiving( selected_messages, folder ) ){
 		alert( get_lang("Impossible to move messages that are still being archived.") );
 	  return;
@@ -1240,13 +1266,13 @@ function move_search_msgs(border_id, new_folder, new_folder_name, action){
 		if(data.no_move){
 			var no_remove = data.no_move.split(',');
 			var continua = true;
-			
+
 		selected_messages = selected_messages.split(",");
 		for (i = 0; i < selected_messages.length; i++){
 				for(j = 0; j < no_remove.length; j++)
 					if(selected_messages[i] == no_remove[j])
 						continua = false;
-				if(continua)	
+				if(continua)
 					removeAll(selected_messages[i]+'_s'+id_border);
 				continua = true;
 		}
@@ -1254,10 +1280,10 @@ function move_search_msgs(border_id, new_folder, new_folder_name, action){
 			selected_messages = selected_messages.split(",");
 			for (i = 0; i < selected_messages.length; i++){
 				removeAll(selected_messages[i]+'_s'+id_border);
-		
+
 			}
 		}
-		
+
 		// Update Box BgColor
 		var box = Element("tbody_box_"+getNumBoxFromTabId(currentTab)).childNodes;
 		if(box.length > 1){
@@ -1265,7 +1291,7 @@ function move_search_msgs(border_id, new_folder, new_folder_name, action){
 		}
 		connector.purgeCache();
 
-		
+
 		if(remove_currente_folder != ""){
 			var mail_msg = Element('tbody_box').childNodes;
 			remove_currente_folder = remove_currente_folder.substring(0,(remove_currente_folder.length-1));
@@ -1282,13 +1308,13 @@ function move_search_msgs(border_id, new_folder, new_folder_name, action){
 				Element('tot_m').innerHTML = parseInt(Element('tot_m').innerHTML) - remove_currente_folder.length;
 			}
 		}
-		
+
 		draw_new_tree_folder();
 		EsearchE.refresh();
 	}
 
 	if (selected_messages){
-		
+
 		var selected_param = "";
 		if (selected_messages.indexOf(',') != -1)
 		{
@@ -1297,7 +1323,7 @@ function move_search_msgs(border_id, new_folder, new_folder_name, action){
 				var tr = Element(selected_msg_array[i]+'_s'+id_border);
 				if(tr.getAttribute('name') == current_folder)
 					remove_currente_folder += tr.id.replace(/_[a-zA-Z0-9]+/,"")+',';
-				
+
 				if ((action == 'delete' && tr.getAttribute('name') == mount_url_folder(["INBOX",special_folders["Trash"]])) || !(parseInt(preferences.save_deleted_msg)))
 				{
 					msg_to_delete +=   ','+special_folders['Trash']+';'+tr.id.replace(/_[a-zA-Z0-9]+/,"");
@@ -1332,7 +1358,7 @@ function move_search_msgs(border_id, new_folder, new_folder_name, action){
 			params += "&selected_messages_move="+url_encode(selected_param);
 			params += "&new_folder_move="+url_encode(new_folder);
 			params += "&new_folder_name_move="+url_encode(new_folder_name);
-		
+
 			new_folder = mount_url_folder(["INBOX",special_folders["Trash"]]);
 			new_folder_name = special_folders['Trash'];
 			params += "&selected_messages_delete="+url_encode(msg_to_delete);
@@ -1420,19 +1446,19 @@ function move_msgs2(folder, msgs_number, border_ID, new_folder, new_folder_name,
 				if (msg_to_delete.previousSibling)
 				{
 					var previous_msg = prev_message ? prev_message : msg_to_delete.previousSibling.id;
-					
+
 					//cExecute("$this.imap_functions.get_info_msg&msg_number="+previous_msg+"&msg_folder=" + current_folder, show_msg);
 					if(!not_opem_previus){
 						if(previous_msg){
 							/*
 							$.ajax({
 								  url: 'controller.php?' + $.param( {action: '$this.imap_functions.get_info_msg',
-													  msg_number: previous_msg, 
+													  msg_number: previous_msg,
 													  msg_folder: folder,
 													  decoded: true } ),
 								  success: function( data ){
 									  data = connector.unserialize( data );
-									  
+
 									  if( data )
 									  show_msg( data );
 								  },
@@ -1448,7 +1474,7 @@ function move_msgs2(folder, msgs_number, border_ID, new_folder, new_folder_name,
 					}
 				}
 				//se houver pagina anterior a paginação deve ser refeita
-				else 
+				else
 				{
 					var border_id = $("#border_id_"+currentTab).prev().attr("id").split("_").slice(2, 3).join("")
 					var folderName = current_folder;
@@ -1458,9 +1484,9 @@ function move_msgs2(folder, msgs_number, border_ID, new_folder, new_folder_name,
 						$.ajax({
 							url: 'controller.php?' + $.param({
 								action: '$this.imap_functions.get_info_msg',
-								msg_number: prev_message, 
+								msg_number: prev_message,
 								msg_folder: folderName,
-								decoded: true 
+								decoded: true
 							}),
 							success: function( data ){
 								data = connector.unserialize( data );
@@ -1478,15 +1504,15 @@ function move_msgs2(folder, msgs_number, border_ID, new_folder, new_folder_name,
 							}
 						});*/
 				        current_page--;
-				        var range_begin = (current_page - 1)*preferences.max_email_per_page + 1; 
+				        var range_begin = (current_page - 1)*preferences.max_email_per_page + 1;
 				        var range_end = current_page*preferences.max_email_per_page;
 				     	var creatBoxAnterior = function (data){
 					    	  draw_box(data, get_current_folder());
 						      lastRow();
-						 };   			  
+						 };
 			         	proxy_mensagens.messages_list(get_current_folder(),range_begin,range_end,sort_box_type,search_box_type,sort_box_reverse,'','', creatBoxAnterior);
 					}
-					else 
+					else
 					{
 						delete_border(currentTab,'false');
 					}
@@ -1499,7 +1525,7 @@ function move_msgs2(folder, msgs_number, border_ID, new_folder, new_folder_name,
 					delete_border(currentTab,'false');
 				}
 			}
-			
+
 			if(msg_to_delete && Element(msg_to_delete.id))
 			{
 				mail_msg.removeChild(msg_to_delete);
@@ -1562,7 +1588,7 @@ function move_msgs2(folder, msgs_number, border_ID, new_folder, new_folder_name,
 		{
 			msg_to_delete = Element(data.msgs_number[i]);
 			if (msg_to_delete)
-				mail_msg.removeChild(msg_to_delete);	
+				mail_msg.removeChild(msg_to_delete);
 		}
 
         showMsg();
@@ -1575,7 +1601,7 @@ function move_msgs2(folder, msgs_number, border_ID, new_folder, new_folder_name,
 			else{
                 delete_border(data.border_ID,'false');
             }
-				
+
 		}
 		if(folder == get_current_folder()){
 			var n_total_msg = parseInt(Element('tot_m').innerHTML) - data.msgs_number.length;
@@ -1591,7 +1617,7 @@ function move_msgs2(folder, msgs_number, border_ID, new_folder, new_folder_name,
 	if (folder == new_folder){
 		write_msg(get_lang('The origin folder and the destination folder are the same.'));
 		return;
-	}  
+	}
 
 	try{
         if(Element('input_folder_'+currentTab))
@@ -1599,7 +1625,7 @@ function move_msgs2(folder, msgs_number, border_ID, new_folder, new_folder_name,
                 alert(get_lang("You cant manipulate local messages on search"));
                 return;
             }
-	} catch (e) {} 
+	} catch (e) {}
     //Validação para recuperar o id caso não seja aba de listagem
 	if (currentTab == 0 && msgs_number == "selected")
 		msgs_number = get_selected_messages();
@@ -1627,7 +1653,7 @@ function move_msgs2(folder, msgs_number, border_ID, new_folder, new_folder_name,
 	}
 
 	if (proxy_mensagens.is_local_folder(folder)){
-        
+
 		expresso_mail_archive.update_counters = true;
         //Folder de onde sai a mensagem é local (armazenamento local)
 
@@ -1638,7 +1664,7 @@ function move_msgs2(folder, msgs_number, border_ID, new_folder, new_folder_name,
         if (new_folder == 'local_root'){
             alert(get_lang("Select a folder!"));
         }
-                    
+
         if (parseInt(msgs_number) > 0 || msgs_number.length > 0) {
             if (proxy_mensagens.is_local_folder(new_folder)){
                 //esta tirando de um folder local para outro folder local
@@ -1654,7 +1680,7 @@ function move_msgs2(folder, msgs_number, border_ID, new_folder, new_folder_name,
                 }
                 if(currentTab.toString().indexOf("_r") != -1){
                     msgs_number = currentTab.toString().substr(0,currentTab.toString().indexOf("_r"));
-                }                      
+                }
                 expresso_mail_archive.unarchieve(folder, new_folder, msgs_number);
                 if(currentTab != 0)
                 	delete_border(border_ID);
@@ -1740,11 +1766,11 @@ function move_msgs2(folder, msgs_number, border_ID, new_folder, new_folder_name,
 				if(!hasFolder){
 					handler_removeFlag();
 				}
-				
+
 			}else
 				write_msg(get_lang('No selected message.'));
         }
-    }	
+    }
 
     //Código adicionado para o correto funcionamento da seleção independente de paginação.
     $.each(msgs_number.split(","), function(index, value){
@@ -1761,7 +1787,7 @@ function move_msgs(folder, msgs_number, border_ID, new_folder, new_folder_name, 
 }
 
 function normalizeMsgNumber( msgNumber ){
-  
+
       if (msgNumber || msgNumber == 'selected')
 	  msgNumber = get_selected_messages();
 
@@ -1775,18 +1801,18 @@ function normalizeMsgNumber( msgNumber ){
 	    else
 		msgNumber = currentTab.toString().substr(0,currentTab.toString().indexOf('_r'));
       }
-      
+
       if (parseInt(msgNumber) <= 0 || msgNumber.length <= 0){
 	    write_msg(get_lang('No selected message.'));
 	    return( false );
       }
-      
+
       return( msgNumber );
 
 }
 
 function archive_search_msgs(folder_dest) {
-	
+
 	var id_msgs = "";
 	id_msgs = get_selected_messages_search();
 	var msg_to_arquive = "";
@@ -1795,7 +1821,7 @@ function archive_search_msgs(folder_dest) {
 
 	if ( parseInt(id_msgs) <= 0 || id_msgs.length <= 0 )
 	    return write_msg(get_lang('No selected message.'));
-	
+
 	if(folder_dest=='local_root' || folder_dest==null) //Caso seja o primeiro arquivamento...
 	    folder_dest = 'local_Inbox';
 
@@ -1805,19 +1831,19 @@ function archive_search_msgs(folder_dest) {
 	    write_msg( get_lang("All messages have been filed earlier.") );
 	    return;
 	}
-  
+
 	document.getElementById("overlay").style.visibility = "visible";
 
 	var handler_arquivar_mensagens = function(data) {
-	  
+
 	    var msgs_info = [];
-	  
+
 	    for( var i = 0; i < data.length; i++ )
 		msgs_info[i] = connector.unserialize( data[i] );
 
 	    //vejo se já tinha mensagens locais
 	    var h = expresso_local_messages.has_local_mails();
-	    
+
 	    expresso_local_messages.insert_mails( msgs_info, folder_dest, function( s, f ){complete_archiving( s, f, h )} );
 
 	    document.getElementById("overlay").style.visibility = "hidden";
@@ -1829,15 +1855,15 @@ function archive_search_msgs(folder_dest) {
 		msg_to_arquive = (tr.getAttribute('name') == null?get_current_folder():tr.getAttribute('name'));
 		messages += ','+msg_to_arquive+';'+tr.id.replace(/_[a-zA-Z0-9]+/,"");
 	}
-	
+
 	$.ajax({
 		  url: 'controller.php?' + $.param( {action: '$this.imap_functions.get_info_msg',
-						      msg_number: messages, 
+						      msg_number: messages,
 						      msg_folder: folder_dest,
 						      decoded: true } ),
 		  success: function( data ){
 		      data = connector.unserialize( data );
-		      
+
 		      if( data )
 			  handler_arquivar_mensagens( data );
 		  },
@@ -1854,7 +1880,7 @@ function archive_search_msgs(folder_dest) {
 
  function archive_msgs(folder,folder_dest,id_msgs) {
 
-    if(typeof (currentTab) == "string" && currentTab.indexOf("local") != -1){  
+    if(typeof (currentTab) == "string" && currentTab.indexOf("local") != -1){
         alert(get_lang("Unable to handle local messages from a search. This is allowed only for non-local messages."));
         return true;
     }
@@ -1869,8 +1895,8 @@ function archive_search_msgs(folder_dest) {
 
     if(folder_dest=='local_root' || folder_dest==null)//Default archive destiny = local_inbox folder
         folder_dest = 'local_inbox';
-    
-    if (parseInt(id_msgs) > 0 || id_msgs.length > 0){       
+
+    if (parseInt(id_msgs) > 0 || id_msgs.length > 0){
         //expresso_mail_archive.Archive(folder,folder_dest,id_msgs);
         window.setTimeout("expresso_mail_archive.Archive('" + folder + "','" + folder_dest + "','" + id_msgs + "')", 1);
         selectAllFolderMsgs(false);
@@ -1887,7 +1913,7 @@ function archive_search_msgs(folder_dest) {
 
 	if(currentTab.toString().indexOf("_r") != -1)
         id_msgs = currentTab.toString().substr(0,currentTab.toString().indexOf("_r"));
-		
+
     if(currentTab.toString().indexOf("_s") != -1)
 		id_msgs = currentTab.toString().substr(0,currentTab.toString().indexOf("_s"));
 
@@ -1897,11 +1923,11 @@ function archive_search_msgs(folder_dest) {
 			return;
 		}else
 			id_msgs = get_selected_messages();
-	}	
+	}
 
 	if ( parseInt(id_msgs) <= 0 || id_msgs.length <= 0 )
 	    return write_msg(get_lang('No selected message.'));
-	
+
 	if(folder_dest=='local_root' || folder_dest==null) //Caso seja o primeiro arquivamento...
 		folder_dest = 'local_Inbox';
 
@@ -1911,19 +1937,19 @@ function archive_search_msgs(folder_dest) {
 	      write_msg( get_lang("All messages have been filed earlier.") );
 	      return;
 	  }
-  
+
 	document.getElementById("overlay").style.visibility = "visible";
 
 	var handler_arquivar_mensagens = function(data) {
-	  
+
 	    //var msgs_info = [];
-	  
+
 	    //for( var i = 0; i < data.length; i++ )
 		//msgs_info[i] = connector.unserialize( data[i] );
 
 	    //vejo se já tinha mensagens locais
 	    //var h = expresso_local_messages.has_local_mails();
-	    
+
 	    //expresso_local_messages.insert_mails( msgs_info, folder_dest, function( s, f ){complete_archiving( s, f, h )} );
 
 	    expresso_mail_archive.Archive(folder,folder_dest,id_msgs);
@@ -1932,12 +1958,12 @@ function archive_search_msgs(folder_dest) {
 
 	$.ajax({
 		  url: 'controller.php?' + $.param( {action: '$this.imap_functions.get_info_msg',
-						      msg_number: id_msgs, 
+						      msg_number: id_msgs,
 						      msg_folder: folder,
 						      decoded: true } ),
 		  success: function( data ){
 		      data = connector.unserialize( data );
-		      
+
 		      if( data )
 			  handler_arquivar_mensagens( data );
 		  },
@@ -1950,24 +1976,24 @@ function archive_search_msgs(folder_dest) {
 
 	});
 	*/
-	
+
 }
 
 function complete_archiving( success, fails, has_local_messages_before )
 {
     var msgs_to_remove = {};
     var target = mount_url_folder(["INBOX",special_folders["Trash"],'tmpMoveToLocal']);
-    
+
     success = expresso_local_messages.select_mail( [ 'original_id', 'original_folder' ], success );
 
     for (var i = 0; i < success.length; i++) {
-	
+
 	var msg_info = success[i];
 
 	//////////////// deselecionando ////////////////
 	Element('chk_box_select_all_messages').checked = false;
 
-	if ( Element("check_box_message_" + msg_info.original_id) ) 
+	if ( Element("check_box_message_" + msg_info.original_id) )
 	{
 		Element("check_box_message_" + msg_info.original_id).checked = false;
 	}
@@ -2005,10 +2031,10 @@ function get_all_messages_search(){
 	var aba = document.getElementById('content_id_'+currentTab);
 	var messages = "";
 	jQuery(function() {
- 	    jQuery("#"+aba.id+" tr").each(function(i, main_list) { 
+ 	    jQuery("#"+aba.id+" tr").each(function(i, main_list) {
 				messages += main_list.id.replace(/_[a-zA-Z0-9]+/,"") + ',' ;
- 	    });              
- 	     
+ 	    });
+
 	});
 	if(messages.indexOf(',') == 0)
 		messages = messages.substring(1,(messages.length));
@@ -2018,13 +2044,13 @@ function get_all_messages_search(){
 function get_selected_messages_search(){
 	var aba = document.getElementById('content_id_'+currentTab);
 	var selected_messages = "";
- 	    jQuery("#"+aba.id+" tr").each(function(i, main_list) { 
+ 	    jQuery("#"+aba.id+" tr").each(function(i, main_list) {
 		var check_box = main_list.firstChild.firstChild;
 			if(check_box && check_box.checked) {
 				selected_messages += main_list.id.replace(/_[a-zA-Z0-9]+/,"") + ',' ;
 			};
- 	    });              
- 	     
+ 	    });
+
 	if (selected_messages != ""){
 		if(selected_messages.indexOf(',') == 0)
 			selected_messages = selected_messages.substring(1,(selected_messages.length));
@@ -2038,12 +2064,12 @@ function get_selected_messages_search(){
 function get_selected_messages_search_role(){
 	var aba = document.getElementById('content_id_'+currentTab);
 	var selected_messages = "";
- 	jQuery("#"+aba.id+" tr").each(function(i, main_list) { 
+ 	jQuery("#"+aba.id+" tr").each(function(i, main_list) {
 	var check_box = main_list.firstChild.firstChild;
 		if(check_box && check_box.checked && check_box.id != 'chk_box_select_all_messages_search') {
 			selected_messages += main_list.role + ',' ;
 		};
-	});              
+	});
 
 	if (selected_messages != ""){
 		if(selected_messages.indexOf(',') == 0)
@@ -2110,14 +2136,14 @@ function get_selected_messages_shortcut(){
 	for (j; j<(main_list.length); j++)
 	{
 
-		if ( (!isNaN(parseInt(numBox))) && (numBox == 0)) { 
-                        check_box = Element("check_box_message_" + main_list[j].id); 
-                } else { 
-                        id_mensagem = main_list[j].id.split('_'); 
-						check_box = Element("search_" + numBox + "_check_box_message_" + id_mensagem[0]); 
-                }        
- 		                 
- 		if ( (check_box) && (check_box.checked) ) 
+		if ( (!isNaN(parseInt(numBox))) && (numBox == 0)) {
+                        check_box = Element("check_box_message_" + main_list[j].id);
+                } else {
+                        id_mensagem = main_list[j].id.split('_');
+						check_box = Element("search_" + numBox + "_check_box_message_" + id_mensagem[0]);
+                }
+
+ 		if ( (check_box) && (check_box.checked) )
 			selected_messages += main_list[j].id + ',';
 
 		if (preferences.use_shortcuts == '1')
@@ -2130,15 +2156,15 @@ function get_selected_messages_shortcut(){
 	}
 	selected_messages = selected_messages.substring(0,(selected_messages.length-1));
 
- 		         
+
  		        /* Verifica se está na tela de pesquisa. */ /*
- 		        if(selected_messages.indexOf("_") != -1) 
- 		        { 
- 		                results_search_messages = selected_messages; 
+ 		        if(selected_messages.indexOf("_") != -1)
+ 		        {
+ 		                results_search_messages = selected_messages;
  		                /* Retira a informação da aba */ /*
  		                selected_messages = selected_messages.substring(0,selected_messages.indexOf("_"));
 	}
-	
+
 
 	if (preferences.use_shortcuts == '1')
 	{
@@ -2155,10 +2181,10 @@ function get_selected_messages_shortcut(){
 		if (array_selected_messages_by_shortcuts.length > 1){
 			if (selected_messages == "")
 			   return selected_messages_by_shortcuts;
-			else 
+			else
 			   return selected_messages + "," + selected_messages_by_shortcuts;
 		}
-	}	
+	}
 	if (selected_messages == '')
 		return false;
 	else
@@ -2185,7 +2211,7 @@ function replaceAll(string, token, newtoken) {
 }
 
 function new_message_to(email) {
-	var new_border_ID = new_message('new','null');		
+	var new_border_ID = new_message('new','null');
 	if (!new_border_ID){
 		var msgId;
 		setTimeout(function(){
@@ -2199,14 +2225,14 @@ function new_message_to(email) {
 							email = group.id;
 						}
 					});
-				draw_email_box(email, content.find('.to').filter('textarea:first'),"G");	
+				draw_email_box(email, content.find('.to').filter('textarea:first'),"G");
 			}
 			else
 				draw_reply_boxes_by_field("to",email,content);
 		},500);
 	}
 	else{
-		var content = $("#content_id_"+new_border_ID); 
+		var content = $("#content_id_"+new_border_ID);
 		if (email.indexOf('@') == -1){
 			var groups = REST.get('/groups');
 				$.each(normalizeContacts(groups.collection.itens),function(index,group){
@@ -2214,11 +2240,11 @@ function new_message_to(email) {
 						email = group.id;
 					}
 				});
-			draw_email_box(email, content.find('.to').filter('textarea:first'),"G");	
+			draw_email_box(email, content.find('.to').filter('textarea:first'),"G");
 		}
 		else
 			draw_reply_boxes_by_field("to",email,content);
-	}	
+	}
 }
 
 function new_message(type, border_ID, flagged)
@@ -2380,6 +2406,9 @@ function new_message(type, border_ID, flagged)
     }
 
     var signature = RichTextEditor.getSignatureDefault();
+    if (corporateSignature != '') {
+        signature += "<br><br>" + corporateSignature;
+    }
 
     if (type != "new" && type != "edit" && document.getElementById("is_local_" + border_ID) != null) data.is_local_message = (document.getElementById("is_local_" + border_ID).value == "1") ? true : false;
 
@@ -2435,7 +2464,7 @@ function new_message(type, border_ID, flagged)
         case "reply_with_history":
             btnSaveVerify();
 
-            RichTextEditor.replyController = true; //Seta o editor como modo reply 
+            RichTextEditor.replyController = true; //Seta o editor como modo reply
             title = "Re: " + html_entities(data.subject);
             content.find(".subject").val("Re: " + data.subject);
             content.find('[name="input_to"]').val(data.to);
@@ -2529,7 +2558,7 @@ function new_message(type, border_ID, flagged)
         case "reply_to_all_with_history":
             btnSaveVerify();
 
-            RichTextEditor.replyController = true; //Seta o editor como modo reply 
+            RichTextEditor.replyController = true; //Seta o editor como modo reply
             //delete user email from to_all array.
             data.to_all = new Array();
             data.to_all = removeUserEmail(_array_to_all);
@@ -2802,7 +2831,7 @@ function removeUserEmail(emailList){
 			if (emailList[i].indexOf(userEmail) < 0){
 			   array_emails[j++] = emailList[i];
 			}
-	  }  
+	  }
  return array_emails;
 }
 
@@ -2825,30 +2854,30 @@ function removeAlternative(value_to_all, _array_to_alternative){
 }
 
 function useOriginalAttachments(new_border_ID,old_id_border)
-{   
+{
 	if (Element("attachments_" + old_id_border))
     {
-        var fileUploadMSG = $('#fileupload_msg'+new_border_ID);         
-        var attachments = $("#attachments_" + old_id_border).find("a");	
+        var fileUploadMSG = $('#fileupload_msg'+new_border_ID);
+        var attachments = $("#attachments_" + old_id_border).find("a");
 		if(openTab.imapBox[new_border_ID].split("local").length > 1 && attachments.length > 0){
 			alert(get_lang("It is not possible to use the attachments of local messages, to have access please unarchive the attachments"));
 			return false;
 		}
-		
+
         var imagens = block_quoted_body.match(/<img[^>]*>/g);
 		var arrayAttachments = [];
 		var arrayAttachmentsA = [];
-		
+
 		//-------------------
 		    for (var i = 0; i < attachments.length; i++){
                             if((attachments[i].tagName=="SPAN") || (attachments[i].tagName=="IMG") || ((attachments[i].href.indexOf("javascript:download_local_attachment")==-1)&&(attachments[i].href.indexOf("javascript:download_attachments")==-1)))
                                     continue;
                                 if(attachments[i].href.split("local") > 1){
-                                	var arrayAtt = attachments[i].href.replace("javascript:download_local_attachment(", "").replace(")", "").split(',');                                 
+                                	var arrayAtt = attachments[i].href.replace("javascript:download_local_attachment(", "").replace(")", "").split(',');
                                 }else{
-                                	var arrayAtt = attachments[i].href.replace("javascript:download_attachments(", "").replace(")", "").split(',');                                 
+                                	var arrayAtt = attachments[i].href.replace("javascript:download_attachments(", "").replace(")", "").split(',');
                                 }
-                                
+
                                 var att = new Object();
                                 var regex = new RegExp( "'", "g" );
                                 att.folder = utf8_decoder(Base64.decode(arrayAtt[0].replace(regex,"")));
@@ -2856,10 +2885,10 @@ function useOriginalAttachments(new_border_ID,old_id_border)
                                 att.part = arrayAtt[3].replace(regex,"");
                                 att.type = 'imapPart';
 				var idATT = JSON.stringify(att);
-				
+
 				if(block_quoted_body.indexOf('src="./inc/get_archive.php?msgFolder='+att.folder+'&amp;msgNumber='+att.uid+'&amp;indexPart='+att.part+'"') !== -1)
 				{
-				    addAttachment( new_border_ID , idATT);  
+				    addAttachment( new_border_ID , idATT);
 
 				    var attach = {};
 				    attach.fileName =  attachments[i].text.substring(0, attachments[i].text.lastIndexOf('('));
@@ -2880,16 +2909,16 @@ function useOriginalAttachments(new_border_ID,old_id_border)
 					    var imagens = content_body.match(/<img[^>]*>/g);
 					    var att = JSON.parse(idAttach);
 					    if(imagens != null)
-					    {   
+					    {
 						for (var x = 0; x < imagens.length; x++)
 						    if(imagens[x].indexOf('src="./inc/get_archive.php?msgFolder='+att.folder+'&amp;msgNumber='+att.uid+'&amp;indexPart='+att.part) !== -1)
 							content_body = content_body.replace(imagens[x],'');
 
-						RichTextEditor.setData('body_'+new_border_ID,content_body);    
-					    }       
+						RichTextEditor.setData('body_'+new_border_ID,content_body);
+					    }
 
 					    fileUploadMSG.find('.attachments-list').find('input[value="'+idAttach+'"]');
-					    delAttachment(new_border_ID,idAttach); 
+					    delAttachment(new_border_ID,idAttach);
 					    $(this).parent().qtip("destroy");
                         $(this).parent().remove();
                         if(!fileUploadMSG.find(' .attachments-list').find(".att-box").length){
@@ -2925,7 +2954,7 @@ function useOriginalAttachments(new_border_ID,old_id_border)
 								 min: 75,
 								 max : 1000
 							},
-                            padding: 3, 
+                            padding: 3,
                             textAlign: 'left',
                             tip: true, // Give it a speech bubble tip with automatic corner detection
                             name: 'blue' // Style it according to the preset 'cream' style
@@ -2933,23 +2962,23 @@ function useOriginalAttachments(new_border_ID,old_id_border)
                     });
 				}
 				else
-				{   
+				{
 				    arrayAttachments.push(idATT);
 				    arrayAttachmentsA.push(attachments[i]);
 				}
         }
 		//-------------------
-		
+
 		if(arrayAttachments.length > 0)
 		{
-		
+
 		    var orignialAtt = fileUploadMSG.find('.button-files-upload').append(' <button tabindex="-1" class="message-add-original-att button-small">_[[Attach original files]]</button>').find(".message-add-original-att").button();
 		    orignialAtt.click(function(event ){
 
 			for (var i = 0; i < arrayAttachments.length; i++){
 
 				    var att = JSON.parse(arrayAttachments[i]);
-				    addAttachment( new_border_ID , arrayAttachments[i]);  
+				    addAttachment( new_border_ID , arrayAttachments[i]);
 
 				    var attach = {};
 				    attach.fileName =  arrayAttachmentsA[i].text.substring(0, arrayAttachmentsA[i].text.lastIndexOf('('));
@@ -2961,7 +2990,7 @@ function useOriginalAttachments(new_border_ID,old_id_border)
                     attach.error = false;
                     fileUploadMSG.find(' .attachments-list').show();
 				    var upload = $(DataLayer.render("../prototype/modules/mail/templates/attachment_add_itemlist.ejs", {file : attach}));
-				    upload.find('.att-box-loading').remove(); 
+				    upload.find('.att-box-loading').remove();
 				    upload.append('<input type="hidden" name="fileId[]" value=\''+arrayAttachments[i]+'\'/>');
 				    upload.find('.att-box-delete').click(function(){
 					    var idAttach = $(this).parent().find('input[name="fileId[]"]').val();
@@ -2969,16 +2998,16 @@ function useOriginalAttachments(new_border_ID,old_id_border)
 					    var imagens = content_body.match(/<img[^>]*>/g);
 					    var att = JSON.parse(idAttach);
 					    if(imagens != null)
-					    {   
+					    {
 						for (var x = 0; x < imagens.length; x++)
 						    if(imagens[x].indexOf('src="./inc/get_archive.php?msgFolder='+att.folder+'&amp;msgNumber='+att.uid+'&amp;indexPart='+att.part) !== -1)
 							content_body = content_body.replace(imagens[x],'');
 
-						RichTextEditor.setData('body_'+new_border_ID,content_body);    
-					    }       
+						RichTextEditor.setData('body_'+new_border_ID,content_body);
+					    }
 
 					    fileUploadMSG.find('.attachments-list').find('input[value="'+idAttach+'"]');
-					    delAttachment(new_border_ID,idAttach); 
+					    delAttachment(new_border_ID,idAttach);
 					    $(this).parent().qtip("destroy");
                         $(this).parent().remove();
                         if(!fileUploadMSG.find(' .attachments-list').find(".att-box").length){
@@ -3014,7 +3043,7 @@ function useOriginalAttachments(new_border_ID,old_id_border)
 								 min: 75,
 								 max : 1000
 							},
-                            padding: 3, 
+                            padding: 3,
                             textAlign: 'left',
                             tip: true, // Give it a speech bubble tip with automatic corner detection
                             name: 'blue' // Style it according to the preset 'cream' style
@@ -3027,13 +3056,13 @@ function useOriginalAttachments(new_border_ID,old_id_border)
 		}
 
          }
-                
+
 }
 
 function addOriginalAttachments(new_border_ID,old_id_border)
-{   
+{
     var fileUploadMSG = $('#fileupload_msg'+new_border_ID);
-    var attachments = $("#attachments_" + old_id_border).find("a");			
+    var attachments = $("#attachments_" + old_id_border).find("a");
 
 	if(openTab.imapBox[new_border_ID].split("local").length > 1 && attachments.length > 0){
 		alert(get_lang("It is not possible to use the attachments of local messages, to have access please unarchive the attachments"));
@@ -3045,9 +3074,9 @@ function addOriginalAttachments(new_border_ID,old_id_border)
                     continue;
                 fileUploadMSG.find(' .attachments-list').show();
                 if(attachments[i].href.split("local").length > 1){
-                	var arrayAtt = attachments[i].href.replace("javascript:download_local_attachment(", "").replace(")", "").split(',');                                 	
+                	var arrayAtt = attachments[i].href.replace("javascript:download_local_attachment(", "").replace(")", "").split(',');
                 }else{
-                	var arrayAtt = attachments[i].href.replace("javascript:download_attachments(", "").replace(")", "").split(',');                                 	
+                	var arrayAtt = attachments[i].href.replace("javascript:download_attachments(", "").replace(")", "").split(',');
                 }
                 var att = new Object();
                 var regex = new RegExp( "'", "g" );
@@ -3057,7 +3086,7 @@ function addOriginalAttachments(new_border_ID,old_id_border)
                 att.type = 'imapPart';
                 var idATT = JSON.stringify(att);
                 addAttachment( new_border_ID , idATT);
-                
+
                 var attach = {};
                 var attachText = (is_ie ? attachments[i].innerText : attachments[i].text);
                 attach.fileName =  attachText.substring(0, attachText.lastIndexOf('('));
@@ -3068,29 +3097,29 @@ function addOriginalAttachments(new_border_ID,old_id_border)
                 attach.error = false;
 
                 var upload = $(DataLayer.render("../prototype/modules/mail/templates/attachment_add_itemlist.ejs", {file : attach}));
-                upload.find('.att-box-loading').remove(); 
+                upload.find('.att-box-loading').remove();
                 upload.find('.att-box-delete').click(function(){
                     var idAttach = $(this).parent().find('input[name="fileId[]"]').val();
                     var content_body = RichTextEditor.getData('body_'+new_border_ID);
                     var imagens = content_body.match(/<img[^>]*>/g);
                     var att = JSON.parse(idAttach);
                     if(imagens != null)
-                    {   
+                    {
                         for (var x = 0; x < imagens.length; x++)
                             if(imagens[x].indexOf('src="./inc/get_archive.php?msgFolder='+att.folder+'&amp;msgNumber='+att.uid+'&amp;indexPart='+att.part) !== -1)
                                 content_body = content_body.replace(imagens[x],'');
 
-                         RichTextEditor.setData('body_'+new_border_ID,content_body);    
-                    }       
+                         RichTextEditor.setData('body_'+new_border_ID,content_body);
+                    }
 
                     fileUploadMSG.find(' .attachments-list').find('input[value="'+idAttach+'"]');
-                    delAttachment(new_border_ID,idAttach); 
+                    delAttachment(new_border_ID,idAttach);
                     $(this).parent().qtip("destroy");
                     $(this).parent().remove();
                     if(!fileUploadMSG.find(' .attachments-list').find(".att-box").length){
                         fileUploadMSG.find(' .attachments-list').hide();
                     }
-                });	
+                });
 
 
                 upload.append('<input type="hidden" name="fileId[]" value=\''+idATT+'\'/>');
@@ -3122,18 +3151,18 @@ function addOriginalAttachments(new_border_ID,old_id_border)
 							 min: 75,
 							 max : 1000
 						},
-                        padding: 3, 
+                        padding: 3,
                         textAlign: 'left',
                         tip: true, // Give it a speech bubble tip with automatic corner detection
                         name: 'blue' // Style it according to the preset 'cream' style
                     }
                 });
 
-    }	                
+    }
 }
 
 function send_message_return(data, ID){
-	
+
 	if (typeof(data) == 'object' && data.load){
 		cExecute("$this.imap_functions.get_folders_list&onload=true", update_menu);
 	}
@@ -3262,12 +3291,12 @@ function send_message_return(data, ID){
 				$.each(array, function(index, value){
 					if(error_mail == $(value).find("input").val().match(reComplexEmail)[1])
 						$(value).addClass("invalid-email-box");
-				});				
-			} 
+				});
+			}
 			write_msg(data);
 		}else
 			write_msg(get_lang("Connection failed with %1 Server. Try later.", "Web"));
-		
+
 		var save_link = $("#content_id_"+ID).find(".save")[0];
 		save_link.onclick = function onclick(event) {openTab.toPreserve[ID] = true;save_msg(ID);} ;
 		$("#save_message_options_"+ID).button({disabled: false});
@@ -3279,7 +3308,7 @@ function send_message_return(data, ID){
 
 /*Função que grava o destinatário nos contatos dinâmicos*/
 function save_dynamic_contacts(array){
-		
+
     $.each(array, function(i, value){
         var stop = false;
         $.each(dynamicPersonalContacts, function(x, valuex){
@@ -3382,7 +3411,7 @@ function appletReturn(smime, ID, operation, folder){
 	}
 }
 
-/* 
+/*
  * Método que verifica se existe algum item de 'words' em 'body'.
  * Se houver, retorna a primeira ocorrência encontrada de words, caso contrário retorna false.
  */
@@ -3414,7 +3443,7 @@ function verifyBodyWords(body, words)
 
     for(i = 0; i < words.length; i++) {
 		if(body.search(words[i]) != -1) {
-			return words[i]; 
+			return words[i];
 		}
 	}
 
@@ -3423,11 +3452,11 @@ function verifyBodyWords(body, words)
 
 
 function send_message(ID, folder, folder_name){
-	var content_body  = RichTextEditor.getData('body_'+ID);     
-	/* 
+	var content_body  = RichTextEditor.getData('body_'+ID);
+	/*
 		Funcionalidade que verifica se o usuário escreveu a palavra anexo no corpo da mensagem e não anexou nenhum arquivo.
 		Esta funcionalidade é ativada nas preferências do módulo ExpressoMail.
-	*/	
+	*/
 	/* Lista de palavras que vão ser procuradas no corpo do email, referente às variantes da palavra anexo em português, inglês e espanhol. */
 	if(language == "pt-br") //Português brasileiro
         var words = ['anexando', 'anexos', 'anexadas', 'anexados', 'anexei',  'anexaste', 'anexastes', 'anexamos', 'anexaram', 'anexas', 'anexado', 'anexada', 'anexo', 'anexa'];
@@ -3438,7 +3467,7 @@ function send_message(ID, folder, folder_name){
 
 	if($('#fileupload_msg'+ID).find('.att-box').length == 0 && preferences.alert_message_attachment == '1' ) {
 		var bodyWord = verifyBodyWords(content_body, words);
-		if(bodyWord) {		
+		if(bodyWord) {
 			$.Zebra_Dialog(get_lang('You wrote "%1" in your message, but there are no files attached. Send it anyway?', bodyWord), {
 				'type':     'question',
 				'overlay_opacity': '0.5',
@@ -3447,7 +3476,7 @@ function send_message(ID, folder, folder_name){
 				'custom_class': 'custom-zebra-filter',
 				'onClose':  function(clicked) {
 					if(clicked == get_lang('Yes')){
-						send_valided_message(ID, folder, folder_name);				
+						send_valided_message(ID, folder, folder_name);
 						return;
 					} else {
 						return;
@@ -3456,7 +3485,7 @@ function send_message(ID, folder, folder_name){
 			});
 		}
 		else
-			send_valided_message(ID, folder, folder_name);	
+			send_valided_message(ID, folder, folder_name);
 	}
 	else if(!zebraDiscardEventDialog && $('#fileupload_msg'+ID).find('.att-box-loading').length)
 	{
@@ -3469,7 +3498,7 @@ function send_message(ID, folder, folder_name){
 				'buttons':  ['_[[Discard attachments and send]]', '_[[Continue editing and wait attachments]]'],
 				'width' : 500,
 				'onClose':  function(clicked) {
-					if(clicked == '_[[Discard attachments and send]]' ){ 
+					if(clicked == '_[[Discard attachments and send]]' ){
 						$.each($('#fileupload_msg'+ID).find('.att-box'), function(index, value){
 							if($(value).find(".att-box-loading").length)
 								$(value).find('.att-box-delete').trigger("click");
@@ -3481,14 +3510,14 @@ function send_message(ID, folder, folder_name){
 					}, 500);
 				}
 			})
-		}, 300); 
+		}, 300);
 	}else {
 		send_valided_message(ID, folder, folder_name);
 		}
 }
 
 function send_valided_message(ID, folder, folder_name)
-{ 
+{
     if (preferences.auto_save_draft == 1)
        autoSaveControl.status[ID] = true;
 
@@ -3511,7 +3540,7 @@ function send_valided_message(ID, folder, folder_name)
     var array = content.find(".reply-to-tr").find(".box");
     $.each(array, function(index, value){
         stringReply += $(value).find("input").val() + ",";
-    }); 
+    });
     var stringToEmail = "";
     draw_email_box(content.find(".to-tr").find("textarea:first").val() || content.find(".to-tr").find("input:visible").val(), content.find(".to-tr").find("textarea:first"));
     content.find(".to-tr").find("textarea:first").val("");
@@ -3567,10 +3596,10 @@ function send_valided_message(ID, folder, folder_name)
     mailData.input_return_receipt = $(content).find('input:checkbox:checked[name="input_return_receipt"]').val();
     mailData.msg_forward_from = $(content).find('[name="msg_forward_from"]').val();
     mailData.msg_reply_from = $(content).find('[name="msg_reply_from"]').val();
-    
+
     if ($(content).find('select[name="input_from"]').val())
         mailData.input_from = $(content).find('select[name="input_from"]').val();
-    
+
     if(stringEmail != ""){
     $.ajax({
         url: "controller.php?action=$this.imap_functions.send_mail",
@@ -3595,14 +3624,14 @@ function send_valided_message(ID, folder, folder_name)
         }
     });
 	}else{
-		write_msg(get_lang("message without receiver")); 
+		write_msg(get_lang("message without receiver"));
 	}
 }
 
-function is_valid_email(campo){	
+function is_valid_email(campo){
 	var invalidEmail = searchEmail(campo);
 	var semicolon = campo.split(";");
-	
+
 	if((campo.replace(/^\s+|\s+$/g,"")) != ""){
 			if(invalidEmail[0] == true){
 				write_msg("_[[SMTP Error: The following recipient addresses failed:]]"+ invalidEmail[1]);
@@ -3625,7 +3654,7 @@ function is_valid_email(campo){
 	else{
 		write_msg(get_lang("Message without receiver"));
 		return false;
-	}		
+	}
 }
 function change_tr_properties(tr_element, newUid, newSubject){
 	message_id=tr_element.id;
@@ -3637,12 +3666,12 @@ function change_tr_properties(tr_element, newUid, newSubject){
 	var openNewMessage = function () {
 		$.ajax({
 			  url: 'controller.php?' + $.param( {action: '$this.imap_functions.get_info_msg',
-							      msg_number: newUid, 
+							      msg_number: newUid,
 							      msg_folder: current_folder,
 							      decoded: true } ),
 			  success: function( data ){
 			      data = connector.unserialize( data );
-			      
+
 			      if( data )
 				  show_msg( data );
 			  },
@@ -3702,8 +3731,8 @@ function save_msg(border_id){
 			content.find('[name="input_cco"]').val(stringEmail);
 		}
 	}
-	
-	stringEmail = "";	
+
+	stringEmail = "";
 	if(content.find(".cc-tr").css("display") != "none")
 	{
 		var array = content.find(".cc-tr").find(".box");
@@ -3712,13 +3741,13 @@ function save_msg(border_id){
 		});
 		content.find('[name="input_cc"]').val(stringEmail);
 	}
-	
+
    var idJavascript = saveBorderError[border_id];
-   
+
    if(saveBorderError[border_id] !== false)
    	DataLayer.put('message',DataLayer.merge(DataLayer.form("#form_message_"+border_id), {id: idJavascript }));
    else
-       idJavascript = DataLayer.put('message',DataLayer.form("#form_message_"+border_id));  
+       idJavascript = DataLayer.put('message',DataLayer.form("#form_message_"+border_id));
 
    uidsSave[border_id] = [];
    DataLayer.commit(false,false,function(data){
@@ -3734,7 +3763,7 @@ function save_msg(border_id){
        else
        {
        	saveBorderError[border_id] = idJavascript;
-       	write_msg('_[[Error saving your message! Retry in a few seconds.]]');    
+       	write_msg('_[[Error saving your message! Retry in a few seconds.]]');
        }
    });
 
@@ -3746,7 +3775,7 @@ function set_messages_flag_search_local(flag)
 }
 
 function set_messages_flag_search(flag){
-	
+
 	var id_border = currentTab.replace(/[a-zA-Z_]+/, "");
 	var msgs_flag = this.get_selected_messages_search();
 	if (!msgs_flag){
@@ -3761,7 +3790,7 @@ function set_messages_flag_search(flag){
 		var msg_to_flag = (tr.getAttribute('name') == null?get_current_folder():tr.getAttribute('name'));
 		selected_param += ','+msg_to_flag+';'+tr.id.replace(/_[a-zA-Z0-9]+/,"");
 	}
-	
+
 	var handler_set_messages_flag = function(data){
 		var errors = false;
 		var notErrors = false;
@@ -3774,7 +3803,7 @@ function set_messages_flag_search(flag){
 					notArray = false;
 				}else
 					msgs[0] = data[i].msgs_to_set;
-					
+
 				for (var j = 0; j < msgs.length; j++){
 					switch(data[i].flag){
 						case "unseen":
@@ -3802,11 +3831,11 @@ function set_messages_flag_search(flag){
 				errors = true;
 			}
 		}
-		
+
 		draw_tree_folders(folders);
 		Element('chk_box_select_all_messages_search').checked = false;
 		refresh();
-		
+
 		if(errors && notErrors)
 			write_msg(get_lang('Some messages were not marked with success!'));
 		else if(notErrors)
@@ -3818,14 +3847,14 @@ function set_messages_flag_search(flag){
 }
 
 // Get checked messages
-function set_messages_flag(flag, msgs_to_set){	
+function set_messages_flag(flag, msgs_to_set){
 	if(currentTab != 0 && currentTab.indexOf("search_local")  >= 0){
 		return set_messages_flag_search_local(flag);
 	}
 	if (currentTab != 0 && currentTab.indexOf("search_")  >= 0){
 		return set_messages_flag_search(flag);
 	}
-	
+
 	var handler_set_messages_flag = function (data){
 		if(!verify_session(data))
 			return;
@@ -3850,11 +3879,11 @@ function set_messages_flag(flag, msgs_to_set){
 			}
 			if(!data.msgs_unflageds)
 				return;
-				
+
 			else
 				if(data.msgs_not_to_set != "")
 					write_msg(get_lang("Error processing some messages."));
-					
+
 				msgs_to_set = data.msgs_unflageds.split(",");
 		}
 
@@ -3884,13 +3913,13 @@ function set_messages_flag(flag, msgs_to_set){
 				switch(data.flag){
 					case "unseen":
 						    set_msg_as_unread(msgs_to_set[i]);
-						if(results_search_messages != "") 
+						if(results_search_messages != "")
 							set_msg_as_unread(results_search_messages, true);
 						Element("check_box_message_" + msgs_to_set[i]).checked = false;
 						break;
 					case "seen":
 						set_msg_as_read(msgs_to_set[i], false);
-						if(results_search_messages != "") 
+						if(results_search_messages != "")
 							set_msg_as_read(results_search_messages, false, true);
 						Element("check_box_message_" + msgs_to_set[i]).checked = false;
 
@@ -3907,13 +3936,13 @@ function set_messages_flag(flag, msgs_to_set){
 						break;
 					case "flagged":
 						    set_msg_as_flagged(msgs_to_set[i]);
-						if(results_search_messages != "") 
+						if(results_search_messages != "")
 							set_msg_as_flagged(results_search_messages, true);
 						document.getElementById("check_box_message_" + msgs_to_set[i]).checked = false;
 						break;
 					case "unflagged":
 						    set_msg_as_unflagged(msgs_to_set[i]);
-						if(results_search_messages != "") 
+						if(results_search_messages != "")
  	                        set_msg_as_unflagged(results_search_messages, true);
 						Element("check_box_message_" + msgs_to_set[i]).checked = false;
 						break;
@@ -3928,7 +3957,7 @@ function set_messages_flag(flag, msgs_to_set){
 		var msgs_to_set = this.get_selected_messages();
 	else
 		folder = Element("input_folder_"+msgs_to_set+"_r").value;
-	
+
 	if (msgs_to_set)
 		$.ajax({
 			  type: "POST",
@@ -3936,8 +3965,8 @@ function set_messages_flag(flag, msgs_to_set){
 		 	  data: {
 		 	  	folder: folder,
 				msgs_to_set: msgs_to_set,
-				flag: flag, 
-				decoded: true 
+				flag: flag,
+				decoded: true
 			  },
 			  success: function( data ){
 			      data = connector.unserialize( data );
@@ -3965,7 +3994,7 @@ function set_message_flag(msg_number, flag, func_after_flag_change){
 	var msg_number_folder = Element("new_input_folder_"+msg_number+"_r"); //Mensagens respondidas/encaminhadas
 	if(!msg_number_folder)
 		var msg_number_folder = Element("input_folder_"+msg_number+"_r"); //Mensagens abertas
-	
+
 	var handler_set_messages_flag = function (data){
 		if(!verify_session(data))
 			return;
@@ -3977,7 +4006,7 @@ function set_message_flag(msg_number, flag, func_after_flag_change){
 			func_after_flag_change(true);
 		}
 		if (data.status && Element("td_message_answered_"+msg_number)) {
-			
+
 			switch(flag){
 				case "unseen":
 					set_msg_as_unread(msg_number);
@@ -3997,7 +4026,7 @@ function set_message_flag(msg_number, flag, func_after_flag_change){
 				case "forwarded":
 					Element("td_message_answered_"+msg_number).innerHTML = '<img src=templates/'+template+'/images/forwarded.png title=Encaminhada>';
 					break;
-			}				
+			}
 		} else {
 			refresh();
 		}
@@ -4010,7 +4039,7 @@ function set_message_flag(msg_number, flag, func_after_flag_change){
 						      decoded: true } ),
 		  success: function( data ){
 		      data = connector.unserialize( data );
-		      
+
 		      if( data )
 			  handler_set_messages_flag( data );
 		  },
@@ -4024,12 +4053,12 @@ function set_message_flag(msg_number, flag, func_after_flag_change){
 	});
 }
 
-function print_search_msg(){		
+function print_search_msg(){
 	var folder = "<h2>&nbsp;Resultado da Pesquisa&nbsp;<font color=\"#505050\" face=\"Verdana\" size=\"1\"></h2>";
 	msgs_number = get_selected_messages_search();
 	var tbody = Element('divScrollMain_'+numBox).firstChild.firstChild.innerHTML;
 	var id_border = currentTab.replace(/[a-zA-Z_]+/, "");
-	
+
 	if(msgs_number){
 		msgs_number = msgs_number.split(",");
 		var tbody = "";
@@ -4044,41 +4073,41 @@ function print_search_msg(){
 			tbody += "<tr id=\""+msgs_number[i]+"_s"+id_border+"\" class=\"tr_msg_unread tr_msg_read2\">"+ Element(msgs_number[i]+'_s'+id_border).innerHTML+"</tr>";
 		}
 	}
-	
-	var print_width = screen.width - 200; 
-	var x = ((screen.width - print_width) / 2); 
-	var y = ((screen.height - 400) / 2) - 35; 
-	var window_print = window.open('','ExpressoMail','width='+print_width+',height=400,resizable=yes,scrollbars=yes,left='+x+',top='+y); 
-	seekDot = (is_ie ? /width=24/gi : /width="24"/gi); 
+
+	var print_width = screen.width - 200;
+	var x = ((screen.width - print_width) / 2);
+	var y = ((screen.height - 400) / 2) - 35;
+	var window_print = window.open('','ExpressoMail','width='+print_width+',height=400,resizable=yes,scrollbars=yes,left='+x+',top='+y);
+	seekDot = (is_ie ? /width=24/gi : /width="24"/gi);
 
 	var thead = "<tr class=\"message_header\">    <td width=\"3%\"></td><td width=\"2%\"></td><td width=\"1%\"></td><td width=\"1%\"></td><td width=\"1%\"></td><td width=\"1%\"></td><td width=\"2%\"></td><td id=\"message_header_FOLDER_0\" class=\"th_resizable\" align=\"left\" width=\"20%\">Pasta</td><td id=\"message_header_SORTFROM_0\" class=\"th_resizable\" align=\"left\" width=\"20%\">De</td><td id=\"message_header_SORTSUBJECT_0\" class=\"th_resizable\" align=\"left\" width=\"*\">Assunto</td><td id=\"message_header_SORTARRIVAL_0\" class=\"th_resizable\" align=\"center\" width=\"11%\"><b>Data</b><img src=\"templates/default/images/arrow_descendant.gif\"></td><td id=\"message_header_SORTSIZE_0\" class=\"th_resizable\" align=\"left\" width=\"11%\">Tamanho</td></tr>";
-	tbody = tbody.replace(seekDot, "style='display:none'"); 
-	seekDot = (is_ie ? /width=16/gi : /width="16"/gi); 
+	tbody = tbody.replace(seekDot, "style='display:none'");
+	seekDot = (is_ie ? /width=16/gi : /width="16"/gi);
 
-	tbody = tbody.replace(seekDot, "style='display:none'"); 
-	seekDot = (is_ie ? /width=12/gi : /width="12"/gi); 
+	tbody = tbody.replace(seekDot, "style='display:none'");
+	seekDot = (is_ie ? /width=12/gi : /width="12"/gi);
 
-	tbody = tbody.replace(seekDot, "style='display:none'"); 
-	while (1){ 
-		try{ 
-			window_print.document.open(); 
-	 	    var html = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"><html>' 
-	 	    + '<head><link rel="stylesheet" type="text/css" href="templates/'+template+'/print.css"/></head>' 
-	 	    + cabecalho + '</h4><hr />' 
-	 	    + '<h2>'+folder+'</h2><hr/><blockquote><font size="2">' 
-	 	    + '<table width="100%" cellpadding="0" cellspacing="0">' 
-	 	    + '<thead>' + thead + '</thead><tbody>' + tbody + '</tbody>' 
-	 	    + '</table></font></blockquote></body></html>'; 
-	 	    window_print.document.write(html); 
-	 	    window_print.document.close(); 
-	 	    break; 
-		} 
-		catch(e){ 
-			//alert(e.message); 
-		} 
-	} 
-	window_print.document.close(); 
-	window_print.print(); 
+	tbody = tbody.replace(seekDot, "style='display:none'");
+	while (1){
+		try{
+			window_print.document.open();
+	 	    var html = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"><html>'
+	 	    + '<head><link rel="stylesheet" type="text/css" href="templates/'+template+'/print.css"/></head>'
+	 	    + cabecalho + '</h4><hr />'
+	 	    + '<h2>'+folder+'</h2><hr/><blockquote><font size="2">'
+	 	    + '<table width="100%" cellpadding="0" cellspacing="0">'
+	 	    + '<thead>' + thead + '</thead><tbody>' + tbody + '</tbody>'
+	 	    + '</table></font></blockquote></body></html>';
+	 	    window_print.document.write(html);
+	 	    window_print.document.close();
+	 	    break;
+		}
+		catch(e){
+			//alert(e.message);
+		}
+	}
+	window_print.document.close();
+	window_print.print();
 }
 
 
@@ -4108,11 +4137,11 @@ function print_messages_bodies(){
 		$.each(data,function(index,message){
 			var html = "<table><tbody>";
 			if(message.sender)
-				for(var i=0; i<message.sender.length; i++){	
+				for(var i=0; i<message.sender.length; i++){
 					html += newRow(get_lang('Sent by')+":",message.sender[i]);
 				}
 			if(message.from)
-				for(var i=0; i<message.from.length; i++){	
+				for(var i=0; i<message.from.length; i++){
 					html += newRow(get_lang('From')+":",message.from[i]);
 				}
 			if(message.toaddress2) {
@@ -4136,8 +4165,8 @@ function print_messages_bodies(){
                 today.setSeconds(59);
                 today.setMilliseconds(999);
 	            udate_local = message.udate*1000 + today.getTimezoneOffset()*60*1000;
-	            date_msg = new Date(udate_local);				
-				if (preferences.show_date_numerical == 0 || typeof(preferences.show_date_numerical) == 'undefined') { 	
+	            date_msg = new Date(udate_local);
+				if (preferences.show_date_numerical == 0 || typeof(preferences.show_date_numerical) == 'undefined') {
 					if (today.getTime() - date_msg.getTime() < 86400000)
 						html += newRow(get_lang('Date')+":",norm(date_msg.getHours()) + ':' + norm(date_msg.getMinutes()));
 					else
@@ -4146,11 +4175,11 @@ function print_messages_bodies(){
 						else if (today.getTime() - date_msg.getTime() < 259200000)
 							html += newRow(get_lang('Date')+":",get_lang(weekDays[date_msg.getDay()]));
 						else
-							html += newRow(get_lang('Date')+":",norm(date_msg.getDate()) + '/' + norm(date_msg.getMonth()+1) + '/' +date_msg.getFullYear());					
+							html += newRow(get_lang('Date')+":",norm(date_msg.getDate()) + '/' + norm(date_msg.getMonth()+1) + '/' +date_msg.getFullYear());
 				}else
 					html += newRow(get_lang('Date')+":",norm(date_msg.getDate()) + '/' + norm(date_msg.getMonth()+1) + '/' +date_msg.getFullYear());
-			}	
-			html += newRow(get_lang('Subject')+":",message.subject);		
+			}
+			html += newRow(get_lang('Subject')+":",message.subject);
 			/*LISTA DE ANEXOS*/
 			if (message.attachments && message.attachments.length) {
 	 	        var img = '<img style="margin-bottom : -5px; cursor : pointer;" src="templates/'+template+'/images/new.png">';
@@ -4158,7 +4187,7 @@ function print_messages_bodies(){
 	 	        $.each(message.attachments,function(index,attach){
 	 	        	atts += " | " + attach.name + "("+ formatBytes(attach.fsize) +") " + img + " | ";
 	 	        });
-	 	        html += newRow(get_lang('Attachments: '),atts);       
+	 	        html += newRow(get_lang('Attachments: '),atts);
 	 	    }
 	 	    /*ANEXOS LOCAIS*/
 	 	    else if (message.attachment && message.attachment.number_attachments > 0) {
@@ -4167,7 +4196,7 @@ function print_messages_bodies(){
 	 	        $.each(message.attachment.names.split(','),function(index,attach){
 	 	        	atts += " | " + attach + img + " |";
 	 	        });
-	 	        html += newRow(get_lang('Attachments: '),atts);       
+	 	        html += newRow(get_lang('Attachments: '),atts);
 	 	    }
 			html += '</tbody></table>';
 			if (message.body){
@@ -4187,14 +4216,14 @@ function print_messages_bodies(){
 		var msgs = Array();
 		var _msg = {};
 		$.each(get_selected_messages().split(','),function(index,value){
-			_msg.header = expresso_mail_archive.getMessageHeaders(value); 
+			_msg.header = expresso_mail_archive.getMessageHeaders(value);
 			_msg.body = expresso_mail_archive.getMessageBodies([value]);
 			msgs.push($.extend({},_msg.header,_msg.body[0]));
 		});
 		print_bodies(msgs);
 	}
 	else{
-		$.ajax({			
+		$.ajax({
 				type: "POST",
 				url: "controller.php?action=$this.imap_functions.getMessages",
 				data: {
@@ -4214,7 +4243,7 @@ function print_messages_bodies(){
 					connector.hideProgressBar();
 				}
 			});
-	}	
+	}
 }
 
 function newTbody(messages){
@@ -4223,7 +4252,7 @@ function newTbody(messages){
 		var newTr = make_tr_message(msg,get_current_folder());
 		if (msg.attachments && msg.attachments.length){
 			$(newTr).find('td').eq(1).css({'background-image':'url(templates/'+template+'/images/mail-gifs.gif)','background-position': '0 -242px'});
-		}		
+		}
 		tbody.append(newTr);
 	});
 	return tbody.html();
@@ -4236,21 +4265,21 @@ function print_messages_list(){
 		var y = ((screen.height - 400) / 2) - 35;
 		var window_print = window.open('','ExpressoMail','width='+print_width+',height=400,resizable=yes,scrollbars=yes,left='+x+',top='+y);
 		seekDot = (is_ie ? /width=24/gi : /width="24"/gi);
-		//thead = thead.replace(seekDot, "style='display:none'"); 
+		//thead = thead.replace(seekDot, "style='display:none'");
 		var thead = "<tr class=\"message_header\"> <td width=\"3%\"></td><td width=\"2%\"></td><td width=\"1%\"></td><td width=\"1%\"></td><td width=\"1%\"></td><td width=\"1%\"></td><td width=\"2%\"></td><td width=\"2%\"></td><td width=\"2%\"></td><td id=\"message_header_SORTFROM_0\" class=\"th_resizable\" align=\"left\" width=\"20%\">De</td><td id=\"message_header_SORTSUBJECT_0\" class=\"th_resizable\" align=\"left\" width=\"*\">Assunto</td><td id=\"message_header_SORTARRIVAL_0\" class=\"th_resizable\" align=\"center\" width=\"11%\"><b>Data</b><img src=\"templates/default/images/arrow_descendant.gif\"></td><td id=\"message_header_SORTSIZE_0\" class=\"th_resizable\" align=\"left\" width=\"11%\">Tamanho</td></tr>";
 		tbody = tbody.replace(seekDot, "style='display:none'");
 		seekDot = (is_ie ? /width=16/gi : /width="16"/gi);
-		//thead = thead.replace(seekDot, "style='display:none'"); 
+		//thead = thead.replace(seekDot, "style='display:none'");
 		tbody = tbody.replace(seekDot, "style='display:none'");
 		seekDot = (is_ie ? /width=12/gi : /width="12"/gi);
-		//thead = thead.replace(seekDot, "style='display:none'"); 
+		//thead = thead.replace(seekDot, "style='display:none'");
 		tbody = tbody.replace(seekDot, "style='display:none'");
 		while (1){
 			try{
 				window_print.document.open();
 				var html = '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"><html>'
 				+ '<head><link rel="stylesheet" type="text/css" href="templates/'+template+'/print.css"/></head>'
-		 	    + cabecalho + '</h4><hr />' 
+		 	    + cabecalho + '</h4><hr />'
 				+ '<h2>'+$('#border_id_0').html()+'</h2><hr/><blockquote><font size="2">'
 				+ '<table width="100%" cellpadding="0" cellspacing="0">'
 				+ '<thead>' + thead + '</thead><tbody>' + tbody + '</tbody>'
@@ -4282,7 +4311,7 @@ function print_messages_list(){
 			print_list(newTbody(msgs));
 		}
 		else{
-			$.ajax({			
+			$.ajax({
 				type: "POST",
 				url: "controller.php?action=$this.imap_functions.getMessages",
 				data:{
@@ -4302,13 +4331,13 @@ function print_messages_list(){
 				complete: function( jqXHR, settings ){
 					connector.hideProgressBar();
 				}
-			});	
-		}	
+			});
+		}
 	}
 }
 
 function print_all(){
-    if(typeof (currentTab) == "string" && currentTab.indexOf("local") != -1){  
+    if(typeof (currentTab) == "string" && currentTab.indexOf("local") != -1){
         alert(get_lang("Unable to handle local messages from a search. This is allowed only for non-local messages."));
         return true;
     }
@@ -4333,7 +4362,7 @@ function print_all(){
 	        	return print_messages_bodies();
 	        }
 	        else{
-	        	return print_messages_list();	
+	        	return print_messages_list();
 	        }
 	    }
 	});
@@ -4343,36 +4372,36 @@ function print_msg(msg_folder, msg_number, border_ID){
 	var div_toaddress_full = Element("div_toaddress_full_"+border_ID);
 	var div_ccaddress_full = Element("div_ccaddress_full_"+border_ID);
 	var div_ccoaddress_full = Element("div_ccoaddress_full_"+border_ID);
-	var printListTO = (div_toaddress_full && div_toaddress_full.style.display != 'none') || toaddress_array[border_ID].length == 1 ? true : false;	
+	var printListTO = (div_toaddress_full && div_toaddress_full.style.display != 'none') || toaddress_array[border_ID].length == 1 ? true : false;
 	var printListCC = (div_ccaddress_full && div_ccaddress_full.style.display != 'none') || !div_ccaddress_full ? true : false;
-	var printListCCO = (div_ccoaddress_full && div_ccoaddress_full.style.display != 'none') || !div_ccoaddress_full ? true : false;	
+	var printListCCO = (div_ccoaddress_full && div_ccoaddress_full.style.display != 'none') || !div_ccoaddress_full ? true : false;
 	var sender		= Element('sender_values_'+border_ID) ? Element('sender_values_'+border_ID).value : null;
 	var from		= Element('from_values_'+border_ID) ? Element('from_values_'+border_ID).value : null;
 	var to			= Element('to_values_'+border_ID) ? Element('to_values_'+border_ID).value :null;
 	var cco			= Element('cco_values_'+border_ID) ? Element('cco_values_'+border_ID).value : null;
-	var cc 			= Element('cc_values_'+border_ID) ? Element('cc_values_'+border_ID).value : null;		
-	var date		=  Element('date_'+border_ID);	
+	var cc 			= Element('cc_values_'+border_ID) ? Element('cc_values_'+border_ID).value : null;
+	var date		=  Element('date_'+border_ID);
 	var subject		= Element('subject_'+border_ID);
 	var attachments	= Element('attachments_'+border_ID);
 	var body		= Element('body_'+border_ID);
 
-	
+
 	var att = '';
-	
-	var countAtt = 0; 
- 		         
- 	if(attachments !== null) 
- 	{ 
-		countAtt = attachments.getElementsByTagName('a').length; 
-		if(countAtt === 1)  
-			att =  attachments.getElementsByTagName('a')[0].innerHTML; 
-		else if(countAtt > 1) 
-			for (var i = 1; i <attachments.getElementsByTagName('a').length; i++) 
-				att += " | " + attachments.getElementsByTagName('a')[i].innerHTML; 
- 	} 
- 	        
-	var body = Element('body_'+border_ID); 
-	
+
+	var countAtt = 0;
+
+ 	if(attachments !== null)
+ 	{
+		countAtt = attachments.getElementsByTagName('a').length;
+		if(countAtt === 1)
+			att =  attachments.getElementsByTagName('a')[0].innerHTML;
+		else if(countAtt > 1)
+			for (var i = 1; i <attachments.getElementsByTagName('a').length; i++)
+				att += " | " + attachments.getElementsByTagName('a')[i].innerHTML;
+ 	}
+
+	var body = Element('body_'+border_ID);
+
 	var print_width = screen.width - 200;
 	var x = ((screen.width - print_width) / 2);
 	var y = ((screen.height - 400) / 2) - 35;
@@ -4399,7 +4428,7 @@ function print_msg(msg_folder, msg_number, border_ID){
 		show_attachs = "<tr><td width=7%><font size='2'>" + get_lang('Attachments: ')+ " </font></td><td><font size='2'>"+attachs+"</font></td></tr>";
 	} else{
 		show_attachs = "";
-	}       
+	}
 	var current_path = window.location.href.substr(0,window.location.href.lastIndexOf("/"));
 	var head = '<head><title></title><link href="'+current_path+'/templates/default/main.css" type="text/css" rel="stylesheet"/></head>';
 	window_print.document.write(head);
@@ -4430,11 +4459,11 @@ function print_msg(msg_folder, msg_number, border_ID){
 			}
 			if(date)
 				html += "<tr><td width=7%><font size='2'>" + get_lang('Date') + ": </font></td><td><font size='2'>"+date.innerHTML+"</font></td></tr>";
-			
+
 			html += "<tr><td width=7%><font size='2'>" + get_lang('Subject')+ ": </font></td><td><font size='2'>"+subject.innerHTML+"</font></td></tr>";
 			//html += show_attachs; //to show the names of the attachments
-			if (countAtt > 0) { 
- 	            html += "<tr><td width=7%><font size='2'>" + get_lang('Attachments: ') + "</font></td><td><font size='2'>"+att+"</font></td></tr>";       
+			if (countAtt > 0) {
+ 	            html += "<tr><td width=7%><font size='2'>" + get_lang('Attachments: ') + "</font></td><td><font size='2'>"+att+"</font></td></tr>";
  	        }
 			html += "</tbody></table><hr />";
 			window_print.document.write(html + body.innerHTML);
@@ -4448,7 +4477,7 @@ function print_msg(msg_folder, msg_number, border_ID){
 
 					tab_tags[i].parentNode.replaceChild(_img,tab_tags[i]);
 				}
-                        
+
 			break;
 		}
 		catch(e){
@@ -4487,7 +4516,7 @@ function empty_trash_imap(shared, button, type){
 				draw_paging(0);
                 totalFolderMsgs = 0;
                 updateSelectedMsgs();
-				remove_rows(document.getElementById("table_box"));				
+				remove_rows(document.getElementById("table_box"));
 				Element('tot_m').innerHTML = 0;
 				Element('new_m').innerHTML = 0;
 			}
@@ -4496,7 +4525,7 @@ function empty_trash_imap(shared, button, type){
 		else
 			write_msg(get_lang('ERROR emptying your Trash folder.'));
 	}
-	
+
 	$.Zebra_Dialog(get_lang('Do you really want to empty your trash folder?'), {
 		'type':     'question',
 		'title':    get_lang('Empty Trash'),
@@ -4511,7 +4540,7 @@ function empty_trash_imap(shared, button, type){
                     cExecute("$this.imap_functions.get_folders_list&onload=true", update_menu);
                 } else {
                     cExecute ("$this.imap_functions.empty_folder&clean_folder="+"imapDefaultTrashFolder"+(shared ? "&shared="+folder : ""), handler_empty_trash);
-                } 
+                }
 			}
 		}
 	});
@@ -4542,17 +4571,17 @@ function empty_spam_imap(shared, button, type){
 					cExecute("$this.imap_functions.get_folders_list&onload=true", update_menu);
 					return write_msg(get_lang("Permission denied"));
 				}else{
-					write_msg(get_lang('Your Spam folder was empty.'));		
+					write_msg(get_lang('Your Spam folder was empty.'));
 				}
 			}else{
-				write_msg(get_lang('Your Spam folder was empty.'));	
+				write_msg(get_lang('Your Spam folder was empty.'));
 			}
 			refresh();
 		}
 		else
 			write_msg(get_lang('ERROR emptying your Spam folder.'));
 	}
-	
+
 	$.Zebra_Dialog(get_lang('Do you really want to empty your spam folder?'), {
 		'type':     'question',
 		'title':    get_lang('Empty Spam'),
@@ -4561,18 +4590,23 @@ function empty_spam_imap(shared, button, type){
 		'custom_class': 'custom-zebra-filter',
 		'onClose':  function(caption) {
 			if(caption == get_lang("Yes")){
-                if(type.id == "local_messages_spam"){ 
+                if(type.id == "local_messages_spam"){
                     expresso_mail_archive.deleteAllMessages(type.id);
                     cExecute("$this.imap_functions.get_folders_list&onload=true", update_menu);
                 } else {
                     cExecute ("$this.imap_functions.empty_folder&clean_folder="+"imapDefaultSpamFolder"+(shared ? "&shared="+folder : ""), handler_empty_spam);
-                } 
+                }
 			}
 		}
 	});
 }
 
 function export_all_selected_msgs(){
+	if (!window.expresso.max_msgs_to_export)
+	{
+		write_msg(get_lang('Export messages was disabled by your administrator.'));
+		return false;
+	}
 	if(get_current_folder().split("_")[0] == "local"){
 
         if(get_selected_messages().indexOf(",") != -1){
@@ -4582,12 +4616,12 @@ function export_all_selected_msgs(){
         }
 
     } else {
-        
-    if (openTab.type[currentTab] > 1){	    
+
+    if (openTab.type[currentTab] > 1){
 		source_msg(currentTab,openTab.imapBox[currentTab]);
 		return;
 	}
-	var search = false;		
+	var search = false;
 
 	if(currentTab != 0 && currentTab.indexOf("search_")  >= 0){
 		var id_border = currentTab.replace(/[a-zA-Z_]+/, "");
@@ -4613,14 +4647,14 @@ function export_all_selected_msgs(){
 			write_msg(get_lang('Error compressing messages (ZIP). Contact the administrator.'));
 		}
 		else{
-			var filename = 'mensagens.zip'; 
-			if (data[0].match(/\.eml$/gi)) { 
-                filename = data[1]+'.eml'; 
-			} 
+			var filename = 'mensagens.zip';
+			if (data[0].match(/\.eml$/gi)) {
+                filename = data[1]+'.eml';
+			}
 
             if(typeof data == "object")
 			     download_attachments(null, null, data[0], null,null,filename);
-            else 
+            else
                  download_attachments(null, null, data, null,null,filename);
 		}
 	}
@@ -4628,8 +4662,15 @@ function export_all_selected_msgs(){
 	if(search){
 		cExecute ("$this.exporteml.makeAll", handler_export_all_selected_msgs, "folder=false&msgs_to_export="+selected_param);
 	}else if (msgs_to_export) {
-		cExecute ("$this.exporteml.makeAll", handler_export_all_selected_msgs, "folder="+get_current_folder()+"&msgs_to_export="+msgs_to_export);
-		write_msg(get_lang('You must wait while the messages will be exported...'));
+		if (window.expresso.max_msgs_to_export > 0 && msgs_to_export.split(',').length > window.expresso.max_msgs_to_export)
+		{
+			write_msg(get_lang('You cannot export more than %1 messages.', window.expresso.max_msgs_to_export));
+		}
+		else
+		{
+			cExecute ("$this.exporteml.makeAll", handler_export_all_selected_msgs, "folder="+get_current_folder()+"&msgs_to_export="+msgs_to_export);
+			write_msg(get_lang('You must wait while the messages will be exported...'));
+		}
 	}
 	else
 		write_msg(get_lang('No selected message.'));
@@ -4640,13 +4681,13 @@ function select_all_search_messages(select, aba){
 
 	if(select){
 		jQuery("#"+aba+" tr").each(function(i, o) {
-		
+
 			o.firstChild.firstChild.checked = true;
 			add_className(o, 'selected_msg');
-		});		
+		});
 	}else{
 		jQuery("#"+aba+" tr").each(function(i, o) {
-		
+
 			o.firstChild.firstChild.checked = false;
 			remove_className(o, 'selected_msg');
 		});
@@ -4684,20 +4725,20 @@ function save_image(e,thumb,file_type){
 		if($(_target).parent().attr("href").split("http").length > 1){
 			var part_find = thumb.toString().split("#");
 			var part2_find = part_find[1].split("/temp");
-			var part_id_dwl = part2_find[0] + '/temp/download' + part2_find[1]; 
+			var part_id_dwl = part2_find[0] + '/temp/download' + part2_find[1];
 			download_local_attachment(part_id_dwl);
 			return;
 		}else{
-			var _params = _target.id.split(";;");	
+			var _params = _target.id.split(";;");
 			download_attachments(_params[0],_params[1],_params[2],_params[3],_params[4],file_type);
 		}
 	}
 }
 
-function save_image2(info){ 
-	var obj = jQuery.parseJSON(unescape(info)); 
-	download_attachments(obj.folder, obj.message, obj.thumbIndex, obj.pid, obj.encoding, obj.type.replace("/",".")); 
-} 
+function save_image2(info){
+	var obj = jQuery.parseJSON(unescape(info));
+	download_attachments(obj.folder, obj.message, obj.thumbIndex, obj.pid, obj.encoding, obj.type.replace("/","."));
+}
 
 function nospam(msgs_number, border_ID, folder){
 	if (folder == 'null')
@@ -4753,7 +4794,7 @@ function spam(folder, msgs_number, border_ID){
 		folder = get_current_folder();
 	var new_folder = '';
 	if(folder.substr(0,4) == 'user')
-	{       
+	{
 		arrayFolder = folder.split(cyrus_delimiter);
 		new_folder = 'user'+cyrus_delimiter+arrayFolder[1]+cyrus_delimiter+special_folders['Spam'];
 	}
@@ -4793,7 +4834,7 @@ function spam(folder, msgs_number, border_ID){
 
 function import_window()
 {
-    if(typeof (currentTab) == "string" && currentTab.indexOf("local") != -1){  
+    if(typeof (currentTab) == "string" && currentTab.indexOf("local") != -1){
         alert("_[[Unable to handle local messages from a search. This is allowed only for non-local messages.]]");
         return true;
     }
@@ -4809,19 +4850,19 @@ function import_window()
 			modal		: true,
 			buttons		: [
 							 {
-							 	text	: get_lang("Close"), 
+							 	text	: get_lang("Close"),
 							 	click	: function()
 							 	{
 							 		importEmails.dialog("close").dialog("destroy");
 							 	}
 							 },
 							 {
-							 	text	: get_lang("Import"), 
+							 	text	: get_lang("Import"),
 							 	click	: function()
 							 	{
 							 		var input_file	 = importEmails.find("input[type=file]");
-							 		var input_hidden = importEmails.find("input[name=folder]"); 
-							 		
+							 		var input_hidden = importEmails.find("input[name=folder]");
+
 							 		if( input_file.attr("value") == "" )
 							 		{
 							 			$.Zebra_Dialog(get_lang("You must choose a file") + " !",{
@@ -4830,7 +4871,7 @@ function import_window()
 											'custom_class': 'custom-zebra-filter',
 											'buttons'			: [get_lang("Close")],
 							 				'onClose'			:  function(){
-							 					$("#importMessageAccordion").accordion('activate',0);	
+							 					$("#importMessageAccordion").accordion('activate',0);
 							 				}
 							 			});
 							 		}
@@ -4843,28 +4884,28 @@ function import_window()
 												'custom_class': 'custom-zebra-filter',
 												'buttons'			: [get_lang("Close")],
 								 				'onClose'			:  function(){
-								 					$("#importMessageAccordion").accordion('activate',1);	
+								 					$("#importMessageAccordion").accordion('activate',1);
 								 				}
 											});
 								 		else
 								 		{
 								 			var handler_return = function(data)
 								 			{
-								 				write_msg(get_lang('The import was executed successfully.'));								 				
+								 				write_msg(get_lang('The import was executed successfully.'));
 								 				return_import_msgs( data, folder );
 								 				if(typeof(shortcut) != 'undefined') shortcut.disabled = false;
 								 			}
-								 			
+
 								 			var formSend =  document.getElementById("importFileMessages");
-								 			
+
 								 			importEmails.dialog("destroy");
-								 			
+
 								 			write_msg(get_lang('You must wait while the messages will be imported...'));
-											
+
 											var local_folder = input_hidden.attr("value"); //recupera a pasta selecionada
 											if(local_folder.indexOf("local_") == 0){ //verifica se a pasta selecionada é uma pasta local
 												var fdata = local_folder.substr(15, local_folder.length); //recupera somente a estrutura da pasta ou o id
-												expresso_mail_archive.getFolderInfo(fdata); //recuperar a estrutura da pasta, 
+												expresso_mail_archive.getFolderInfo(fdata); //recuperar a estrutura da pasta,
 																							//para realizar a importação de mensagens
 												fdata = expresso_mail_archive.folder.path;
 
@@ -4892,7 +4933,7 @@ function import_window()
 													modal		: true,
 													buttons		: [
 																	 {
-																	 	text	: get_lang("Close"), 
+																	 	text	: get_lang("Close"),
 																	 	click	: function()
 																	 	{
 																	 		importEmailsLocalDialog.dialog("close").dialog("destroy");
@@ -4906,7 +4947,7 @@ function import_window()
 												$(formSend).attr("target", "frameResult");
 												$(formSend).submit();
 												importEmailsLocalDialog.dialog( "open" );
-												if(typeof(shortcut) != 'undefined') 
+												if(typeof(shortcut) != 'undefined')
 													shortcut.disabled = false;
 											} else {
 												cExecuteForm('$this.imap_functions.import_msgs', formSend , handler_return );
@@ -4917,13 +4958,13 @@ function import_window()
 							 	}
 							 }
 						],
-                open: function(event, ui) 
+                open: function(event, ui)
                 {
-                    if(typeof(shortcut) != 'undefined') shortcut.disabled = true; 
+                    if(typeof(shortcut) != 'undefined') shortcut.disabled = true;
                 },
-                close: function(event, ui) 
+                close: function(event, ui)
                 {
-                    if(typeof(shortcut) != 'undefined') shortcut.disabled = false; 
+                    if(typeof(shortcut) != 'undefined') shortcut.disabled = false;
                 },
                 destroy: function(event,ui)
                 {
@@ -4932,14 +4973,14 @@ function import_window()
 		});
 
 	importEmails.css("overflow","hidden");
-		
+
 	importEmails.find("input[type=file]").change(function()
-	{ 
+	{
 		var deniedExtension = true;
 		var fileExtension 	= ["eml","zip"];
 		var fileName 		= importEmails.find("input[type=file]").attr('value');
 			fileName 		= fileName.split(".");
-		
+
 		if( fileName[(fileName.length-1)] )
 		{
 			for( var i in fileExtension )
@@ -4963,10 +5004,10 @@ function import_window()
 		}
 
 		$("#lblFileName").html( ( !deniedExtension ) ? importEmails.find("input[type=file]").attr('value') : "" );
-		
-	});	
-		
-	$("#importMessageAccordion").accordion();	
+
+	});
+
+	$("#importMessageAccordion").accordion();
 
 	var foldersTree = jQuery("#foldertree-container-importMessage")
 	.removeClass('empty-container')
@@ -4984,24 +5025,24 @@ function import_window()
 		    target = target.parent();
 
         if (target.attr('id') == "foldertree") return;
-		
+
 		folder.id 		= target.attr('id');
 		folder.child 	= target.find('.folder');
-		folder.caption	= target.find('span').attr('title');			
-		
+		folder.caption	= target.find('span').attr('title');
+
 		$('#foldertree-container-importMessage .filetree span.folder.selected').removeClass('selected');
 		if(!target.is('#foldertree > .expandable, #foldertree > .collapsable'))
 			$(target).children('.folder').addClass('selected');
-		
+
 		selectedFolder = {
-		    id: folder.id, 
+		    id: folder.id,
 		    name: folder.child.attr('title'),
 		    'class': folder.child.attr('class')
 		};
-		
+
 		importEmails.find("input[name=folder]").attr("value", folder.id);
 	});
-	
+
 	$("#lblFileName").prev().css("margin-left", "10px");
 	$("#lblFileName").prev().css("font-weight", "bold");
 }
@@ -5036,7 +5077,7 @@ function return_import_msgs(data, folder)
 					openTab.imapBox[0] = '';
 					change_folder(folder.id, folder.caption);
 				}
-				
+
 				refresh();
 			}
 		}
@@ -5046,27 +5087,27 @@ function return_import_msgs(data, folder)
 
 //Normalização dos dados evita ter que reemplementar toda as funcionalidades do calendar
 function decodeCreateSchedulable(type, ID){
-	var startEvent = new Date();  
-	if(startEvent.toString('mm') < 30) 
-		startEvent.add({minutes: (30 - parseInt(startEvent.toString('mm')))}); 
-	else 
-		startEvent.add({hours: 1, minutes: '-'+startEvent.toString('mm')}); 
-	var endEvent = function(date){ 
-	if(!!User.preferences.defaultCalendar){ 
-		return  new Date(parseInt(date.getTime()) + 
-			(!!Calendar.signatureOf[User.preferences.defaultCalendar].calendar.defaultDuration ?  
+	var startEvent = new Date();
+	if(startEvent.toString('mm') < 30)
+		startEvent.add({minutes: (30 - parseInt(startEvent.toString('mm')))});
+	else
+		startEvent.add({hours: 1, minutes: '-'+startEvent.toString('mm')});
+	var endEvent = function(date){
+	if(!!User.preferences.defaultCalendar){
+		return  new Date(parseInt(date.getTime()) +
+			(!!Calendar.signatureOf[User.preferences.defaultCalendar].calendar.defaultDuration ?
 			(Calendar.signatureOf[User.preferences.defaultCalendar].calendar.defaultDuration * 60000) :
 			(User.preferences.defaultDuration * 60000)
 		));
-	}else 
-		return new Date(parseInt(date.getTime()) + (User.preferences.defaultDuration * 60000)); 
-	};       
+	}else
+		return new Date(parseInt(date.getTime()) + (User.preferences.defaultDuration * 60000));
+	};
 
 	var emails = $("#to_values_"+ID).val().split(',');
-	
+
 	var schedulable = {};
-	
-	schedulable = { 
+
+	schedulable = {
 		acl: {inviteGuests: true, organization: true ,participationRequired: false, read: true, write: true},
 		alarms: [],
 		allDay: false,
@@ -5090,17 +5131,17 @@ function decodeCreateSchedulable(type, ID){
 		organizer: {name: User.me.name, mail: User.me.mail, acl: 'rowi', status: '1', delegatedFrom: '0' , id: User.me.id},
 		statusParticipants: {accepted: 0, cancelled: 0, tentative: 0, unanswered:emails.length},
 		location: '',
-		attendee: $.map(emails, function( mail ){			
+		attendee: $.map(emails, function( mail ){
 			var contact = false;
 			var decoded =  Encoder.htmlDecode(mail);
 			var newAttendeeName = "";
 
 			var name = decoded.match(/"([^"]*)"/) ? decoded.match(/"([^"]*)"/)[1] : '';
-			var mail = decoded.match(/<([^<]*)>[\s]*$/) ? decoded.match(/<([^<]*)>[\s]*$/)[1].toLowerCase() : decoded; 
+			var mail = decoded.match(/<([^<]*)>[\s]*$/) ? decoded.match(/<([^<]*)>[\s]*$/)[1].toLowerCase() : decoded;
 
 
 			var user = DataLayer.get('user', ["=", "mail", mail], true);
-			
+
 			if( $.type(user) == "array" )
 				user = user[0];
 
@@ -5117,16 +5158,16 @@ function decodeCreateSchedulable(type, ID){
 					delegatedFrom: '0',
 					status: '4',
 					isExternal: user.isExternal
-				}, !!user.id ? {id : DataLayer.put('participant', {user: user.id, isExternal: user.isExternal})} : {id: DataLayer.put('participant', {user: user})}); 
+				}, !!user.id ? {id : DataLayer.put('participant', {user: user.id, isExternal: user.isExternal})} : {id: DataLayer.put('participant', {user: user})});
 			}else if(mail.match(/[\w-]+(\.[\w-]+)*@(([A-Za-z\d][A-Za-z\d-]{0,61}[A-Za-z\d]\.)+[A-Za-z]{2,6}|\[\d{1,3}(\.\d{1,3}){3}\])/)){
-				
+
 				var userId = DataLayer.put('user', {
-				name: name, 
-				mail: mail, 
+				name: name,
+				mail: mail,
 				isExternal: '1'
 				});
 				var newAttendeeId = DataLayer.put('participant', {
-				user: userId, 
+				user: userId,
 				isExternal: '1'
 				});
 
@@ -5139,20 +5180,20 @@ function decodeCreateSchedulable(type, ID){
 					status: '4',
 					isExternal: '1'
 				};
-				
+
 			}else
 				return (null);
 		})
 	};
 
-	schedulable  = DataLayer.merge(schedulable, 
-		type == 'event' ? 
+	schedulable  = DataLayer.merge(schedulable,
+		type == 'event' ?
 		{calendar: User.preferences.defaultCalendar ? User.preferences.defaultCalendar : Calendar.calendars[0], calendars: Calendar.calendars}
 		: {group: Calendar.groups[0].id, groups: Calendar.groups, percentage: 0, isOrganizer: true}
 	);
-	
+
 	return schedulable;
-	    
+
 
 }
 
@@ -5161,7 +5202,7 @@ function import_implements_calendar(){
 	if(typeof(Encoder) == "undefined"){
 		var lang =  !!User.me.lang ? User.me.lang : 'pt_BR';
 		$.ajax({url: "../prototype/modules/calendar/scripts_import_mail.php?lang="+lang, async: false });
-		DataLayer.dispatchPath = "../prototype/";	
+		DataLayer.dispatchPath = "../prototype/";
 	}
 }
 
@@ -5200,9 +5241,9 @@ function select_import_folder(){
 	owner = User.me.id;
 	var imapBox = (openTab.imapBox[currentTab].indexOf( 'user' ) >= 0 ? openTab.imapBox[currentTab].split(cyrus_delimiter) : [] );
 	if(imapBox.length > 1){
-	    var user = DataLayer.get('user', {filter: ['=','uid',imapBox[1]]});		    
+	    var user = DataLayer.get('user', {filter: ['=','uid',imapBox[1]]});
 	    owner = $.isArray(user) ? user[0].id : user.id;
-	}	
+	}
 	return owner;
     }
 
@@ -5229,7 +5270,7 @@ function select_import_folder(){
 	    }
 	    else
 		write_msg(get_lang(data));
-        }   
+        }
 	if(defaultCalendar == "expressoCalendar" && $("#expressoCalendarid")[0]){
 	    import_implements_calendar();
 		$( "#import-dialog" ).dialog({
@@ -5238,27 +5279,27 @@ function select_import_folder(){
 		    modal: true,
 		    resizable : false,
 		    open: function(event, ui) {
-			if(typeof(shortcut) != 'undefined') shortcut.disabled = true; 
+			if(typeof(shortcut) != 'undefined') shortcut.disabled = true;
 		    },
 		    close: function(event, ui){
 			event.stopPropagation();
-			if(typeof(shortcut) != 'undefined') shortcut.disabled = false; 
+			if(typeof(shortcut) != 'undefined') shortcut.disabled = false;
 		    },
 		    closeOnEscape: true
 		});
-                   
+
 		$.ajax({
 		    url: "controller.php?action="+import_url+'&from_ajax=true&id_user='+User.me.id+'&readable=true&cirus_delimiter='+cyrus_delimiter+'&analize=true&uidAccount='+decodeOwner(),
 		    async: false,
 		    success: function(data){
 			data = connector.unserialize(data);
 			var createDialog = function(typeImport, propaget){
-                                               
+
 			    if(typeof(typeImport) == "object"){
 				var calendarIds = !!typeImport.calendar ? typeImport.calendar : Calendar[typeImport.type];
 				typeImport = typeImport.action;
 			    }
-                                                   
+
 			    switch(parseInt(typeImport)){
 				case 1:
 				case 7:
@@ -5292,7 +5333,7 @@ function select_import_folder(){
 					    }
 					}
 				    });
-    
+
 				    if(typeImport == 7){
 					$("#import-dialog").find('#select-status option[value=1]').attr('selected','selected').trigger('change');
 					$("#import-dialog").find('#select-status').attr('disabled','disabled');
@@ -5306,7 +5347,7 @@ function select_import_folder(){
 					}
 				    });
 				    return;
-				    break; 
+				    break;
 				case 5:
 				    $.ajax({
 					url: 'controller.php?action='+import_url+'&from_ajax=true&selected=true&cirus_delimiter='+cyrus_delimiter,
@@ -5315,7 +5356,7 @@ function select_import_folder(){
 					}
 				    });
 				    return;
-				    break; 
+				    break;
 				case 6:
 					var acceptedSuggestion = confirm("_[[Do you want to update the event/task according to the suggestion?]]");
 					$.ajax({
@@ -5357,22 +5398,22 @@ function select_import_folder(){
 							$( this ).dialog( "close" );
 						    }
 						},
-						close:function(event, ui) 
+						close:function(event, ui)
 						{
-						    if(typeof(shortcut) != 'undefined') shortcut.disabled = false; 
+						    if(typeof(shortcut) != 'undefined') shortcut.disabled = false;
 						},
-						open: function(event, ui) 
+						open: function(event, ui)
 						{
-						    if(typeof(shortcut) != 'undefined') shortcut.disabled = true; 
+						    if(typeof(shortcut) != 'undefined') shortcut.disabled = true;
 						}
 					    });
 					    $(".ui-dialog-buttonpane").find(".ui-button:last").children().html("Atualizar");
 				    }
 				    $( "#import-dialog" ).dialog( "open" );
-                                                                                                                                   
+
 				};
 				createDialog(data, true);
-                                   
+
 			    },
 			    beforeSend: function( jqXHR, settings ){
 				connector.showProgressBar();
@@ -5380,7 +5421,7 @@ function select_import_folder(){
 			    complete: function( jqXHR, settings ){
 				connector.hideProgressBar();
 			    }
-			});    
+			});
                     }
                     else
                     {
@@ -5396,14 +5437,14 @@ function select_import_folder(){
 						});
                     }
     }
-    
+
 function open_msg_part(data){
 	var handler_open_msg_part = function (data)
         {
             if(data.append == 1)
             {
                 proxy_mensagens.get_msg(data.msg_number,data.msg_folder,false,function (data) {
-                    if (onceOpenedHeadersMessages[data.msg_folder] == undefined) 
+                    if (onceOpenedHeadersMessages[data.msg_folder] == undefined)
                     {
                         onceOpenedHeadersMessages[data.msg_folder] = [];
                     };
@@ -5415,7 +5456,7 @@ function open_msg_part(data){
             else
                write_msg(data.append);
 	}
-        cExecute('$this.imap_functions.ope_msg_part&msg_folder='+data+'&save_folder=INBOX'+cyrus_delimiter+special_folders['Trash'] , handler_open_msg_part);	
+        cExecute('$this.imap_functions.ope_msg_part&msg_folder='+data+'&save_folder=INBOX'+cyrus_delimiter+special_folders['Trash'] , handler_open_msg_part);
 }
 function hack_sent_queue(data,rowid_message) {
 
@@ -5500,7 +5541,7 @@ function create_new_folder(name_folder, base_path){
 			return write_msg(get_lang("Limit reached folders"));
 		}
 	}
-	
+
 	$.ajax({
 		url : "controller.php?action=$this.imap_functions.create_mailbox",
 		type : "POST",
@@ -5532,7 +5573,7 @@ function searchEmail(emailString){
 		var email;
 		var arrayEmailsFull = new Array();
 		arrayEmailsFull = emailString.split(',');
-		var er_Email =  new RegExp("<(.*?)>"); 
+		var er_Email =  new RegExp("<(.*?)>");
                 // TODO Use validateEmail of common functions !
 		var er_ValidaEmail = new RegExp("^[_a-zA-Z0-9-]+(\.[_a-zA-Z0-9-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*(\.[a-zA-Z]{2,3})$");
 
@@ -5540,7 +5581,7 @@ function searchEmail(emailString){
 			email = er_Email.exec(arrayEmailsFull[i]);
 			tempEmail = email == null  ? arrayEmailsFull[i]:email[1];
 			tempEmail = tempEmail.replace(/^\s+|\s+$/g,"");
-			
+
 			if (tempEmail != '') {
 				singleEmail = er_ValidaEmail.exec(tempEmail);
 				if (singleEmail == null) {
@@ -5555,7 +5596,7 @@ function searchEmail(emailString){
 
 /* Funçãoo que chama a tela para o usuário reportar um erro no email. */
 function reports_window(currentTab)
-{ 
+{
 	var _window = $("#error_reporter");
 
 	_window.dialog(
@@ -5567,7 +5608,7 @@ function reports_window(currentTab)
 		modal		: true,
 		buttons		: [
 						 {
-						 	text	: get_lang("Close"), 
+						 	text	: get_lang("Close"),
 						 	click	: function()
 						 	{
 						 		$(this).dialog("destroy");
@@ -5590,28 +5631,28 @@ function reports_window(currentTab)
 								cExecute ("$this.imap_functions.report_mail_error&params="+msgId+";;"+msgUser+";;"+msgFolder, handleReportsWindow);
 						 	}
 						 }
-					 ]	 	
-	});				 
+					 ]
+	});
 
 	_window.html( new EJS( {url: 'templates/default/emailTruncate.ejs'} ).render());
-} 
+}
 
 
 DataLayer.codec( "message", "detail", {
-  
+
 	decoder:function( form ){
-            var border_id = form.abaID;  
+            var border_id = form.abaID;
             //Defininindo pasta a ser salva mensagem
 			var user_selected = $('#content_id_'+border_id).find('.from-select option:selected').text();
 			var str_begin_name = user_selected.indexOf('<') + 1;
 			var str_end_name = user_selected.indexOf('@');
 			var user_selected_name = user_selected.substring(str_begin_name, str_end_name);
-			
+
 			if(user_selected.length > 0)
-				var user_selected_email = user_selected.match(/<([^<]*)>[\s]*$/)[1];	
-			else 
+				var user_selected_email = user_selected.match(/<([^<]*)>[\s]*$/)[1];
+			else
 				var user_selected_email = User.me.mail;
-			
+
 
             /*
             Este trecho de código está comentado pois:
@@ -5624,7 +5665,7 @@ DataLayer.codec( "message", "detail", {
 				var has_folder = false;//Folder.get( (prefix + cyrus_delimiter + draftsfolder), false );
 				var folders = DataLayer.get("folder");
 				$.each(folders,function(index,value){
-					if(value && value.id == prefix) 
+					if(value && value.id == prefix)
 						has_folder = true;
 				});
                 if(!has_folder){
@@ -5634,28 +5675,28 @@ DataLayer.codec( "message", "detail", {
             */
 
             var prefix = 'INBOX';
-			
+
             var folder_id = (openTab.imapBox[border_id] && openTab.type[border_id] < 6) ? openTab.imapBox[border_id]: prefix + cyrus_delimiter + draftsfolder;
             form.folder = folder_id;
             form.body = RichTextEditor.getData("body_"+border_id);
-			form.type =  RichTextEditor.plain[border_id] ? 'plain' : 'html';	    
+			form.type =  RichTextEditor.plain[border_id] ? 'plain' : 'html';
             form.attachments = listAttachment(border_id);
             form.uidsSave = uidsSave[border_id].toString();
             return( form );
-      
+
 	},
 
 	encoder:function( pref ){
-              
+
 		return( pref );
 	}
 
 });
 
 DataLayer.codec( "mailAttachment", "detail", {
-  
+
 	decoder: function(evtObj){
-	
+
 		if( notArray = $.type(evtObj) !== "array" )
 			evtObj = [ evtObj ];
 
@@ -5666,10 +5707,10 @@ DataLayer.codec( "mailAttachment", "detail", {
 		});
 	return notArray ? res[0] : res;
 	},
-      
+
 	encoder: function(){}
 
-      
+
 });
 
 function formatBytes(bytes) {
@@ -5714,7 +5755,7 @@ function break_comma (originalText){
 				completeString = "";
 			}
 			else
-				completeString+=character;	
+				completeString+=character;
 		}
 		else
 			completeString+=character;
@@ -5740,7 +5781,7 @@ DataLayer.poll('message',30);
 //MAILARCHIVER-04
 function services_retry(){
     try{
-        connector.purgeCache(); 
+        connector.purgeCache();
         //window.alert('expresso var dump:\nenabled = ' + expresso_mail_archive.enabled + '\ntimer = ' + expresso_mail_archive.timer +'\ncounter = ' + expresso_mail_archive.counter);
 
         if ((expresso_mail_archive.enabled == null) && (expresso_mail_archive.timer == null) && (expresso_mail_archive.counter > 0)){
@@ -5756,16 +5797,16 @@ function services_retry(){
 
         connector.showProgressBar();
         var head = document.getElementById('send_queue');
-        
+
         var script_xdr= document.createElement('script');
-        var script_xdr_tag_id = 'mail_archiver_retry_xdr';    
-        
+        var script_xdr_tag_id = 'mail_archiver_retry_xdr';
+
         var script_request= document.createElement('script');
-        var script_request_tag_id = 'mail_archiver_retry_request';                
-        
+        var script_request_tag_id = 'mail_archiver_retry_request';
+
         var script_cors= document.createElement('script');
         var script_cors_tag_id = 'mail_archiver_retry_cors';
-        
+
         var script_utils= document.createElement('script');
         var script_utils_tag_id = 'mail_archiver_retry_utils';
 
@@ -5780,10 +5821,10 @@ function services_retry(){
         if(document.getElementById(script_cors_tag_id)){
             document.getElementById(script_cors_tag_id).parentNode.removeChild(document.getElementById(script_cors_tag_id));
         }
-        
+
         if(document.getElementById(script_utils_tag_id)){
             document.getElementById(script_utils_tag_id).parentNode.removeChild(document.getElementById(script_utils_tag_id));
-        }        
+        }
 
         //IE XDR ADAPTER
         script_xdr.type= 'text/javascript';
@@ -5849,5 +5890,44 @@ function check_services_restart(){
         //connector.resetProgressBarText();
         check_services_tryouts = 1;
     }
+}
+
+
+function drawInitialFolders(){
+	cExecute("$this.imap_functions.get_folders_list&onload=true", update_menu);
+}
+
+function automaticClean(){
+	
+	
+	
+	 if (preferences.delete_trash_messages_after_n_days != 0 && preferences.delete_trash_messages_after_n_days != undefined){
+	        cExecute ("$this.imap_functions.automatic_trash_cleanness&before_date="+preferences.delete_trash_messages_after_n_days+"&cyrus_delimiter="+cyrus_delimiter, handler_automatic_trash_cleanness);
+	    }else{
+	        cExecute ("$this.imap_functions.automatic_trash_cleanness&before_date="+14+"&cyrus_delimiter="+cyrus_delimiter, handler_automatic_trash_cleanness);
+	    }
+
+
+	    if (preferences.delete_spam_messages_after_n_days != 0 && preferences.delete_spam_messages_after_n_days != undefined){
+	        cExecute ("$this.imap_functions.automatic_spam_cleanness&before_date="+preferences.delete_spam_messages_after_n_days+"&cyrus_delimiter="+cyrus_delimiter, handler_automatic_spam_cleanness);
+	    }else{
+	        cExecute ("$this.imap_functions.automatic_spam_cleanness&before_date="+14+"&cyrus_delimiter="+cyrus_delimiter, handler_automatic_spam_cleanness);
+	    }
+	    
+}
+
+
+var handler_automatic_trash_cleanness = function(data)
+{
+   if( data != false ) {
+       write_msg(data.length +' '+ $("#txt_clear_trash_auto").val());
+   }
+}
+
+var handler_automatic_spam_cleanness = function(data)
+{
+   if ( data != false ) {
+       write_msg(data.length +' '+ $("#txt_clear_spam_auto").val());
+   }
 }
 

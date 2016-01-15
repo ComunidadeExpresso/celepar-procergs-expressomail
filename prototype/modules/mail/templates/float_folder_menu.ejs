@@ -1,4 +1,4 @@
-<% 
+<%
 	var specialFolders = {
 			INBOX: {name:'_[[Inbox]]'},
 			Inbox: {name:'_[[Inbox]]'},
@@ -26,7 +26,7 @@
 		<%if(!specialFolders[data.name_folder] ){ %>
 			<span class="ui-icon ui-icon-pencil float-menu-edit floating-default" title="<%= '_[[Edit folder]]' %>"></span>
 			<span class="ui-icon ui-icon-close float-menu-remove floating-default" title="<%= '_[[Delete folder]]' %>"></span>
-		<%} 
+		<%}
 		else if(data.name_folder == trashfolder || data.name_folder == "local_messages_trash"){%>
          <% var type = false; if(data.name_folder == "local_messages_trash"){ type = data.name_folder; } else { type = false; } %>
 			<span class="ui-icon ui-icon-trash float-menu-clean floating-default" onclick="empty_trash_imap(false, false, <%= type %>);" title="<%= '_[[Empty trash]]' %>"></span>
@@ -34,7 +34,7 @@
 		else if(data.name_folder == spamfolder || data.name_folder == "local_messages_spam"){%>
             <% var type = false; if(data.name_folder == "local_messages_spam"){ type = data.name_folder; } else { type = false; } %>
 			<span class="ui-icon ui-icon-trash float-menu-clean floating-default" onclick="empty_spam_imap(false, false, <%= type %>);" title="<%= '_[[Clean spam]]' %>"></span>
-			
+
 		<%}%>
 
 	<%}else{ %>
@@ -55,5 +55,12 @@
 		<%}%>
 	<%}%>
     <% } %>
-	<span class="ui-icon ui-icon-arrowthickstop-1-n float-menu-export floating-default" title="<%= '_[[Export folder messages]]' %>"></span>
- </span>
+    <%
+    if (window.expresso.ldap_entry_config != true)
+    {
+    	%>
+		<span class="ui-icon ui-icon-arrowthickstop-1-n float-menu-export floating-default" title="<%= '_[[Export folder messages]]' %>"></span>
+    	<%
+    }
+    %>
+</span>

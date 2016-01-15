@@ -142,8 +142,9 @@
     function loadMenu(){
         var archive = "";
 
-        if( preferences['use_followupflags_and_labels'] == "1" )
+        if( preferences['use_followupflags_and_labels'] == "1" ){
             var labelItems = getLabels();
+        }
 
         var revertSortBox = function(){
             if (search_box_type == "UNSEEN") sort_box_reverse = sort_box_reverse ? 0 : 1; 
@@ -163,13 +164,14 @@
                         archive = {"name": get_lang("Archive"), "icon": "archive", callback: function(key, opt){ proxy_mensagens.unarchive_message('inbox', 'get_selected_messages'); }}
                     }
                 }
-
-                if( preferences['use_followupflags_and_labels'] == "1" )
+                if( preferences['use_followupflags_and_labels'] == "1" && !(get_current_folder().split("user.").length > 1)){
                     var itensNotLocal = {
                         "label": { "name": get_lang("Labels"), "items": labelItems},
-                        "follouwpflag":{"name": get_lang("Follow up"), callback: function(key, opt){ configureFollowupflag(); } },
+                        //O acompanhamento não está funcional e foi comentado para evitar erros de javascript.
+                        //"follouwpflag":{"name": get_lang("Follow up"), callback: function(key, opt){ configureFollowupflag(); } },
                         "sep2": "---------"
                     }
+            	}
 
                 var items= {
                     "flagSeen":      {"name": get_lang("Mark as") + " " + get_lang('seen'), "icon": "seen", callback: function(key, opt){ revertSortBox(); proxy_mensagens.proxy_set_messages_flag('seen','get_selected_messages'); }},
