@@ -1,5 +1,5 @@
 <div class="new-msg-head-buttons table_message ui-widget-header" style="width:100%; clear: both; display: inline-block; height: 30px;">
-	<div class="new-msg-head-left-buttons" style="float: left; margin: 3px; white-space: nowrap;">		
+	<div class="new-msg-head-left-buttons" style="float: left; margin: 3px; white-space: nowrap;">
 		<button class="send button small" title="<%= '_[[Send mail]]' %>"><%= '_[[Send]]' %></button>
 		<%
 		if((preferences.save_in_folder == "-1") || (preferences.save_in_folder == "")) {
@@ -16,9 +16,9 @@
 		<%
 		}
 		%>
-		
+
 		<button class="return-recept button small msg-option <%=(parseInt(preferences.return_recipient_deafault) != 0 ? "expressomail-button-icon-ative": "")%>" name="input_return_receipt" title="<%= '_[[Return receipt]]' %>">&nbsp;</button>
-		
+
 		<%
 		if(parseInt(preferences.use_assinar_criptografar)){
 			if(parseInt(preferences.use_signature_digital_cripto)){
@@ -43,7 +43,7 @@
 		<%if(allow_hidden_copy){ %>
 		<button class="button small cco-button"><%= '_[[Add Bcc]]' %></button>
 		<%
-		}	
+		}
 		%>
 		<button class="button small reply-to-button"><%= '_[[Reply to]]' %></button>
 		<button class="button small rich-button"><%= (preferences.plain_text_editor == 1 ? '_[[Rich text]]' : '_[[Simple text]]' ) %></button>
@@ -70,7 +70,7 @@
 				</td>
 				<td class="value" style="width: 100%;">
 					<div class="email-area ui-corner-all">
-						<textarea class="new-message-input to email-text" name="input_aux_to" type="text" value="" autocomplete="off"></textarea>	
+						<textarea class="new-message-input to email-text" name="input_aux_to" type="text" value="" autocomplete="off"></textarea>
 					</div>
 					<textarea class="new-message-input to" name="input_to" style="width:99%; resize: none;display : none;"></textarea>
 				</td>
@@ -83,7 +83,7 @@
 				</td>
 				<td class="value">
 					<div class="email-area ui-corner-all">
-						<textarea class="new-message-input cc email-text" name="input_aux_cc" type="text" value="" autocomplete="off"></textarea>	
+						<textarea class="new-message-input cc email-text" name="input_aux_cc" type="text" value="" autocomplete="off"></textarea>
 					</div>
 					<textarea class="new-message-input cc" name="input_cc" style="width:99%; resize: none;display : none;"></textarea>
 				</td>
@@ -96,7 +96,7 @@
 				</td>
 				<td class="value">
 					<div class="email-area ui-corner-all">
-						<textarea class="new-message-input cco email-text" name="input_aux_cco" type="text" value="" autocomplete="off"></textarea>	
+						<textarea class="new-message-input cco email-text" name="input_aux_cco" type="text" value="" autocomplete="off"></textarea>
 					</div>
 					<textarea class="new-message-input cco" name="input_cco" style="width:99%; resize: none;display : none;"></textarea>
 				</td>
@@ -107,7 +107,7 @@
                 </td>
                 <td class="value" style="width: 100%;">
                     <div class="email-area ui-corner-all">
-                        <textarea class="new-message-input reply-to email-text" name="input_aux_reply_to" type="text" value="" autocomplete="off"></textarea>	
+                        <textarea class="new-message-input reply-to email-text" name="input_aux_reply_to" type="text" value="" autocomplete="off"></textarea>
                     </div>
                     <textarea class="new-message-input reply-to" name="input_reply_to" style="width:99%; resize: none;display : none;"></textarea>
                 </td>
@@ -151,13 +151,13 @@
 					<div id="message-attach-dialog" title="<%='_[[Select messages to attach...]]'%>" style="clear: both; display:none;")>&nbsp;</div>
 				</td>
 			</tr>
-		</table>	
+		</table>
 		<div class="editor">
 			<textarea id="body_<%= data.id %>" style="width : 100%;"></textarea>
 		</div>
 		<input type="hidden" name="input_folder"/>
 		<input type="hidden" name="msg_reply_from"/>
 		<input type="hidden" name="msg_forward_from"/>
-		
+
 	</form>
 </div>

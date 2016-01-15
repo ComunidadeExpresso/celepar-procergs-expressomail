@@ -1353,6 +1353,7 @@ searchE.prototype.quickSearchAbort = function(){
 
 searchE.prototype.quickSearchMail = function(value, page, sort, border_id)
 {
+
 	if( $.trim(value) === "")	
 	{
 		$.Zebra_Dialog( get_lang("No data for search"), 
@@ -1369,9 +1370,20 @@ searchE.prototype.quickSearchMail = function(value, page, sort, border_id)
 		
 		$.each(folders, function(key)
 		{
+			
 			for(var i in folders[key] )
 			{
-				if( i === "folder_id" ){ nm_box[nm_box.length] = folders[key][i] }
+				//Não deve fazer filtro de mensagens por TAG em pastas compartilhadas
+				if( i === "folder_id" ){ 
+					if(folders[key][i].indexOf("user.")>-1){
+						if(value.indexOf("$Label")<0){
+						nm_box[nm_box.length] = folders[key][i]; 
+
+						}
+					}else{
+						nm_box[nm_box.length] = folders[key][i]; 
+					}
+				}
 			}
 		});
 
@@ -1386,12 +1398,15 @@ searchE.prototype.quickSearchMail = function(value, page, sort, border_id)
 
 		for( var i = 0; i < nm_box.length; i++ )
 		{
-		    if( nm_box[i] === current_folder )
+		    if( nm_box[i] === current_folder ){
 				continue;
-		    else if( /^user/.test(nm_box[i]) )
+		    }else if( /^user/.test(nm_box[i])&&value.indexOf("$Label")<0){
 				selection2[selection2.length] = nm_box[i];
-		    else
+		    }else{
+		    	//console.log(nm_box[i]);
+		    	//if(!(temp.split("$Label").length > 1))
 				selection1[selection1.length] = nm_box[i];
+		    }
 		}
 
 	    var url = [], labels = [];

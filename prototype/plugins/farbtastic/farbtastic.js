@@ -25,7 +25,7 @@ jQuery.fn.farbtastic = function (callback) {
 jQuery.farbtastic = function (container, callback) {
   var container = $(container).get(0);
   return container.farbtastic || (container.farbtastic = new jQuery._farbtastic(container, callback));
-}
+};
 
 jQuery._farbtastic = function (container, callback) {
   // Store farbtastic object
@@ -78,12 +78,12 @@ jQuery._farbtastic = function (container, callback) {
       }
     }
     return this;
-  }
+  };
   fb.updateValue = function (event) {
     if (this.value && this.value != fb.color) {
       fb.setColor(this.value);
     }
-  }
+  };
 
   /**
    * Change color with HTML syntax #123456
@@ -97,7 +97,7 @@ jQuery._farbtastic = function (container, callback) {
       fb.updateDisplay();
     }
     return this;
-  }
+  };
 
   /**
    * Change color with HSL triplet [0..1, 0..1, 0..1]
@@ -108,7 +108,7 @@ jQuery._farbtastic = function (container, callback) {
     fb.color = fb.pack(fb.rgb);
     fb.updateDisplay();
     return this;
-  }
+  };
 
   /////////////////////////////////////////////////////
 
@@ -137,7 +137,7 @@ jQuery._farbtastic = function (container, callback) {
 
       // Look for the coordinates starting from the wheel widget.
       var e = reference;
-      var offset = { x: 0, y: 0 }
+      var offset = { x: 0, y: 0 };
       while (e) {
         if (typeof e.mouseX != 'undefined') {
           x = e.mouseX - offset.x;
@@ -160,9 +160,9 @@ jQuery._farbtastic = function (container, callback) {
     else {
       // Use absolute coordinates
       var pos = fb.absolutePosition(reference);
-	  
+
 /**
- * TODO - 
+ * TODO -
  * Remover este código assim que a comunidade do plugin farbtastic incorporar
  * uma solução definitiva para o problema do container com scroll
  */
@@ -171,7 +171,7 @@ jQuery._farbtastic = function (container, callback) {
  */
 var pr = $(el).parents("div#divAppbox");
 pos.x -= + pr.scrollLeft();
-pos.y -= + pr.scrollTop(); 
+pos.y -= + pr.scrollTop();
 /**
  * End: Solução temporária para o problema do container com scroll
  */
@@ -181,7 +181,7 @@ pos.y -= + pr.scrollTop();
     }
     // Subtract distance to middle
     return { x: x - fb.width / 2, y: y - fb.width / 2 };
-  }
+  };
 
   /**
    * Mousedown handler
@@ -191,7 +191,7 @@ pos.y -= + pr.scrollTop();
     if (!document.dragging) {
       $(document).bind('mousemove', fb.mousemove).bind('mouseup', fb.mouseup);
       document.dragging = true;
-    }
+    };
 
     // Check which area is being dragged
     var pos = fb.widgetCoords(event);
@@ -200,7 +200,7 @@ pos.y -= + pr.scrollTop();
     // Process
     fb.mousemove(event);
     return false;
-  }
+  };
 
   /**
    * Mousemove handler
@@ -221,7 +221,7 @@ pos.y -= + pr.scrollTop();
       fb.setHSL([fb.hsl[0], sat, lum]);
     }
     return false;
-  }
+  };
 
   /**
    * Mouseup handler
@@ -231,7 +231,7 @@ pos.y -= + pr.scrollTop();
     $(document).unbind('mousemove', fb.mousemove);
     $(document).unbind('mouseup', fb.mouseup);
     document.dragging = false;
-  }
+  };
 
   /**
    * Update the markers and styles
@@ -270,7 +270,7 @@ pos.y -= + pr.scrollTop();
     else if (typeof fb.callback == 'function') {
       fb.callback.call(fb, fb.color);
     }
-  }
+  };
 
   /**
    * Get absolute position of element
@@ -294,7 +294,7 @@ pos.y -= + pr.scrollTop();
     return '#' + (r < 16 ? '0' : '') + r.toString(16) +
            (g < 16 ? '0' : '') + g.toString(16) +
            (b < 16 ? '0' : '') + b.toString(16);
-  }
+  };
 
   fb.unpack = function (color) {
     if (color.length == 7) {
@@ -307,7 +307,7 @@ pos.y -= + pr.scrollTop();
         parseInt('0x' + color.substring(2, 3)) / 15,
         parseInt('0x' + color.substring(3, 4)) / 15];
     }
-  }
+  };
 
   fb.HSLToRGB = function (hsl) {
     var m1, m2, r, g, b;
@@ -317,7 +317,7 @@ pos.y -= + pr.scrollTop();
     return [this.hueToRGB(m1, m2, h+0.33333),
         this.hueToRGB(m1, m2, h),
         this.hueToRGB(m1, m2, h-0.33333)];
-  }
+  };
 
   fb.hueToRGB = function (m1, m2, h) {
     h = (h < 0) ? h + 1 : ((h > 1) ? h - 1 : h);
@@ -325,7 +325,7 @@ pos.y -= + pr.scrollTop();
     if (h * 2 < 1) return m2;
     if (h * 3 < 2) return m1 + (m2 - m1) * (0.66666 - h) * 6;
     return m1;
-  }
+  };
 
   fb.RGBToHSL = function (rgb) {
     var min, max, delta, h, s, l;
@@ -346,7 +346,7 @@ pos.y -= + pr.scrollTop();
       h /= 6;
     }
     return [h, s, l];
-  }
+  };
 
   // Install mousedown handler (the others are set on the document on-demand)
   $('*', e).mousedown(fb.mousedown);
@@ -358,4 +358,4 @@ pos.y -= + pr.scrollTop();
   if (callback) {
     fb.linkTo(callback);
   }
-}
+};

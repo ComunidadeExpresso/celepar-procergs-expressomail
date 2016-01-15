@@ -1,5 +1,5 @@
-/* 
- * Retorna as regras por remetente e que o usuário deseja ser avisado 
+/*
+ * Retorna as regras por remetente e que o usuário deseja ser avisado
  */
 function getFromAlertRules() {
     fromRules = [];
@@ -21,7 +21,7 @@ function getFromAlertRules() {
     return fromRules;
 }
 
-/* 
+/*
  * Verifica se a regra Fora de escritório está ativa
  */
 function outOfficeVerify(force) {
@@ -44,7 +44,7 @@ function outOfficeVerify(force) {
 		clean_msg();
 }
 
-/* 
+/*
  * Valida os campos do formulário da tela de filtros para salvar.
  */
 valid_save = function(){
@@ -59,7 +59,7 @@ valid_save = function(){
 					list_container.find('[name="name"]').focus();
 				}
 			});
-			accord.accordion('activate',0);
+			accord.accordion({active: 0});
 			return false;
 		}else if($.trim(list_container.find('[name="name"]').val()) == "vacation"){
 			$.Zebra_Dialog(get_lang("Invalid name, 'vacation' is a reserved word"),{
@@ -69,7 +69,7 @@ valid_save = function(){
 					list_container.find('[name="name"]').val("").focus();
 				}
 			});
-			accord.accordion('activate',0);
+			accord.accordion({active: 0});
 			return false;
 		}else{
 			filter_list = DataLayer.get("filter", true);
@@ -83,7 +83,7 @@ valid_save = function(){
 							list_container.find('[name="name"]').val("").focus();
 						}
 					});
-					accord.accordion('activate',0);
+					accord.accordion({active: 0});
 					error = true;
 					return;
 				}
@@ -105,7 +105,7 @@ valid_save = function(){
 				list_container.find('[name="actionType[]"]:checked').parent().find("input:text, textarea").focus();
 			}
 		});
-		accord.accordion('activate',0);
+		accord.accordion({active: 0});
 		return false;
 	}
 	$.each(criteria_list, function(index, value){
@@ -121,7 +121,7 @@ valid_save = function(){
 				list_container.find('[name="criteriaValue[]"]:first').focus();
 			}
 		});
-		accord.accordion('activate',0);
+		accord.accordion({active: 0});
 		return false;
 	}
 	if(list_container.find('[name="actionType[]"]:checked').parent().find("input:text, textarea").length){
@@ -165,7 +165,7 @@ valid_save = function(){
                     'custom_class': 'custom-zebra-filter'
                 });
 				return false;
-			} 
+			}
 		}else{
 			$.Zebra_Dialog('<strong>'+get_lang('Filter with alert')+'</strong><br />'+get_lang('The filter should be set as a criteria "Sender" and action "Archive folder"'),{
                 'overlay_opacity': '0.5',
@@ -225,7 +225,7 @@ keys = function( object ){
 
 }
 
-/* 
+/*
  * Preenche o formulário de filtros com as informações originais para edição
  */
 showDetails = function( filter ){
@@ -265,7 +265,7 @@ showDetails = function( filter ){
             actions.filter( '[value="' + filter.actions[i].type + '"]' ).val( filter.actions[i].type )
             .siblings( '[name="actionParameter[]"]' ).val( filter.actions[i].parameter );
         }
-    }	
+    }
 	isExact.filter('[value="'+(filter.isExact != "false"? "and" : "or")+'"]').attr("checked", "True");
 
 	if (filter.alertMessage == 'true') $('.alertMessage').attr('checked', 'True');
@@ -307,15 +307,15 @@ DataLayer.codec( "filter", "detail", {
 
 			!the_parameter ? the_parameter = form.actionParameter[i+1] : "";
 
-			if (type == 'alertMessage') { 
+			if (type == 'alertMessage') {
 				//if(!$('[value="alertMessage"]').parent().hasClass("hidden")){
 					type = 'addflag';
 					the_parameter = '$FilteredMessage';
 				//}else{
 				//	return;
 				//}
-			} 
-			if (type == 'fileinto') { 
+			}
+			if (type == 'fileinto') {
 				the_parameter = form.valueFileInto;
 			}
 			if (type == 'reject') {
@@ -349,7 +349,7 @@ DataLayer.codec( "filter", "detail", {
 		verifyNextRule: $('.verifyNextRule').is(':checked'),
 		//applyMessages: allMessages? !$.isEmptyObject( selectedMessages ) ?
 		//keys( selectedMessages ) : allMessages : ""
-		applyMessages: apply_messages_ 
+		applyMessages: apply_messages_
     };
   },
 
@@ -417,7 +417,7 @@ DataLayer.dispatchPath = BASE_PATH;
 var selectedMessages = {};
 var allMessages = false;
 
-/* 
+/*
  * Bloqueia usuário por email - utilizado na tela de mensagens do ExpressoMail
  */
 function block_user_email(email) {
@@ -494,7 +494,7 @@ DataLayer.codec( 'message', 'jqGridSearch', {
       }
 });
 
-/* Gerencia o grid das mensagens da caixa de entrada 
+/* Gerencia o grid das mensagens da caixa de entrada
  * Mostra o grid de mensagens para aplicar a regra nas mensagens da caixa de entrada.
  */
 function showGridMessages(thiss) {
@@ -543,7 +543,7 @@ function showGridMessages(thiss) {
 
 	var data = DataLayer.get( 'message', { filter: criterias_, criteria: { isExact: isExact , properties: { context: { folder: 'INBOX' } } } }, true );
 	if(DataLayer.criterias['message:jqGrid']){
-		delete DataLayer.criterias['message:jqGrid'];	
+		delete DataLayer.criterias['message:jqGrid'];
 	}
 
 	DataLayer.register( 'criterias', 'message:jqGrid', function( crit ){
@@ -627,26 +627,26 @@ function showGridMessages(thiss) {
 }
 
 /* Gerencia a listagem de filtros do usuário */
-/* 
+/*
  * Lista os filtros para o usuário
  */
-function list_filters(html) { 
+function list_filters(html) {
 	outOfficeVerify();
-	for (var index in selectedMessages) 
+	for (var index in selectedMessages)
 	{
 		delete selectedMessages[index];
 	}
- 
-	initialize_container(html); // Inicializa o container do diálogo de filtros 
- 
-	list_container = create_filter_dialog(); // Cria a estrutura básica do diálogo 
-	
+
+	initialize_container(html); // Inicializa o container do diálogo de filtros
+
+	list_container = create_filter_dialog(); // Cria a estrutura básica do diálogo
+
 	var list = DataLayer.render( BASE_PATH + 'modules/filters/filter-list.ejs', DataLayer.get("filter:detail", true));
 	list_container.html(list).find(".button").button();
     list_container.find(".alldelete").button("disable");
     list_container.find(".alldisable").button("disable");
     list_container.find(".allenable").button("disable");
-    
+
 	list_container.find(".rule-list").selectable({
 		selecting: function(event, ui) {
 			$(ui.selecting).find(':checkbox').attr('checked', true);
@@ -693,13 +693,13 @@ function list_filters(html) {
 				showDetails(filters);
 				var accord = list_container.find(".rule-details-container").accordion({autoHeight: false});
 				list_container.find(".button").button().filter(".forth").click(function(){
-					accord.accordion('activate',1);
+					accord.accordion({active: 1});
 				}).end().filter(".forth2").click(function(){
-					accord.accordion('activate',2);
+					accord.accordion({active: 2});
 				}).end().filter(".back").click(function(){
-					accord.accordion('activate',0);
+					accord.accordion({active: 0});
 				}).end().filter(".back2").click(function(){
-					accord.accordion('activate',1);
+					accord.accordion({active: 1});
 				}).end().filter(".cancel").click(function(){
 					DataLayer.render( BASE_PATH + 'modules/filters/init.ejs', {},list_filters);
 				}).end().filter(".submit").click(function(){
@@ -877,7 +877,7 @@ function list_filters(html) {
 	var aa = 0;
 
 	list_container.parent().find(".button.add:first").click(function(){
-		render_new_rule(); // Renderiza a tela de criação de nova regra de filtragem. 
+		render_new_rule(); // Renderiza a tela de criação de nova regra de filtragem.
 	});
 	list_container.parent().find(".button.add.vacation").click(function(){
 
@@ -907,129 +907,129 @@ function list_filters(html) {
 	});
 }
 
-/* 
-	Inicializa o container do diálogo de gerenciamento de filtros. 
-*/ 
-function initialize_container (html) { 
-	if(html) 
-	{ 
-		if(!$(".filters-windows").length)  
-		{ 
-			container = $('.expressomail-module-container').append("<div class='filters-windows'></div>").find(".filters-windows").html(html).find(".expresso-window-container"); 
-		} 
-	} 
-} 
- 
-/* 
-	Cria a estrutura básica do diálogo de gerenciamento de filtros. 
-*/ 
-function create_filter_dialog () { 
-	var dialog = $(".expresso-window-filters").dialog( 
-	{ 
-		title: get_lang('Filters'), 
-		width: 700, 
-		modal: true, 
-		resizable: false, 
-		// closeOnEscape: false, 
-		// close: function(event, ui) 
-		// { 
-		// 	event.stopPropagation(); 
-		// 	if(list_container.find(".cancel").length) list_container.find(".cancel").trigger('click'); 
-		// 	$(".dialog-head-buttonpane").hide(); 
-		// }, 
-		// open: function() 
-		// { 
-		// 	$(".ui-dialog .ui-dialog-titlebar").append('<a href="#" class="ui-dialog-titlebar-minimize ui-corner-all" role="button"><span class="ui-icon ui-icon-minusthick">minimize</span></a>').find('.ui-dialog-titlebar-minimize').click(function() 
-		// 	{ 
-		// 		$(".ui-dialog-buttonpane, .ui-dialog-content").toggle(); 
-		// 		$(".ui-icon-minusthick, .ui-icon-newwin").toggleClass('ui-icon-minusthick').toggleClass('ui-icon-newwin'); 
-		// 	}); 
-		// 	$(".dialog-head-buttonpane").show(); 
-		// }, 
-		autoOpen: false, 
-		buttons: [ 
-		{ 
-			text: get_lang("Close"), 
-			click: function() 
-			{ 
-				$(this).dialog("destroy"); 
-			} 
-		}] 
-	}); 
- 
+/*
+	Inicializa o container do diálogo de gerenciamento de filtros.
+*/
+function initialize_container (html) {
+	if(html)
+	{
+		if(!$(".filters-windows").length)
+		{
+			container = $('.expressomail-module-container').append("<div class='filters-windows'></div>").find(".filters-windows").html(html).find(".expresso-window-container");
+		}
+	}
+}
+
+/*
+	Cria a estrutura básica do diálogo de gerenciamento de filtros.
+*/
+function create_filter_dialog () {
+	var dialog = $(".expresso-window-filters").dialog(
+	{
+		title: get_lang('Filters'),
+		width: 730,
+		modal: true,
+		resizable: false,
+		// closeOnEscape: false,
+		// close: function(event, ui)
+		// {
+		// 	event.stopPropagation();
+		// 	if(list_container.find(".cancel").length) list_container.find(".cancel").trigger('click');
+		// 	$(".dialog-head-buttonpane").hide();
+		// },
+		// open: function()
+		// {
+		// 	$(".ui-dialog .ui-dialog-titlebar").append('<a href="#" class="ui-dialog-titlebar-minimize ui-corner-all" role="button"><span class="ui-icon ui-icon-minusthick">minimize</span></a>').find('.ui-dialog-titlebar-minimize').click(function()
+		// 	{
+		// 		$(".ui-dialog-buttonpane, .ui-dialog-content").toggle();
+		// 		$(".ui-icon-minusthick, .ui-icon-newwin").toggleClass('ui-icon-minusthick').toggleClass('ui-icon-newwin');
+		// 	});
+		// 	$(".dialog-head-buttonpane").show();
+		// },
+		autoOpen: false,
+		buttons: [
+		{
+			text: get_lang("Close"),
+			click: function()
+			{
+				$(this).dialog("destroy");
+			}
+		}]
+	});
+
 	//$(".ui-dialog-titlebar").find("span").
 
-	$(".ui-dialog-titlebar").after("<div class='dialog-head-buttonpane ui-dialog-buttonpane ui-widget-content ui-helper-clearfix' style='background-color: rgb(224, 238, 238); '><div class='ui-dialog-buttonset header-buttonpane'></div></div>"); 
-    if (!$('.dialog-head-buttonpane .header-buttonpane .button.add').length)
-    {
+	$(".ui-dialog-titlebar").after("<div class='dialog-head-buttonpane ui-dialog-buttonpane ui-widget-content ui-helper-clearfix' style='background-color: rgb(224, 238, 238); '><div class='ui-dialog-buttonset header-buttonpane'></div></div>");
+	if (!$('.dialog-head-buttonpane .header-buttonpane .button.add').length)
+	{
 		$(".dialog-head-buttonpane").css("padding", "5px").
 		find(".header-buttonpane").html("<a href='#' class='button add' title='" + get_lang("Add new rule") + "'>" + get_lang("New rule") + "</a>" + (!outoffice ? "<a href='#' class='button add vacation' title='" + get_lang("Add rule out of office") + "'>" + get_lang("Out of office") + "</a>" : "")).find(".button").button();
 	}
-    $(".ui-dialog-buttonpane.ui-widget-content").css("background-color", "#E0EEEE");
- 
-    return dialog;
-} 
- 
-/* 
-	Renderiza a tela de adição de uma nova regra de filtragem,  
-	dentro do diálogo de gerenciamento de filtros. 
-*/ 
-function render_new_rule (from, subject) { 
-	list_container.parent().find(".dialog-head-buttonpane").addClass("hidden"); 
-	var data = { 
-		folders: DataLayer.get("folder", true), 
-		delimiter: cyrus_delimiter, 
-		from: from, 
-		subject: subject ? html_entities(subject) : subject 
-	} 
- 
-	DataLayer.render(BASE_PATH + 'modules/filters/edit-filter.ejs', data, function(html) 
-	{ 
-		list_container.html(html); 
-		var accord = list_container.find(".rule-details-container").accordion( 
-		{ 
-			autoHeight: false 
-		}); 
-		list_container.find(".button").button().filter(".forth").click(function() 
-		{ 
-			accord.accordion('activate', 1); 
-		}).end().filter(".forth2").click(function() 
-		{ 
-			accord.accordion('activate', 2); 
-		}).end().filter(".back").click(function() 
-		{ 
-			accord.accordion('activate', 0); 
-		}).end().filter(".back2").click(function() 
-		{ 
-			accord.accordion('activate', 1); 
-		}).end().filter(".cancel").click(function() 
-		{ 
-			DataLayer.render(BASE_PATH + 'modules/filters/init.ejs', {}, list_filters); 
-		}).end().filter(".submit").click(function() 
-		{ 
-			if(valid_save()) $(this).submit(); 
-			else return; 
-			DataLayer.commit('filter', false, function() 
-			{ 
-				if($('#gbox_fields-search-messages-grid').length > 0 && action != '') 
-				{ 
-					for(var index in selectedMessages) 
-					{ 
-						set_message_flag(index, action, false); 
-					} 
-				} 
-				DataLayer.render(BASE_PATH + 'modules/filters/init.ejs', {}, list_filters); 
-				getFromAlertRules(); 
-			}); 
-		}).end().filter('.button.search').click(function() 
-		{ 
-			if(valid_save()) showGridMessages($(this)); 
-			else return; 
-		}); // end function click 
-	}); // end DataLayer.render 
+	$(".ui-dialog-buttonpane.ui-widget-content").css("background-color", "#E0EEEE");
+
+	return dialog;
 }
 
-/* Inicializa os filtros e chama o list_filters 
+/*
+	Renderiza a tela de adição de uma nova regra de filtragem,
+	dentro do diálogo de gerenciamento de filtros.
+*/
+function render_new_rule (from, subject) {
+	list_container.parent().find(".dialog-head-buttonpane").addClass("hidden");
+	var data = {
+		folders: DataLayer.get("folder", true),
+		delimiter: cyrus_delimiter,
+		from: from,
+		subject: subject ? html_entities(subject) : subject
+	}
+
+	DataLayer.render(BASE_PATH + 'modules/filters/edit-filter.ejs', data, function(html)
+	{
+		list_container.html(html);
+		var accord = list_container.find(".rule-details-container").accordion(
+		{
+			autoHeight: false
+		});
+		list_container.find(".button").button().filter(".forth").click(function()
+		{
+			accord.accordion({active: 1});
+		}).end().filter(".forth2").click(function()
+		{
+			accord.accordion({active: 2});
+		}).end().filter(".back").click(function()
+		{
+			accord.accordion({active: 0});
+		}).end().filter(".back2").click(function()
+		{
+			accord.accordion({active: 1});
+		}).end().filter(".cancel").click(function()
+		{
+			DataLayer.render(BASE_PATH + 'modules/filters/init.ejs', {}, list_filters);
+		}).end().filter(".submit").click(function()
+		{
+			if(valid_save()) $(this).submit();
+			else return;
+			DataLayer.commit('filter', false, function()
+			{
+				if($('#gbox_fields-search-messages-grid').length > 0 && action != '')
+				{
+					for(var index in selectedMessages)
+					{
+						set_message_flag(index, action, false);
+					}
+				}
+				DataLayer.render(BASE_PATH + 'modules/filters/init.ejs', {}, list_filters);
+				getFromAlertRules();
+			});
+		}).end().filter('.button.search').click(function()
+		{
+			if(valid_save()) showGridMessages($(this));
+			else return;
+		}); // end function click
+	}); // end DataLayer.render
+}
+
+/* Inicializa os filtros e chama o list_filters
  * Inicia a funcionalidade de filtros de mensagens
  */
 function  init_filters(){
@@ -1039,12 +1039,12 @@ function  init_filters(){
 
 /*
  * Ao excluir filtro, desabilitar filtro ou retirar a ação Alerta de um filtro
- * esta função é chamada para retirar as flags que caracterizam uma mensagem como alertada pelos Filtros por Remetente 
+ * esta função é chamada para retirar as flags que caracterizam uma mensagem como alertada pelos Filtros por Remetente
  */
 function removeMessagesFlag(id){
 	var filters_c = DataLayer.get('filter', urlencode(id));
 	var folder = '';
-	var from = '';	
+	var from = '';
 	if(filters_c['actions'])
 	for(var i=0; i < filters_c['actions'].length; i++){
 		if(filters_c['actions'][i].type == 'fileinto'){

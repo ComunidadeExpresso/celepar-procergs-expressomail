@@ -6,7 +6,7 @@ if(!isset($GLOBALS['phpgw_info'])){
                 'noheader'   => true
         );
 }
-require_once '../header.inc.php';
+require_once '../header.session.inc.php';
 require_once '../services/class.servicelocator.php';
 
 	//	Explode action from cExecuteForm function

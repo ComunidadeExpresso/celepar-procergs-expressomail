@@ -1217,5 +1217,43 @@ class ldap_functions
     		}
     		return $return['ok'] = true;
     	}        
+
+    function get_corporateSignature()
+    {
+        $user = $_SESSION['phpgw_info']['expressomail']['user']['userid'];
+        list ($company, $name, $surname) = split ('[/.-]', $user);
+        $this->ldapRootConnect(false);
+        $objectclasscompany = ldattr('objectclasscompany');
+        $corporatesignature = ldattr('corporatesignature');
+        if ($this->ds) {
+            $filter="(&(cn=".$company.")(objectclass=" . $objectclasscompany . "))";
+            $justthese = array($corporatesignature);
+            $sr = @ldap_search($this->ds, $this->ldap_context, $filter, $justthese);
+            if(!$sr) {
+                return false;
+            }
+            $info = ldap_get_entries($this->ds, $sr);
+            $info[0][$corporatesignature][0] = utf8_decode($info[0][$corporatesignature][0]);
+            return $info[0][$corporatesignature][0];
+        }
+        return "";
+    }
+
+    function get_alternative_emails_ldap(){
+        $result= array();
+        $user = $_SESSION['phpgw_info']['expressomail']['user']['account_lid'];
+        $this->ldapRootConnect(false);
+        if ($this->ds) {
+            $filter="uid=".$user;
+            $justthese = array("mail","mailAcceptingGeneralID");
+            $sr = ldap_search($this->ds,$this->ldap_context, $filter, $justthese);
+            $ent = ldap_get_entries($this->ds, $sr);
+            ldap_close($this->ds);
+            for ($i=0; $i < $ent[0]['mailacceptinggeneralid']['count']; $i++){
+                $result[] = $ent[0]["mailacceptinggeneralid"][$i];
+            }
+        }
+        return $result;
+    }
 }
 ?>

@@ -1,13 +1,13 @@
 /**
  * Estrutura que guarda em cache as mensagens abertas, a exemplo da estrutura utilizada
  * na funcionalidade de anexar mensagens.
- * Isto reduz a necessidade de acessar estruturas da tela para obter informações sobre 
+ * Isto reduz a necessidade de acessar estruturas da tela para obter informaï¿½ï¿½es sobre
  * as mensagens, como tem sido para encaminhar, responder, etc.
  * Manter os dados 'limpos' em uma estrutura 'somente-leitura' permite maior flexibilidade
- * para mudar a tela e menos processamento de limpeza de dados (por exemplo retirar tags de 
- * formatação, etc.) 
+ * para mudar a tela e menos processamento de limpeza de dados (por exemplo retirar tags de
+ * formataï¿½ï¿½o, etc.)
  */
- 
+
 focusIn = "";
 canMakeBox = true;
 fastSearch = false;
@@ -31,7 +31,7 @@ var openTab = {
 
 var autoSaveControl = {
     'timer' : [], // The timeout timer for autosave function
-    'status' : [] // The status autosave 
+    'status' : [] // The status autosave
 };
 
 var tabTypes = {
@@ -45,7 +45,7 @@ var tabTypes = {
 	};
 
 var currentTab,numBox = 0; // Open Tab and num of mailboxes opened at context
-// Objeto Map, talvez o ideal fosse adicionar este objeto à Api do egroupware, e carregá-lo
+// Objeto Map, talvez o ideal fosse adicionar este objeto ï¿½ Api do egroupware, e carregï¿½-lo
 // aqui no expressoMail.
 
 function draw_tree_labels()
@@ -76,16 +76,16 @@ function draw_tree_labels()
 		}
 	}).find(".square-color").css("display","");
 
-	$("#MyMarckersList a.title-my-labels").click(function() {	
+	$("#MyMarckersList a.title-my-labels").click(function() {
 		if($("#MyMarckersList ul.label-list").css("display") == "none"){
 			$("#MyMarckersList ul.label-list").show();
 		}else{
 			$("#MyMarckersList ul.label-list").hide();
 		}
 		$('#MyMarckersList .status-list-labels').toggleClass("ui-icon-triangle-1-s");
-		$('#MyMarckersList .status-list-labels').toggleClass("ui-icon-triangle-1-n");	
+		$('#MyMarckersList .status-list-labels').toggleClass("ui-icon-triangle-1-n");
 	 });
-	
+
 	if (!labels){
 		$(".my-labels").hide();
 	}
@@ -108,7 +108,7 @@ function update_menu(data, forceLoadFolders)
 					target.innerHTML = data;
 			}
 		);
-		
+
         return false;
 	}
 	else
@@ -116,7 +116,7 @@ function update_menu(data, forceLoadFolders)
         draw_quota(data);
 
         folders = data;
-        
+
         draw_new_tree_folder( false, forceLoadFolders );
 
         if( preferences['use_followupflags_and_labels'] == "1" ) draw_tree_labels();
@@ -126,6 +126,7 @@ function update_menu(data, forceLoadFolders)
 var handler_draw_box = function(data){
     populateSelectedMsgs(data.messagesIds);
 	draw_box(data, 'INBOX', true);
+    setTimeout(function(){setPageTitle();}, 500);
 }
 
 // Action on change folders.
@@ -167,6 +168,7 @@ function change_folder(folder, folder_name){
 		$(".folders-loading").removeClass("folders-loading");
 		alternate_border(0);
 	}
+    setPageTitle();
 }
 
 function open_folder(folder, folder_name)
@@ -179,13 +181,13 @@ function open_folder(folder, folder_name)
 			if(!verify_session(data)) return false;
 
 			numBox++;
-			
+
             create_border(folder_name,numBox.toString());
-			
+
             draw_box(data, current_folder, false);
-			
+
             alternate_border(numBox);
-			
+
             return true;
 		}
 		cExecute ("$this.imap_functions.get_range_msgs2&folder="+current_folder+"&msg_range_begin=1&msg_range_end="+preferences.max_email_per_page+"&sort_box_type="+sort_box_type+ "&search_box_type="+ search_box_type +"&sort_box_reverse="+sort_box_reverse+"", handler_draw_box);
@@ -250,7 +252,7 @@ function draw_paging(num_msgs){
     {
   	 	lnk_page = document.createElement("SPAN");
   	}
-  	
+
     span_paging.appendChild(lnk_page);
 
   	lnk_page.innerHTML = "&lt;&lt;";
@@ -274,9 +276,9 @@ function draw_paging(num_msgs){
   	for(i = lastPage; i <= total_pages; i++) {
 
   		if(current_page == i || (i == total_pages && !hasMarked)) {
-  			lnk_page = document.createElement("SPAN");			
+  			lnk_page = document.createElement("SPAN");
   			span_paging.appendChild(lnk_page);
-			lnk_page.style.color = "red";			
+			lnk_page.style.color = "red";
   			lnk_page.innerHTML = "&nbsp;<b>"+i+"</b>&nbsp;";
   			hasMarked = true;
   			continue;
@@ -571,12 +573,12 @@ function syncColumns() {
 			}
 		}
 	}
-	 
+
     //bug do firefox ao redefinir os tamanhos das colunas
 	if (is_mozilla && !is_webkit)
-    {  
+    {
 	    if(trM[r])
-	    for (var c=0;c<trM[r].cells.length;c++) 
+	    for (var c=0;c<trM[r].cells.length;c++)
 		document.getElementById("colgroup_main_"+numBox).childNodes[c].setAttribute("width",colSizes[tbl][c]);
 
 	}
@@ -586,7 +588,7 @@ function syncColumns() {
 			for(i=0;i<arrHeader.length;i++){
 					if(arrBody[i] !== undefined && arrBody[i].width !== undefined)
 					arrHeader[i].width = arrBody[i].width;
-			}			
+			}
 	}
 }
 
@@ -610,8 +612,8 @@ function resizeMailList() {
 			});
 			$('#colgroup_main_'+numBox).find('col').each(function(index,value){
 				 $(this).attr('width',colSizes[1][index]);
-			});	
-		}	
+			});
+		}
 		else if (is_webkit){
 			$('#table_message_header_box_'+numBox).removeAttr('style');
 			$('#table_message_header_box_'+numBox).css('table-layout','auto');
@@ -624,7 +626,7 @@ function resizeMailList() {
 		});
 		$('#divScrollMain_'+numBox).find('tr:first').find('td').each(function(index,value){
 		     $(this).width(colSizes[1][index]);
-		});			
+		});
 	}
 	$('#table_resultsearch_'+numBox).removeAttr('style');
 }
@@ -689,11 +691,11 @@ function getColSizesCookie() {
 }
 
 
-/*Cria a div que permite a seleção de todas as mensagens*/
+/*Cria a div que permite a seleï¿½ï¿½o de todas as mensagens*/
 function drawSelectMsgsTable(){
-	var div = $('<div>');	
+	var div = $('<div>');
 	div.html('<span class="none-selected">_[[No selected message.]]</span>');
-	div.attr('class','select-all-messages'); 
+	div.attr('class','select-all-messages');
 	$('#content_id_0').first().prepend(div);
 }
 
@@ -706,20 +708,20 @@ function totalSelected(){
 };
 
 /*Atualiza o array de mensagens selecionadas*/
-function updateSelectedMsgs(selected,msg_number){ 
+function updateSelectedMsgs(selected,msg_number){
 	var folder = $('#content_folders .folder.selected').attr('title');
 	folder = folder ? folder : get_lang('INBOX');
 	folder = folder.length > 70 ? '"'+folder.substr(0,70) + "..." +'"': '"'+folder+'"' ;
 	var div = $('.select-all-messages');
 	var filterFlag = search_box_type != "ALL" ? '"' + get_lang(search_box_type) + "s" + '"': "";
-	/*Seleciona as mensagens ao navegar pelas páginas*/
+	/*Seleciona as mensagens ao navegar pelas pï¿½ginas*/
 	if (allMsgsSelected && msg_number == undefined){
 		$('.checkbox').each(function(){
 			$(this).attr('checked', true);
 			$(this).parent().parent().addClass('selected_msg');
 		});
 	}
-	else if (msg_number == undefined){	
+	else if (msg_number == undefined){
 		for(var obj in selectedPagingMsgs){
 			if (selectedPagingMsgs[obj] == true){
 				$('#check_box_message_'+obj).attr('checked', true);
@@ -729,7 +731,7 @@ function updateSelectedMsgs(selected,msg_number){
 	}
 	if (selected && msg_number != undefined){
 		selectedPagingMsgs[msg_number] = true;
-		$(this).parent().parent().addClass('selected_msg');		
+		$(this).parent().parent().addClass('selected_msg');
 	}
 	else if(!selected && msg_number != undefined){
 		selectedPagingMsgs[msg_number] = false;
@@ -765,7 +767,7 @@ function updateSelectedMsgs(selected,msg_number){
 		$('.select-link').bind('click',function(){
             selectAllFolderMsgs();
             $('.select-link').unbind('click');
-        });		
+        });
 	}
 	else if (allMsgsSelected && total_pages > 1){
 		var link = "<a class='select-link' href='#'>_[[Clear selection?]]</a>";
@@ -782,7 +784,7 @@ function updateSelectedMsgs(selected,msg_number){
 	}
 	else{
 		div.hide();
-	}  
+	}
     resizeWindow();
 }
 
@@ -806,14 +808,14 @@ function selectAllFolderMsgs(select){
 		for(var obj in selectedPagingMsgs){
 			selectedPagingMsgs[obj] = true;
 		}
-	
+
 	}else{
 		allMsgsSelected = false;
-		var checkbox = $("#content_id_0").find("input:checkbox"); 
-        $.each(checkbox, function(i, v){ 
-            $(v).removeAttr("checked"); 
-            $(v).parents("tr:first").removeClass("selected_msg selected_shortcut_msg"); 
-        }); 
+		var checkbox = $("#content_id_0").find("input:checkbox");
+        $.each(checkbox, function(i, v){
+            $(v).removeAttr("checked");
+            $(v).parents("tr:first").removeClass("selected_msg selected_shortcut_msg");
+        });
 		for(var obj in selectedPagingMsgs){
 			selectedPagingMsgs[obj] = false;
 		}
@@ -865,10 +867,10 @@ function draw_box(headers_msgs, msg_folder, alternate){
 		}
 	}
 	/**
-	 * Preenche a estrutura de cache de mensagens para posterior consulta de 
-	 * informações sobre as mensagens no escopo global.
+	 * Preenche a estrutura de cache de mensagens para posterior consulta de
+	 * informaï¿½ï¿½es sobre as mensagens no escopo global.
 	 */
-	for (var i=0; i<headers_msgs.length; i++) { 
+	for (var i=0; i<headers_msgs.length; i++) {
 		if (!onceOpenedHeadersMessages[current_folder])
 			onceOpenedHeadersMessages[current_folder] = {};
 		onceOpenedHeadersMessages[current_folder][headers_msgs[i].msg_number] = headers_msgs[i];
@@ -880,8 +882,8 @@ function draw_box(headers_msgs, msg_folder, alternate){
 	if(is_ie)
 		document.getElementById("border_table").width = "99.5%";
 
-	numBox = 0; //As pastas sempre estarão na aba 0
-	
+	numBox = 0; //As pastas sempre estarï¿½o na aba 0
+
 	openTab.content_id[numBox] = document.getElementById("content_id_"+numBox);
 	openTab.content_id[numBox].innerHTML = "";
 	openTab.imapBox[numBox] = msg_folder;
@@ -966,17 +968,17 @@ function draw_box(headers_msgs, msg_folder, alternate){
 
 		var td_element24 = createTDElement(0,5);
 		td_element24.innerHTML = "&nbsp;";
-			
-		
+
+
 		var td_element25 = createTDElement(0,7);
 		td_element25.innerHTML = "&nbsp;";
-		
+
 		var td_element27 = createTDElement(0,8);
 		td_element25.innerHTML = "&nbsp;";
-		
+
 		var td_element26 = createTDElement(0,6);
 		td_element26.innerHTML = "&nbsp;";
-		
+
 
 		tr_element.appendChild(td_element21);
 		tr_element.appendChild(td_element22);
@@ -985,7 +987,7 @@ function draw_box(headers_msgs, msg_folder, alternate){
 		tr_element.appendChild(td_element26);
 		tr_element.appendChild(td_element27);
 		tr_element.appendChild(td_element25);
-		
+
 		tr_element.appendChild(td_element3);
 		tr_element.appendChild(td_element4);
 		tr_element.appendChild(td_element5);
@@ -1056,11 +1058,11 @@ function draw_box(headers_msgs, msg_folder, alternate){
 	}
 	_divScroll.appendChild(table_element);
 	openTab.content_id[numBox].appendChild(_divScroll);
-	
+
 	var f_unseen = 0;
 
 	document.getElementById("table_message_header_box_"+numBox).emptyBody = false;
-	
+
 	if (headers_msgs.num_msgs == 0)
 		showEmptyBoxMsg(tbody_element);
 
@@ -1079,7 +1081,7 @@ function draw_box(headers_msgs, msg_folder, alternate){
                     $(".lower").css("top", ($("#content_folders").height()-18) + $("#content_folders").offset().top);
 					if($(".shared-folders").length){
 						$(".shared-folders,.head_folder").parent().find('.folder:not(".shared-folders")').droppable({
-							over : function(a, b){						
+							over : function(a, b){
 								//SETA BORDA EM VOLTA DA PASTA
                                 $(b.helper).find(".draggin-folder,.draggin-mail").css("color", "green");
 								over = $(this);
@@ -1091,7 +1093,7 @@ function draw_box(headers_msgs, msg_folder, alternate){
 												if(over.hasClass("folder-over"))
 													over.prev().trigger("click");
 											}, 500);
-											
+
 										}
 							},
 							out : function(a,b){
@@ -1108,7 +1110,7 @@ function draw_box(headers_msgs, msg_folder, alternate){
 								}else{
 									var folder_to = $(this).parent().attr('id');
 									var to_folder_title = $(this).attr('title');
-								}		
+								}
 								var folder_to_move = ui.draggable.parent().attr('id');
 								var border_id = ui.draggable.find("input[type=hidden]").attr("name");
 								// Mensagens : SE O DROP VIER DA LISTA DE MENSAGENS :
@@ -1122,7 +1124,7 @@ function draw_box(headers_msgs, msg_folder, alternate){
 				},
 				stop :function(){
                     $('.upper, .lower').hide();
-					$(".shared-folders").parent().find(".folder").droppable("destroy");
+					//$(".shared-folders").parent().find(".folder").droppable("destroy");
 				},
 				//helper: 'clone',
  				helper: function(event){
@@ -1134,14 +1136,14 @@ function draw_box(headers_msgs, msg_folder, alternate){
 			            	updateSelectedMsgs($(value).find(":checkbox").is(':checked'),$(value).attr("id"));
 				        });
 					}
-					
+
 					if(totalSelected() > 1 )
-						return $("<tr><td>"+DataLayer.render('../prototype/modules/mail/templates/draggin_box.ejs', {texto : (totalSelected()+" mensagens selecionadas"), type: "messages"})+"</td></tr>");				
+						return $("<tr><td>"+DataLayer.render('../prototype/modules/mail/templates/draggin_box.ejs', {texto : (totalSelected()+" mensagens selecionadas"), type: "messages"})+"</td></tr>");
 					if(	$(this).find(".td_msg_subject").text().length > 18 )
 						return $("<tr><td>"+DataLayer.render('../prototype/modules/mail/templates/draggin_box.ejs', {texto : $(this).find(".td_msg_subject").text().substring(0,18) + "...", type: "messages"})+"</td></tr>");
 					else
 						return $("<tr><td>"+DataLayer.render('../prototype/modules/mail/templates/draggin_box.ejs', {texto : $(this).find(".td_msg_subject").text(), type: "messages"})+"</td></tr>");
-				}, 
+				},
 				iframeFix: true,
 				delay: 150,
 				cursorAt: {top: 5, left: 56},
@@ -1152,7 +1154,7 @@ function draw_box(headers_msgs, msg_folder, alternate){
 					if($(this).find("input:checkbox").attr("checked") != "checked"){
 
                         $(this).find("input:checkbox").trigger('click');
-			
+
                         $(this).addClass("selected_msg");
                 }
                 updateSelectedMsgs($(this).find("input:checkbox").is(':checked'),$(this).attr("id"));
@@ -1160,7 +1162,7 @@ function draw_box(headers_msgs, msg_folder, alternate){
                     if($(this).find("input:checkbox").attr("checked") != "checked"){
 
                         $(this).find("input:checkbox").trigger('click');
-            
+
                         $(this).addClass("selected_msg");
                     }
                     updateSelectedMsgs($(this).find("input:checkbox").is(':checked'),$(this).attr("id"));
@@ -1171,8 +1173,8 @@ function draw_box(headers_msgs, msg_folder, alternate){
 
 	if ((preferences.use_shortcuts == '1') && (headers_msgs[0]))
 		select_msg(headers_msgs[0].msg_number, 'null', true);
-		
-	
+
+
 	var tdFolders  =  Element("folderscol");
 	if ( !currentTab )
 		alternate_border(numBox);
@@ -1184,25 +1186,25 @@ function draw_box(headers_msgs, msg_folder, alternate){
 		_eTime = _eTime.getTime();
 		alert("Carregou em "+(_eTime - _bTime)+" ms");
 	}
-	
+
 	var msg_folder = Element('msg_folder').value;
 	var msg_number = Element('msg_number').value;
 	if(!msg_folder && msg_number) {
         if ((msg_number.toString().indexOf('@') != -1) || !msg_number.toString().match(/[0-9]/)){
             new_message_to(msg_number);
-        }    
+        }
         else
             new_message('new','null');
 	}
 	else if(msg_folder && msg_number){
 		$.ajax({
 			  url: 'controller.php?' + $.param( {action: '$this.imap_functions.get_info_msg',
-							      msg_number: msg_number, 
+							      msg_number: msg_number,
 							      msg_folder: msg_folder,
 							      decoded: true } ),
 			  success: function( data ){
 			      data = connector.unserialize( data );
-			      
+
 			      if( data )
 				  show_msg( data );
 			  },
@@ -1221,7 +1223,7 @@ function draw_box(headers_msgs, msg_folder, alternate){
 	// Loading Quota View Folder Component (if exists...)
 	if(Element("table_quota"))
 		connector.loadScript("InfoQuota");
-	
+
 	// creates the dotted ruler which helps user to visualize resizing of columns
 	var ruler_element = document.getElementById("table_message_ruler");
 	if (ruler_element == null) {
@@ -1262,7 +1264,7 @@ function html_entities(string) {
 		return String(string).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// Passar o parâmetro offset para esta função
+// Passar o parï¿½metro offset para esta funï¿½ï¿½o
 function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
 		headers_msgs.subject = html_entities(headers_msgs.subject);
 		if (typeof offsetToGMT == 'undefined')
@@ -1277,7 +1279,7 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
 
 		tr_element.msg_sample = "";
         tr_element.tip = "";
-		
+
 		if(headers_msgs.msg_sample && preferences.preview_msg_subject == "1" && headers_msgs.msg_sample.body !== "")
 		{
 			if (cssForResizing) //Colunas redimensionaveis - nao trunca
@@ -1306,11 +1308,11 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
                     /*problema no decode, se ele for utilizado, nao lista as mensagens -> CORRIGIDO em mail_archiver.js*/
                     //if (headers_msgs.msg_sample.body.length > 0)
 				    tr_element.msg_sample = Base64.decode(headers_msgs.msg_sample.body).substr(0,180) + "..."; //trecho do body que sera exibido com o assunto; //blabla
-			        tr_element.msg_sample = html_entities(tr_element.msg_sample); 
+			        tr_element.msg_sample = html_entities(tr_element.msg_sample);
                  } else {
 				    //if (headers_msgs.msg_sample.body.length > 0)
 					tr_element.msg_sample = Base64.decode(headers_msgs.msg_sample.body).substr(0,120) + "..."; //trecho do body que sera exibido com o assunto;
-		            tr_element.msg_sample = html_entities(tr_element.msg_sample);  
+		            tr_element.msg_sample = html_entities(tr_element.msg_sample);
                   }
             }
         }
@@ -1318,7 +1320,7 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
         if(headers_msgs.msg_sample && preferences.preview_msg_tip == "1" && headers_msgs.msg_sample.body !== "") {
             tr_element.tip = Base64.decode(headers_msgs.msg_sample.body).substr(3,300) + "..."; //trecho do body que sera exibido no tool-tip;
         }
-		
+
 		if ((headers_msgs.Unseen == 'U') || (headers_msgs.Recent == 'N')){
 			if ((headers_msgs.Flagged == 'F') || ( headers_msgs.Importance !== undefined && headers_msgs.Importance.toLowerCase().indexOf("high")!=-1 ) )
 				add_className(tr_element, 'flagged_msg');
@@ -1340,7 +1342,7 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
 		chk_box_element.setAttribute("type", "checkbox");
 		chk_box_element.className = "checkbox";
 		chk_box_element.setAttribute("id", "check_box_message_"+headers_msgs.msg_number);
-		
+
 		$(chk_box_element).click(function(e){
 			updateSelectedMsgs($(this).is(':checked'),headers_msgs.msg_number);
 			$(".selected_shortcut_msg").removeClass("current_selected_shortcut_msg selected_shortcut_msg");
@@ -1355,7 +1357,18 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
 
 		td_element2 = createTDElement(0,1,"td_msg");
 		if (headers_msgs.attachment && (headers_msgs.attachment == 1 || headers_msgs.attachment.number_attachments> 0))
-			$(td_element2).addClass('expressomail-sprites-clip');
+		{
+			// coloca o icone de calendario se aplicavel; caso contrario
+			// considera um anexo generico
+			if (headers_msgs.Calendar)
+			{
+				$(td_element2).addClass('expressomail-sprites-calendar');
+			}
+			else
+			{
+				$(td_element2).addClass('expressomail-sprites-clip');
+			}
+		}
 
 		td_element21 = createTDElement(0,2,"td_msg",null,"td_message_answered_"+headers_msgs.msg_number);
 
@@ -1395,7 +1408,7 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
 
 		td_element23 = createTDElement(0,4,"td_msg",null,"td_message_important_"+headers_msgs.msg_number);
 
-		if ( (headers_msgs.Flagged == 'F') || ( headers_msgs.Importance !== undefined && headers_msgs.Importance.toLowerCase().indexOf("high") != -1 )) 
+		if ( (headers_msgs.Flagged == 'F') || ( headers_msgs.Importance !== undefined && headers_msgs.Importance.toLowerCase().indexOf("high") != -1 ))
 		{
 			td_element23.innerHTML = "<img src ='templates/"+template+"/images/important.png' title='"+get_lang('Important')+"'>";
 		}
@@ -1425,32 +1438,32 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
 		test = true;
 		if(msg_folder.indexOf(special_folders['Sent']) !=-1 ||msg_folder.indexOf(preferences.save_in_folder) !=-1 || msg_folder.replace("local_","INBOX"+cyrus_delimiter).indexOf(preferences.save_in_folder) !=-1)
 		    test = false;
-		
+
 		if( (msg_folder.indexOf(special_folders['Sent']) !=-1) && (headers_msgs.from != undefined) && headers_msgs.from.email.toLowerCase() == Element("user_email").value.toLowerCase() && (preferences.from_to_sent == "1") && !(msg_folder.substr(0,5) == "user/"))
 		{
-			td_element3.onmouseover = function () { 
-					var title_to = ''; 
-					$.each(headers_msgs.to, function(index, value) { 
-							if(index == (headers_msgs.to.length - 1)){ 
-									title_to = title_to + value.email; 
-							} 
-							else { 
-									title_to = title_to + value.email + ', '; 
-							} 
-					}); 
-					this.title = title_to; 
+			td_element3.onmouseover = function () {
+					var title_to = '';
+					$.each(headers_msgs.to, function(index, value) {
+							if(index == (headers_msgs.to.length - 1)){
+									title_to = title_to + value.email;
+							}
+							else {
+									title_to = title_to + value.email + ', ';
+							}
+					});
+					this.title = title_to;
 			};
-			
+
 			if (headers_msgs.Draft == 'X')
 				td_element3.innerHTML += "<span style=\"color:red\">("+get_lang("Draft")+") </span>";
 			else{
-				if(headers_msgs.to && headers_msgs.to[0] && headers_msgs.to[0].email != null && headers_msgs.to[0].email.toLowerCase() != Element("user_email").value) 
+				if(headers_msgs.to && headers_msgs.to[0] && headers_msgs.to[0].email != null && headers_msgs.to[0].email.toLowerCase() != Element("user_email").value)
 					td_element24.innerHTML = "<img align='center' src ='templates/"+template+"/images/sent.gif' title='"+get_lang('Sent')+"'>";
 
 				if (headers_msgs.to && headers_msgs.to[0]) {
-					if (headers_msgs.to[0].name != null) 
-							td_element3.innerHTML += headers_msgs.to[0].name; 
-					else if(headers_msgs.to[0].email != null) { 
+					if (headers_msgs.to[0].name != null)
+							td_element3.innerHTML += headers_msgs.to[0].name;
+					else if(headers_msgs.to[0].email != null) {
 							td_element3.innerHTML += headers_msgs.to[0].email;
 					}
 					else {
@@ -1474,17 +1487,17 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
 				current = get_current_folder();
 				if ((preferences.from_to_sent == "1") && (current.substr(current.length - folder.length, folder.length) == folder)){
 					spanSender.onmouseover = function()
-					{ 
-						var title_to = ''; 
-						$.each(headers_msgs.to, function(index, value) { 
-								if(index == (headers_msgs.to.length - 1)){ 
-										title_to = title_to + value.email; 
-								} 
-								else { 
-										title_to = title_to + value.email + ', '; 
-								} 
-						}); 
-						this.title = title_to; 
+					{
+						var title_to = '';
+						$.each(headers_msgs.to, function(index, value) {
+								if(index == (headers_msgs.to.length - 1)){
+										title_to = title_to + value.email;
+								}
+								else {
+										title_to = title_to + value.email + ', ';
+								}
+						});
+						this.title = title_to;
 					};
 					if (headers_msgs.to && headers_msgs.to[0] != null) {
 						if (headers_msgs.to[0].name != null){
@@ -1536,18 +1549,18 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
 		if(!is_ie){
 			td_element4.innerHTML += "</a>";
 		}
-		
+
 		td_element5 = createTDElement(0,10,"td_msg td_resizable","center");
 		td_element5.onclick = _onclick;
-		
+
 		td_element27 = createTDElement(0,7,"td_msg",null,"td_message_labels_"+headers_msgs.msg_number);
 		$(td_element27).addClass("td-label");
 
 		if (headers_msgs.labels) {
 			$(td_element27).css({'background-image':'url(../prototype/modules/mail/img/mail-sprites.png)','background-position': '0 -1706px',"margin-left":"0",'margin-top':'3px','background-repeat':'no-repeat'});
-			updateLabelsColumn(headers_msgs);		
+			updateLabelsColumn(headers_msgs);
 		}
-		
+
 		  td_element26 = createTDElement(0,6,"td_msg","center","td_message_followup_"+headers_msgs.msg_number);
 		  $(td_element26).addClass("td-followup-flag");
 
@@ -1577,53 +1590,53 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
 		/**
 		 * Clique para aplicar sinalizador
 		 */
-		$(td_element26).click(function() {	
+		$(td_element26).click(function() {
 			var messageClickedId = $(this).attr('id').match(/td_message_followup_([\d]+)/)[1];
 
-            var loading = $('#td_message_followup_' + messageClickedId + ', ' + 
+            var loading = $('#td_message_followup_' + messageClickedId + ', ' +
             'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited")
             .find('img[alt=Carregando]');
 
 
-            //Verificar se está carregando a bandeira.
-            //Caso esteja ele sai da função até que seja carregado. 
+            //Verificar se estï¿½ carregando a bandeira.
+            //Caso esteja ele sai da funï¿½ï¿½o atï¿½ que seja carregado.
             if( loading.length ) {
                 return false;
             }
 
 			var followupColor = $('#td_message_followup_' + messageClickedId).find(".flag-edited").css('backgroundColor');
-			
-			$('#td_message_followup_' + messageClickedId + ', ' + 
+
+			$('#td_message_followup_' + messageClickedId + ', ' +
 			'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited")
 			.html('<img alt="Carregando" title="Carregando" style="margin-left:-3px; margin-top:-4px; width:13px; height:13px;" src="../prototype/modules/mail/img/ajax-loader.gif" />');
-			
-			$('#td_message_followup_' + messageClickedId + ', ' + 
+
+			$('#td_message_followup_' + messageClickedId + ', ' +
 			'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited").css("background", "transparent");
-			
+
 
 			/**
 				* Hack:
-				* headers_msgs.followupflagged.id não vai funcionar porque já foi feito DataLayer.commit()
+				* headers_msgs.followupflagged.id nï¿½o vai funcionar porque jï¿½ foi feito DataLayer.commit()
 				* por isso o id deve ser obtido do banco
-				* também para verificar se há ou não sinalizador nesta mensagem
+				* tambï¿½m para verificar se hï¿½ ou nï¿½o sinalizador nesta mensagem
 			*/
 
 			DataLayer.remove('followupflagged', false);
 			var flagged = DataLayer.get('followupflagged', {filter: [
-				'AND', 
-				['=', 'messageNumber', messageClickedId], 
+				'AND',
+				['=', 'messageNumber', messageClickedId],
 				['=', 'folderName', msg_folder]
 			]});
-			
+
 			if (!flagged) {
 				/**
 				 * Aplica followupflag de Acompanhamento
 				 */
 				headers_msgs.followupflagged = {
 					uid : User.me.id,
-					folderName : msg_folder, 
-					messageNumber : messageClickedId, 
-					alarmTime : false, 
+					folderName : msg_folder,
+					messageNumber : messageClickedId,
+					alarmTime : false,
 					backgroundColor : '#FF2016',
 					followupflagId: '1'
 				};
@@ -1635,32 +1648,32 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
 							fail = value;
 						}
 					});
-				
-					$('#td_message_followup_' + messageClickedId + ', ' + 
+
+					$('#td_message_followup_' + messageClickedId + ', ' +
 					'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited")
 					.css({"background-image":"url(../prototype/modules/mail/img/flagEditor.png)"})
 					.find('img').remove();
-					
-					
+
+
 					if(fail != 'success'){
-					    var msgFlag =  $('#td_message_followup_' + messageClickedId + ', ' + 
+					    var msgFlag =  $('#td_message_followup_' + messageClickedId + ', ' +
                         'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited").css("background", "#CCCCCC");
 
                         msgFlag.find('img').remove();
-                        
+
                         //Insere a imagem da flag quando ocorre erro ao marcar a msg
                         msgFlag.append("<img src='../prototype/modules/mail/img/flagEditor.png'/>");
 
                         MsgsCallbackFollowupflag[fail]();
 					}else{
-					    $('#td_message_followup_' + messageClickedId + ', ' + 
+					    $('#td_message_followup_' + messageClickedId + ', ' +
 					    'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).attr('title', get_lang('Follow up')).find(".flag-edited").css("background", headers_msgs.followupflagged.backgroundColor)
 						.append("<img src='../prototype/modules/mail/img/flagEditor.png'/>");
 					    updateCacheFollowupflag(messageClickedId, msg_folder, true);
-					}				
+					}
 				});
-				
-			
+
+
 			} else if (onceOpenedHeadersMessages[msg_folder][messageClickedId]['followupflagged'].followupflag.name == 'Follow up') {
 				/**
 				 * Remove followupflag de Acompanhamento
@@ -1669,44 +1682,44 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
 				DataLayer.remove('followupflagged', flagged[0].id );
 				DataLayer.commit(false, false, function(){
 					updateCacheFollowupflag(messageClickedId, msg_folder, false);
-					$('#td_message_followup_' + messageClickedId + ', ' + 
+					$('#td_message_followup_' + messageClickedId + ', ' +
 					'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited")
 					.find('img').remove();
-					
-					$('#td_message_followup_' + messageClickedId + ', ' + 
+
+					$('#td_message_followup_' + messageClickedId + ', ' +
 					  'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).attr('title', '').find(".flag-edited").css("background", '#CCC');
-				
-					$('#td_message_followup_' + messageClickedId + ', ' + 
+
+					$('#td_message_followup_' + messageClickedId + ', ' +
 						'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited").html('<img src="../prototype/modules/mail/img/flagEditor.png">')
                         .css({"width":"8px","height":"6px"/*"background-image":"url(../prototype/modules/mail/img/flagEditor.png)"*/});
-				});	
+				});
 
 			} else {
-				$('#td_message_followup_' + messageClickedId + ', ' + 
+				$('#td_message_followup_' + messageClickedId + ', ' +
 				'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited")
 				.css("backgroundColor", followupColor)
                 .find('img').remove(); //remove imagem carregando da bandeira
 
                 $('#td_message_followup_' + messageClickedId).find('.flag-edited').append("<img src='../prototype/modules/mail/img/flagEditor.png'/>");
 
-				
+
 			   //Pega id do checkbox
                var id = $(tr_element).addClass('selected_msg').find(':checkbox').attr('id');
-                
-                //Verifica se o checkbox está selecionado
+
+                //Verifica se o checkbox estï¿½ selecionado
                 if($('#' + id).attr('checked') != 'checked')
                     $(tr_element).addClass('selected_msg').find(':checkbox').trigger('click');
-				
+
 				/**
-				 * Hack - Força a atualização da seleção da mensagem, devido a problema na 
-				 * function de seleção atribuida ao evento onclick do checkbox
+				 * Hack - Forï¿½a a atualizaï¿½ï¿½o da seleï¿½ï¿½o da mensagem, devido a problema na
+				 * function de seleï¿½ï¿½o atribuida ao evento onclick do checkbox
 				 */
 				updateSelectedMsgs(true,messageClickedId);
-				
+
 				configureFollowupflag();
 			}
-		});	
-		
+		});
+
 		var norm = function (arg) {return (arg < 10 ? '0'+arg : arg);};
 		var weekDays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 
@@ -1735,7 +1748,7 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
                         date_msg = new Date(udate_local);
                     }
 
-		if (preferences.show_date_numerical == 0 || typeof(preferences.show_date_numerical) == 'undefined') { 	
+		if (preferences.show_date_numerical == 0 || typeof(preferences.show_date_numerical) == 'undefined') {
 			if (today.getTime() - date_msg.getTime() < 86400000)
 				td_element5.innerHTML = norm(date_msg.getHours()) + ':' + norm(date_msg.getMinutes());
 			else
@@ -1744,7 +1757,7 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
 				else if (today.getTime() - date_msg.getTime() < 259200000)
 					td_element5.innerHTML = get_lang(weekDays[date_msg.getDay()]);
 				else{
-					td_element5.innerHTML = norm(date_msg.getDate()) + '/' + norm(date_msg.getMonth()+1) + '/' +date_msg.getFullYear();					
+					td_element5.innerHTML = norm(date_msg.getDate()) + '/' + norm(date_msg.getMonth()+1) + '/' +date_msg.getFullYear();
 					td_element5.title = norm(date_msg.getDate()) + '/' + norm(date_msg.getMonth()+1) + '/' +date_msg.getFullYear();
 					td_element5.alt = td_element5.title;
 				}
@@ -1878,7 +1891,7 @@ function draw_message(info_msg, ID){
 	if(info_msg.Unseen == "U" && preferences['use_alert_filter_criteria'] == "1"){
 		$.each(fromRules, function(index, value) {
 			if(value == info_msg.msg_folder){
-				cExecute ("$this.imap_functions.removeFlagMessagesFilter&folder="+info_msg.msg_folder+"&msg_number="+info_msg.msg_number, function(){}); 
+				cExecute ("$this.imap_functions.removeFlagMessagesFilter&folder="+info_msg.msg_folder+"&msg_number="+info_msg.msg_number, function(){});
 				return false;
 			}
 		});
@@ -1906,7 +1919,7 @@ function draw_message(info_msg, ID){
         var folder_id = ID.match(/\d+/)[0];
         var folder;
 
-        //Correção para fazer funcionar e-mails assinados no formato encapsulado.
+        //Correï¿½ï¿½o para fazer funcionar e-mails assinados no formato encapsulado.
        // folder_id = info_msg.original_ID ? info_msg.original_ID: info_msg.msg_number;
         //if ((folder = document.getElementById(info_msg.msg_number)) == null)
 	if ((folder = Element(info_msg.original_ID)) == null)
@@ -1938,27 +1951,27 @@ function draw_message(info_msg, ID){
 				}
 			};
 		}
-		/*Ultima mensagem de cada página, exceto a ultima*/
+		/*Ultima mensagem de cada pï¿½gina, exceto a ultima*/
         else if( (current_page < total_pages) && !info_msg.msg_number.match("s[0-9]+") ){
-		   
+
 		   img_next_msg.onclick = function()
 			{
 
 			   current_page++;
 			   var tot_msgs = parseInt(Element("tot_m").innerHTML);
 			   var range_begin = preferences.max_email_per_page*( current_page - 1 ) + 1;
-			   var range_end; 
-			   if ( range_begin + parseInt(preferences.max_email_per_page - 1) > tot_msgs ) 
+			   var range_end;
+			   if ( range_begin + parseInt(preferences.max_email_per_page - 1) > tot_msgs )
 			        range_end = tot_msgs;
-			   else     
-			        range_end = range_begin + parseInt(preferences.max_email_per_page  - 1);  
+			   else
+			        range_end = range_begin + parseInt(preferences.max_email_per_page  - 1);
 			   var creatBoxProximo = function (data){
 					    draw_box(data, get_current_folder());
 					    firstRow();
-			        };      			  
+			        };
 		       proxy_mensagens.messages_list(get_current_folder(),range_begin,range_end,sort_box_type,search_box_type,sort_box_reverse,'','', creatBoxProximo);
-			
-			};	   
+
+			};
 		}
 		else
 		{
@@ -1971,7 +1984,7 @@ function draw_message(info_msg, ID){
 	{
 		img_next_msg.src = "./templates/"+template+"/images/down.gray.button.png";
 		img_next_msg.style.cursor = 'default';
-		// testa se a mensagem e local 
+		// testa se a mensagem e local
  	    if (!proxy_mensagens.is_local_folder(get_current_folder()) && !(info_msg.msg_folder == "INBOX" + cyrus_delimiter + "decifradas")) // testa se a mensagem e local
 		{
 			img_next_msg.onclick = function()
@@ -2019,20 +2032,20 @@ function draw_message(info_msg, ID){
 				}
 			};
 		}
-		//primeira mensagem de cada página, exceto a primeira
+		//primeira mensagem de cada pï¿½gina, exceto a primeira
 		else if(current_page > 1){
-		      
+
 		      img_previous_msg.onclick = function()
 		      {
-			     
+
 			     current_page--;
-			     var range_begin = (current_page - 1)*preferences.max_email_per_page + 1; 
-			     var range_end = current_page*preferences.max_email_per_page;         			     
+			     var range_begin = (current_page - 1)*preferences.max_email_per_page + 1;
+			     var range_end = current_page*preferences.max_email_per_page;
 			     var creatBoxAnterior = function (data){
 				    	  draw_box(data, get_current_folder());
 					      lastRow();
-					 };      			  
-		         proxy_mensagens.messages_list(get_current_folder(),range_begin,range_end,sort_box_type,search_box_type,sort_box_reverse,'','', creatBoxAnterior);	         
+					 };
+		         proxy_mensagens.messages_list(get_current_folder(),range_begin,range_end,sort_box_type,search_box_type,sort_box_reverse,'','', creatBoxAnterior);
 	          };
 	    }
 		else
@@ -2045,7 +2058,7 @@ function draw_message(info_msg, ID){
 	{
 		img_previous_msg.src = "./templates/"+template+"/images/up.gray.button.png";
 		img_previous_msg.style.cursor = 'default';
-		// testa se a mensagem e local 
+		// testa se a mensagem e local
  	    if (!proxy_mensagens.is_local_folder(get_current_folder()) && !(info_msg.msg_folder == "INBOX" + cyrus_delimiter + "decifradas")) // testa se a mensagem e local
 		{
 			img_previous_msg.onclick = function()
@@ -2103,7 +2116,7 @@ function draw_message(info_msg, ID){
             $("#option_hide_more_"+ID).click();
         });
         td.innerHTML = "&nbsp&nbsp" + td.innerHTML;
-    }    
+    }
     if (typeof(info_msg.signature) == 'string')
 	{
 		if (info_msg.signature != "void")
@@ -2128,7 +2141,7 @@ function draw_message(info_msg, ID){
 	options.width = "30%";
 	options.setAttribute("noWrap","true");
 	options.style.fontSize = "10px";
-		
+
 		//BEGIN: DESENHA MOSTRA DETALHES, OCULTAR DETALHES
 	var option_hide_more = document.createElement("SPAN");
 	option_hide_more.className = 'message_options';
@@ -2151,7 +2164,7 @@ function draw_message(info_msg, ID){
 		resizeWindow();
 	};
 		//END: DESENHA MOSTRA DETALHES, OCULTAR DETALHES
-		
+
 		//OPCAO PARA MARCAR COMO
 		var option_mark_as = document.createElement("SPAN");
 		option_mark_as.innerHTML = "<b>"+get_lang('Mark as')+"</b>";
@@ -2185,7 +2198,7 @@ function draw_message(info_msg, ID){
 	option_mark_as_unseen.innerHTML = get_lang("Unseen");
 
 	var option_mark_important = document.createElement("SPAN");
-		option_mark_important.className = 'reply_options';		
+		option_mark_important.className = 'reply_options';
 		option_mark_important.onmouseover=function () {this.className='reply_options_active';};
 		option_mark_important.onmouseout=function () {this.className='reply_options'};
 
@@ -2208,13 +2221,13 @@ function draw_message(info_msg, ID){
 		//option_mark.appendChild(option_mark_as_unseen);
 		//option_mark.appendChild(option_mark_important);
 
-		
+
 	option_hide_more.innerHTML = get_lang('Show details');
 		option_hide_more.title = (preferences.use_shortcuts == '1') ? get_lang('Shortcut: %1', 'O') : get_lang('Show details');
-	
+
 		var space3 = document.createElement("SPAN");
 		space3.innerHTML = '&nbsp;|&nbsp;';
-		
+
 		var option_mark_as_options = document.createElement('IMG');
 		option_mark_as_options.id = 'msg_opt_mark_options_'+ID;
 		option_mark_as_options.src = '../expressoMail/templates/default/images/down.png';
@@ -2249,10 +2262,10 @@ function draw_message(info_msg, ID){
 				Element('tr_other_mark_options_'+ID).style.display = 'none';
 			}
 		};
-		
+
 	options.appendChild(option_hide_more);
 		options.appendChild(space3);
-		options.appendChild(option_mark_as_options);				
+		options.appendChild(option_mark_as_options);
 		options.appendChild(option_mark_as);
 		//FIM OPCAO PARA MARCAR COMO
 
@@ -2285,7 +2298,7 @@ function draw_message(info_msg, ID){
 			}
 		};
 		option_more.innerHTML = get_lang('More Actions');
-		
+
 		//CRIA IMG DE MAIS ACOES
 		var option_more_options = document.createElement('IMG');
 		option_more_options.id = 'msg_opt_more_options_'+ID;
@@ -2309,7 +2322,7 @@ function draw_message(info_msg, ID){
 		};
 		option_more_options.onclick = function(){
 			verifyOption('tr_other_more_options_',ID);
-			
+
 			if (this.value != 'hide'){
 				this.value = 'hide';
 				option_more_options.src= '../expressoMail/templates/default/images/pressed.png';
@@ -2326,15 +2339,15 @@ function draw_message(info_msg, ID){
 		options.appendChild(option_more_options);
 		options.appendChild(option_more);
 		//FIM OPCAO PARA MAIS ACOES
-		
+
 		//OPCAO PARA RESPONDER
 	var option_reply = document.createElement("SPAN");
 	option_reply.id = 'msg_opt_reply_'+ID;
 	option_reply.className = 'message_options';
 	option_reply.onclick = function(){
-		
+
 		new_message(($.cookie("option_reply")) ? $.cookie("option_reply") : "reply_with_history", ID);
-		
+
 	};
 	option_reply.innerHTML = get_lang('Reply');
 	option_reply.onmouseover=function () {this.className='message_options_active';};
@@ -2378,7 +2391,7 @@ function draw_message(info_msg, ID){
 	options.appendChild(option_reply_options);
 	options.appendChild(option_reply);
 		//FIM OPCAO PARA RESPONDER
-		
+
 		//OPCAO PARA ENCAMINHAR
 		var option_forward = document.createElement("SPAN");
 		option_forward.id = 'msg_opt_forward_'+ID;
@@ -2388,14 +2401,14 @@ function draw_message(info_msg, ID){
 		option_forward.onmouseover=function () {this.className='message_options_active';};
         option_forward.onmouseout=function () {this.className='message_options'};
 		option_forward.title = (preferences.use_shortcuts == '1') ? get_lang('Shortcut: %1', 'E') : get_lang('Forward');
-		
+
 		var space9 = document.createElement("SPAN");
 		space9.innerHTML = '&nbsp;|&nbsp;';
-		
+
 		options.appendChild(space9);
 		options.appendChild(option_forward);
 		//FIM DA OPCAO PARA ENCAMINHAR
-		
+
 		//OPCAO PARA DELETAR
 		var option_delete = document.createElement("SPAN");
 		option_delete.id = 'msg_opt_delete_'+ID;
@@ -2408,7 +2421,7 @@ function draw_message(info_msg, ID){
 
 		var space6 = document.createElement("SPAN");
 		space6.innerHTML = '&nbsp;|&nbsp;';
-		
+
 		options.appendChild(space6);
 		options.appendChild(option_delete);
 		//FIM OPCAO PARA DELETAR
@@ -2423,7 +2436,7 @@ function draw_message(info_msg, ID){
 	var tr_other_options = document.createElement("TR");
 		var tr_other_mark_options = document.createElement("TR");
 		var tr_other_more_options = document.createElement("TR");
-		
+
 		tr_other_mark_options.id = 'tr_other_mark_options_' + ID;
 		tr_other_mark_options.style.display = 'none';
 		tr_other_mark_options.style.backgroundColor = '#205C8E';
@@ -2432,12 +2445,12 @@ function draw_message(info_msg, ID){
 		tr_other_options.style.backgroundColor = '#205C8E';
 		tr_other_more_options.id = 'tr_other_more_options_' + ID;
 		tr_other_more_options.style.display = 'none';
-		tr_other_more_options.style.backgroundColor = '#205C8E';		
+		tr_other_more_options.style.backgroundColor = '#205C8E';
 
 	var td_other_options = document.createElement("TD");
 		var td_other_mark_options = document.createElement("TD");
 		var td_other_more_options = document.createElement("TD");
-		
+
 	td_other_options.colSpan = '3';
 		td_other_mark_options.colSpan = '3';
 		td_other_more_options.colSpan = '3';
@@ -2449,27 +2462,27 @@ function draw_message(info_msg, ID){
 		//var option_mark_as_unseen = '<span class="message_options" onclick="proxy_mensagens.proxy_set_messages_flag(\'unseen\','+info_msg.msg_number+');write_msg(\''+get_lang('Message marked as ')+get_lang("Unseen")+'.\');">'+get_lang("Unseen")+'</span>, ';
 		//var option_mark_as_important			= '<span class="message_options" onclick="proxy_mensagens.proxy_set_messages_flag(\'flagged\','+info_msg.msg_number+');write_msg(\''+get_lang('Message marked as ')+get_lang("Important")+'.\');">'+get_lang("Important")+'</span>, ';
 		//var option_mark_as_normal				= '<span class="message_options" onclick="proxy_mensagens.proxy_set_messages_flag(\'unflagged\','+info_msg.msg_number+');write_msg(\''+get_lang('Message marked as ')+get_lang("Normal")+'.\');">'+get_lang("Normal")+'</span> | ';
-		var block_user = '<span onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options" onclick ="block_user_email(\''+info_msg.from.email+'\');">'+get_lang("Block Sender")+'</span> | ';	
+		var block_user = '<span onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options" onclick ="block_user_email(\''+info_msg.from.email+'\');">'+get_lang("Block Sender")+'</span> | ';
 		//var option_forward = '<span onclick="new_message(\'forward\',\''+ ID+'\');" onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options">'+get_lang("Forward")+'</span> | ';
 		var option_move	= '<span onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options" onclick=wfolders.makeWindow("'+ID+'","move_to");>'+get_lang("Move")+'</span> | ';
 		var option_print = '<span onclick="print_all()" onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options">'+get_lang("Print")+'</span> | ';
 		var option_export = '<span onclick="proxy_mensagens.export_all_messages()" onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options">'+get_lang("Export")+'</span> | ';
-		var report_error = '<span onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options" onclick=reports_window("'+currentTab+'");>'+get_lang("Truncated message?")+'</span> | '; 
-		// Opção do menu 'Mais Ações' para criar filtro a partir da mensagem aberta:  
-		var option_create_filter = '<span onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options" onclick=filter_from_msg(onceOpenedHeadersMessages[\'' + html_entities(info_msg.msg_folder) + '\'][' + info_msg.msg_number + ']);>' + get_lang("Create filter from message") + '</span> | '; 
+		var report_error = '<span onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options" onclick=reports_window("'+currentTab+'");>'+get_lang("Truncated message?")+'</span> | ';
+		// Opï¿½ï¿½o do menu 'Mais Aï¿½ï¿½es' para criar filtro a partir da mensagem aberta:
+		var option_create_filter = '<span onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options" onclick=filter_from_msg(onceOpenedHeadersMessages[\'' + html_entities(info_msg.msg_folder) + '\'][' + info_msg.msg_number + ']);>' + get_lang("Create filter from message") + '</span> | ';
 		div_other_more_options.innerHTML += option_create_filter + option_move + option_print + option_export + block_user +  report_error;
-		
-		
-		// CRIAÇÃO DE OPÇÕES DE RESPONDER MENSAGEM
+
+
+		// CRIAï¿½ï¿½O DE OPï¿½ï¿½ES DE RESPONDER MENSAGEM
 		var space_replay1 = document.createElement('SPAN');
 		space_replay1.innerHTML = '&nbsp;|&nbsp;';
-		
+
 		var space_replay2 = document.createElement('SPAN');
 		space_replay2.innerHTML = '&nbsp;|&nbsp;';
-		
+
 		var space_replay3 = document.createElement('SPAN');
 		space_replay3.innerHTML = '&nbsp;|&nbsp;';
-		
+
 		// RESPONDER A TODOS
 		var option_reply_to_all = document.createElement('SPAN');
 		option_reply_to_all.onmouseover = function () {this.className = "reply_options_active";};
@@ -2481,7 +2494,7 @@ function draw_message(info_msg, ID){
 		};
 		option_reply_to_all.title = (preferences.use_shortcuts == '1') ? get_lang('Shortcut: %1', 'T') : '';
 		option_reply_to_all.innerHTML = get_lang("Reply to all");
-		
+
 		// RESPONDER SEM HISTORICO
 		var option_reply_without_history = document.createElement('SPAN');
 		option_reply_without_history.onmouseover = function () {this.className = "reply_options_active";};
@@ -2492,7 +2505,7 @@ function draw_message(info_msg, ID){
 			$.cookie ("option_reply", "reply_without_history", { expires: 5});
 		};
 		option_reply_without_history.innerHTML = get_lang("Reply without history");
-		
+
 		// RESPONDER A TODOS SEM HISTORICO
 		var option_reply_to_all_without_history = document.createElement('SPAN');
 		option_reply_to_all_without_history.onmouseover = function () {this.className = "reply_options_active";};
@@ -2503,8 +2516,8 @@ function draw_message(info_msg, ID){
 			$.cookie ("option_reply", "reply_to_all_without_history", { expires: 5});
 		};
 		option_reply_to_all_without_history.innerHTML = get_lang("Reply to all without history");
-		
-		// RESPONDER COM HISTÓRICO
+
+		// RESPONDER COM HISTï¿½RICO
 		var option_reply_with_history = document.createElement('SPAN');
 		option_reply_with_history.onmouseover = function () {this.className = "reply_options_active";};
 		option_reply_with_history.onmouseout = function () {this.className= "reply_options";};
@@ -2514,8 +2527,8 @@ function draw_message(info_msg, ID){
 			$.cookie ("option_reply", "reply_with_history", { expires: 5});
 		};
 		option_reply_with_history.innerHTML = get_lang("Reply with history");
-		
-		// APENDAR OPÇÕES DE RESPONDER
+
+		// APENDAR OPï¿½ï¿½ES DE RESPONDER
 		div_other_options.appendChild(option_reply_to_all);
 		div_other_options.appendChild(space_replay1);
 		div_other_options.appendChild(option_reply_to_all_without_history);
@@ -2534,16 +2547,16 @@ function draw_message(info_msg, ID){
 		}
 		var space5 = document.createElement("SPAN");
 		space5.innerHTML = '&nbsp;|&nbsp;';
-	
+
 		div_other_mark_options.appendChild(option_mark_as_unseen);
 		var space4 = document.createElement("SPAN");
 		space4.innerHTML = '&nbsp;|&nbsp;';
 		div_other_mark_options.appendChild(space4);
-		div_other_mark_options.appendChild(option_mark_important); 
+		div_other_mark_options.appendChild(option_mark_important);
 		var space7 = document.createElement("SPAN");
 		space7.innerHTML = '&nbsp;|&nbsp;';
 		div_other_mark_options.appendChild(space7);
-	
+
 	td_other_options.align = 'right';
 	td_other_options.style.paddingTop = '3px';
 	td_other_options.appendChild(div_other_options);
@@ -2551,7 +2564,7 @@ function draw_message(info_msg, ID){
 		td_other_mark_options.align = 'right';
 		td_other_mark_options.style.paddingTop = '3px';
 		td_other_mark_options.appendChild(div_other_mark_options);
-		
+
 		td_other_more_options.align = 'right';
 		td_other_more_options.style.paddingTop = '3px';
 		td_other_more_options.appendChild(div_other_more_options);
@@ -2559,10 +2572,10 @@ function draw_message(info_msg, ID){
 
 	tr_other_options.appendChild(td_other_options);
 	tbody_message_options.appendChild(tr_other_options);
-		
+
 		tr_other_more_options.appendChild(td_other_more_options);
 		tbody_message_options.appendChild(tr_other_more_options);
-		
+
 		tr_other_mark_options.appendChild(td_other_mark_options);
 		tbody_message_options.appendChild(tr_other_mark_options);
 	////////// END OTHER OPTIONS ////////////////
@@ -2709,7 +2722,7 @@ function draw_message(info_msg, ID){
 	}else{
 		table_message_others_options.className = "table_message_options";
 	}
-	
+
 	var tbody_message_others_options = document.createElement("TBODY");
 	var tr1 = document.createElement("TR");
 	tr1.className = "tr_message_header";
@@ -2785,7 +2798,7 @@ function draw_message(info_msg, ID){
 		reply_to_values.type = "HIDDEN";
 		reply_to_values.value = info_msg.reply_to; //Veio do IMAP, sem images nem links.
 		$.each(break_comma(info_msg.reply_to), function(index, value){
-			reply_to.innerHTML += draw_plugin_cc(ID, value);	
+			reply_to.innerHTML += draw_plugin_cc(ID, value);
 		})
 		reply_to.className = "header_message_field";
 		tr11.appendChild(td11);
@@ -2954,7 +2967,7 @@ function draw_message(info_msg, ID){
 	td5.innerHTML = get_lang("Subject");
 	var subject = document.createElement("TD");
 	subject.id = "subject_"+ID;
-	subject.innerHTML = html_entities(info_msg.subject); 
+	subject.innerHTML = html_entities(info_msg.subject);
 	subject.className = "header_message_field";
 	if($("#expressoCalendarid")[0]){
 		var new_task_logo = document.createElement("IMG");
@@ -2965,13 +2978,13 @@ function draw_message(info_msg, ID){
 		new_task_logo.style.marginLeft = "5px";
 		new_task_logo.onclick = function(){
 		import_implements_calendar();
-		
-		
+
+
 			DataLayer.dispatchPath = "../prototype/";
 			var path = "../prototype/modules/calendar/";
 			taskDetails(decodeCreateSchedulable('task', ID), true, path, true);
 		}
-		
+
 		var new_event_logo = document.createElement("IMG");
 		new_event_logo.title = "Criar evento a partir deste email";
 		new_event_logo.alt = "Criar evento a partir deste email";
@@ -2981,8 +2994,8 @@ function draw_message(info_msg, ID){
 		new_event_logo.style.marginLeft = "5px";
 		new_event_logo.onclick = function(){
 		import_implements_calendar();
-		
-		
+
+
 			DataLayer.dispatchPath = "../prototype/";
 			var path = "../prototype/modules/calendar/";
 
@@ -2995,18 +3008,18 @@ function draw_message(info_msg, ID){
 	tr5.appendChild(subject);
 	tbody_message_others_options.appendChild(tr5);
 	//k!
-	
-	
+
+
 	var update_labeleds_msg = function(){
-		//TODO Mudar quando API abstrair atualizações no cache
+		//TODO Mudar quando API abstrair atualizaï¿½ï¿½es no cache
 		DataLayer.remove('labeled', false);
 		//DataLayer.get('labeled');
 		var labels = DataLayer.get("labeled", {filter: [
 				'AND',
-					['=', 'folderName', current_folder], 
-					['=','messageNumber',folder_id]], 
+					['=', 'folderName', current_folder],
+					['=','messageNumber',folder_id]],
 				criteria : {deepness: 2}} );
-		
+
 		if(labels.length != 0){
 			var tr8 = document.createElement("TR");
 			tr8.className = "tr_message_header";
@@ -3014,7 +3027,7 @@ function draw_message(info_msg, ID){
 			td8.innerHTML = get_lang("Labels: ");
 			var markers = document.createElement("TD");
 			markers.id = "markers_"+ID;
-			
+
 			for(var i=0; i<labels.length; i++){
 				fontColor = labels[i].label.fontColor;
 				borderColor = labels[i].label.borderColor;
@@ -3022,11 +3035,11 @@ function draw_message(info_msg, ID){
 				nameLabel = labels[i].label.name;
 				id = labels[i].id;
 				markers.innerHTML+= "<div  style='height: 15px; background:"+backgroundColor+"; float: left; -webkit-border-radius: 3px; -moz-border-radius: 3px; margin:0 0 1px 1px; border: 1px solid "+borderColor+"'><span style='color: "+fontColor+"; margin: 5px;'>"+nameLabel+"</span><span class='removeLabeledMsg' id='"+id+"' title='"+get_lang("Remove Label")+"'>x</span></div>";
-				
+
 			}
 			$(markers).find('span.removeLabeledMsg').click(function(event){
 				var id_labeled = $(event.target).attr("id");
-				//TODO Mudar quando API abstrair atualizações no cache
+				//TODO Mudar quando API abstrair atualizaï¿½ï¿½es no cache
 				//DataLayer.remove('labeled', false);
 				//DataLayer.get('labeled');
 				DataLayer.remove('labeled', id_labeled);
@@ -3039,7 +3052,7 @@ function draw_message(info_msg, ID){
 					update_labeleds_msg();
 					tbody_message_others_options.removeChild(tr8);
 				});
-				
+
 			});
 			markers.className = "header_message_field";
 			tr8.appendChild(td8);
@@ -3050,13 +3063,13 @@ function draw_message(info_msg, ID){
 
 	if ( info_msg.attachments && info_msg.attachments.length > 0 )
 	{
-		//Código no padrão expresso 2.2
+		//Cï¿½digo no padrï¿½o expresso 2.2
 	var tr6 = document.createElement("TR");
 		tr6.className = "tr_message_header";
 		var td6 = document.createElement("TD");
 		td6.innerHTML = get_lang("Attachments: ");
-		
-		
+
+
 		var attachments = document.createElement("TD");
 		td6.valign = "top";
 		attachments.align = 'left';
@@ -3088,14 +3101,14 @@ function draw_message(info_msg, ID){
 			var link_attachment = document.createElement("a");
 			link_attachment.setAttribute("class", "type_images");
 			link_attachment.style.display = "block";
-			link_attachment.setAttribute("href", proxy_mensagens.link_anexo(info_msg,i));		
+			link_attachment.setAttribute("href", proxy_mensagens.link_anexo(info_msg,i));
 			link_attachment.innerHTML = url_decode(info_msg.attachments[i].name) + " ("+borkb(info_msg.attachments[i].fsize)+")";
 			//link_attachment.innerHTML += " ("+borkb(info_msg.attachments[i].fsize)+")";
 
 			//k trocar por match???
 			if((url_decode(info_msg.attachments[i].name).indexOf(".ics")!=-1) || (url_decode(info_msg.attachments[i].name).indexOf(".vcard")!=-1))
 			{
-				//Link para importar calendário
+				//Link para importar calendï¿½rio
 				var link_import_attachment = new Image();
 				link_import_attachment.src = "templates/"+template+"/images/new.png";
 				link_import_attachment.setAttribute("onclick","javascript:import_calendar('"+info_msg.msg_folder+"&msg_number="+info_msg.msg_number+"&msg_part="+info_msg.attachments[i].pid+"&idx_file="+i+"&encoding="+info_msg.attachments[i].encoding+"'); return false;");
@@ -3110,7 +3123,7 @@ function draw_message(info_msg, ID){
 
             if((url_decode(info_msg.attachments[i].name).indexOf(".eml") != -1))
 			{
-				//Link para importar calendário
+				//Link para importar calendï¿½rio
 				var link_open_msg = new Image();
 				link_open_msg.src = "templates/"+template+"/images/email.png";
 				//link_open_msg.setAttribute("onclick","javascript:import_calendar('"+info_msg.msg_folder+"&msg_number="+info_msg.msg_number+"&msg_part="+info_msg.attachments[i].pid+"&idx_file="+i+"&encoding="+info_msg.attachments[i].encoding+"'); return false;");
@@ -3121,7 +3134,7 @@ function draw_message(info_msg, ID){
 				link_open_msg.style.cursor = "pointer";
 				link_attachment.appendChild(link_open_msg);
 			}
-		
+
             //link_attachment.innerHTML += '<br/>';
             attachments.appendChild(link_attachment);
             }
@@ -3141,7 +3154,7 @@ function draw_message(info_msg, ID){
 				    var calendarPermission = data.calendar;
 				    data = data.action;
 				}
-					
+
 				switch(parseInt(data)){
 				case 5:
 					$('#content_id_' + currentTab + ' .type_images').append('<img class="loader" src="templates/default/images/ajax-loader.gif" align="top" style="margin-left: 5px; cursor: pointer; display: inline">');
@@ -3153,22 +3166,22 @@ function draw_message(info_msg, ID){
 						}
 					});
 					return;
-					break;		
+					break;
 				case 4:
 					$('#content_id_' + currentTab + ' .type_images').append('<img src="../prototype/modules/mail/img/flagDone.png" align="top" style="margin: 3px 0 0 5px; cursor: pointer; ">');
 					write_msg("Seu evento encontra-se atualizado.");
 					return;
 					break;
 				case 12:
-					write_msg('Este evento não existe mais.');
+					write_msg('Este evento nï¿½o existe mais.');
 					return;
-					break;			
+					break;
 				}
 			}
 		});
 	}
 	//k!!
-	
+
 	var div = document.createElement("DIV");
 	div.id = "div_message_scroll_"+ID;
         div.style.background = 'WHITE';
@@ -3178,9 +3191,9 @@ function draw_message(info_msg, ID){
 		tr.className = "tr_message_header";
 	var td = document.createElement("TD");
 		td.colspan = '2';
-	td.style.fontSize = '10pt'; 
- 	td.style.fontFamily = 'Arial,Verdana'; 
- 	td.style.verticalAlign = 'top'; 
+	td.style.fontSize = '10pt';
+ 	td.style.fontFamily = 'Arial,Verdana';
+ 	td.style.verticalAlign = 'top';
  	td.style.height = '100%';
 	div.appendChild(table_message_others_options);
 	var imgTag = info_msg.body.match(/(<img[^>]*src[^>=]*=['"]?[^'">]*["']?[^>]*>)|(<[^>]*(style[^=>]*=['"][^>]*background(-image)?:[^:;>]*url\()[^>]*>)/gi);
@@ -3198,7 +3211,7 @@ function draw_message(info_msg, ID){
 			{
 				for (var i = 0; i < domains.length; i++)
 				{
-					if (imgTag[j].match(/cid:([\w\d]){5,}/) || imgTag[j].match(/src=\"\.\/inc\/get_archive\.php/g)) 
+					if (imgTag[j].match(/cid:([\w\d]){5,}/) || imgTag[j].match(/src=\"\.\/inc\/get_archive\.php/g))
 					{
 						forbidden = false;
 						continue;
@@ -3236,8 +3249,8 @@ function draw_message(info_msg, ID){
 	tr.className = "tr_message_body";
 	var td = document.createElement("TD");
 	//td.setAttribute("colSpan","2");
-	
-	//Comentado pois estes replaces e a tentativa de remover as tags <span> vazias faz com que seja 
+
+	//Comentado pois estes replaces e a tentativa de remover as tags <span> vazias faz com que seja
 	//eliminado os estilos aplicados no corpo do texto quando utilizado o Firefox.
 	//newBody = newBody.replace("<body","<span");
 	//newBody = newBody.replace("<BODY","<span");
@@ -3252,12 +3265,12 @@ function draw_message(info_msg, ID){
 	var _elements = _body.getElementsByTagName( '*' );
 	for( var i = 0; i < _elements.length; i++ )
 		if ( _elements[ i ].attributes && _elements[ i ].attributes.getNamedItem( 'id' ) )
-			_elements[ i ].attributes.removeNamedItem( 'id' );	
-	
+			_elements[ i ].attributes.removeNamedItem( 'id' );
+
 	div.appendChild( _body );
-	
+
 	 //window.setTimeout(function() { $("#div_message_scroll_"+ID).focus() },250);
-	
+
 	function mailto( link )
 	{
 		var mail = link.href.substr( 7 );
@@ -3277,7 +3290,7 @@ function draw_message(info_msg, ID){
 				var anchor_pattern = "http://"+location.host+location.pathname+"#";
 
 				if ( ( links.item( i ).href.indexOf( 'javascript:' ) !== 0 ) &&
-					(links.item( i ).href.indexOf(anchor_pattern) !== 0) ) //se não for âncora
+					(links.item( i ).href.indexOf(anchor_pattern) !== 0) ) //se nï¿½o for ï¿½ncora
 						links.item( i ).setAttribute( 'target', '_blank' );
 			}
 		}catch(e){
@@ -3287,18 +3300,18 @@ function draw_message(info_msg, ID){
 	//Make the thumbs of the message.
 	//////////////////////////////////////////////////////////////////////////////////////////////////////
 	//k
-	
+
 	if ((info_msg.thumbs)&&(info_msg.thumbs.length > 0)){
 		var thumbs = jQuery.parseJSON(info_msg.thumbs);
 		var div_thumbs = document.createElement("div");
-		
+
 		div_thumbs.setAttribute("class", "expressomail-thumbs");
 		div_thumbs.setAttribute("className", "expressomail-thumbs"); //for IE
-		
+
 		var div_thumbs_lbl = document.createElement("DIV");
 		div_thumbs_lbl.setAttribute("class", "expressomail-thumbs-label");
 		div_thumbs_lbl.setAttribute("className", "expressomail-thumbs-label"); //for IE
-		
+
 		var div_thumbs_lbl_sp = document.createElement("SPAN");
 		div_thumbs_lbl_sp.setAttribute("class", "message_options");
 		div_thumbs_lbl_sp.setAttribute("className", "message_options"); //for IE
@@ -3330,46 +3343,46 @@ function draw_message(info_msg, ID){
 		ul_thumbs_list.setAttribute("class", "expressomail-thumbs-list");
 		ul_thumbs_list.setAttribute("className", "expressomail-thumbs-list"); //for IE
 
-	                var msg = info_msg.msg_number; 
-	                var fdr = info_msg.msg_folder; 
+	                var msg = info_msg.msg_number;
+	                var fdr = info_msg.msg_folder;
 					var i = 0;
-				//verifica se está no novo padrão de montagem das mensagens ou no antigo, necessário
+				//verifica se estï¿½ no novo padrï¿½o de montagem das mensagens ou no antigo, necessï¿½rio
 				//para exibir as imagens no arquivamento local arquivamento local.
 				if(thumbs){
 	                jQuery.each(thumbs, function(i, thumb) {
 							if(fdr.indexOf("local_") >= 0){
-								var href = info_msg.array_attach[i].url + '&image=true'; 
-								var src  = info_msg.array_attach[i].url+ '&image=thumbnail'; 
+								var href = info_msg.array_attach[i].url + '&image=true';
+								var src  = info_msg.array_attach[i].url+ '&image=thumbnail';
 								i++;
 							}else{
-								var href = './inc/get_archive.php?msgFolder=' + fdr + '&msgNumber=' + msg + '&indexPart=' + thumb.pid + '&image=true'; 
-								//var href = thumb.url; 
-								var src  = 'inc/get_archive.php?msgFolder=' + fdr + '&msgNumber=' + msg + '&indexPart=' + thumb.pid + '&image=thumbnail'; 
+								var href = './inc/get_archive.php?msgFolder=' + fdr + '&msgNumber=' + msg + '&indexPart=' + thumb.pid + '&image=true';
+								//var href = thumb.url;
+								var src  = 'inc/get_archive.php?msgFolder=' + fdr + '&msgNumber=' + msg + '&indexPart=' + thumb.pid + '&image=thumbnail';
 	                        }
-	                        var msgid= fdr+";;"+msg+";;"+i+";;"+thumb.pid+";;"+thumb.encoding; 
-	                        var image_info = '{"folder":"'+fdr+'","message":"'+msg+'","thumbIndex":"'+i+'","pid":"'+thumb.pid+'","encoding":"'+thumb.encoding+'","type":"'+thumb.type+'"}'; 
-	                         
-	                        var image= '<img id="' + msgid + '" title="' +  
-	                                                        get_lang('Click here do view (+)') + '" src="' + src + '" style="width:auto;height:100%;" />'; 
-	                                                 
-	                        var content = '<a title="'+thumb.name+ '" rel="thumbs'+ID+'" class="expressomail-thumbs-link" onMouseDown="save_image(event,this,\'' +thumb.type+'\')" href="'+href+'" onclick="window.open(\''+href+'\',\'mywindow\',\'width=700,height=600,scrollbars=yes\');return false;">'+image+'</a>'; 
-	                        content += '<input id="thumb_'+ID+'_'+i+'" type="hidden" value="' +escape(image_info) +'" />'; 
-	                        jQuery(ul_thumbs_list).append('<li>'+content+'</li>'); 
-	                         
-	                });    
-		
+	                        var msgid= fdr+";;"+msg+";;"+i+";;"+thumb.pid+";;"+thumb.encoding;
+	                        var image_info = '{"folder":"'+fdr+'","message":"'+msg+'","thumbIndex":"'+i+'","pid":"'+thumb.pid+'","encoding":"'+thumb.encoding+'","type":"'+thumb.type+'"}';
+
+	                        var image= '<img id="' + msgid + '" title="' +
+	                                                        get_lang('Click here do view (+)') + '" src="' + src + '" style="width:auto;height:100%;" />';
+
+	                        var content = '<a title="'+thumb.name+ '" rel="thumbs'+ID+'" class="expressomail-thumbs-link" onMouseDown="save_image(event,this,\'' +thumb.type+'\')" href="'+href+'" onclick="window.open(\''+href+'\',\'mywindow\',\'width=700,height=600,scrollbars=yes\');return false;">'+image+'</a>';
+	                        content += '<input id="thumb_'+ID+'_'+i+'" type="hidden" value="' +escape(image_info) +'" />';
+	                        jQuery(ul_thumbs_list).append('<li>'+content+'</li>');
+
+	                });
+
 		div_thumbs.appendChild(div_thumbs_lbl);
 		div_thumbs.appendChild(div_thumbs_lbl_sp2);
 		div_thumbs.appendChild(ul_thumbs_list);
-		
+
 				}else{
 					div_thumbs.appendChild(div_thumbs_lbl);
 					div_thumbs.appendChild(div_thumbs_lbl_sp2);
 					div_thumbs.innerHTML = div_thumbs.innerHTML + info_msg.thumbs;
-					
-					
+
+
 				}
-		
+
 		div.appendChild(div_thumbs);
 	}
 	//k!!
@@ -3395,53 +3408,53 @@ function draw_message(info_msg, ID){
 	}
 
 	/*
-	 * TODO: implementar o controle como preferência do usuário
+	 * TODO: implementar o controle como preferï¿½ncia do usuï¿½rio
 	 *
 	 */
 	var jcarousel = false;
 	if (jcarousel) {
-		//carousel 
+		//carousel
 		jQuery(document).ready(function() {
-	 		jQuery('.expressomail-thumbs-list').attr('id', 'expressomail-thumbs-list'+ID) 
-	 	    .addClass('jcarousel-skin-default').jcarousel(); 
+	 		jQuery('.expressomail-thumbs-list').attr('id', 'expressomail-thumbs-list'+ID)
+	 	    .addClass('jcarousel-skin-default').jcarousel();
 
-			jQuery('.expressomail-thumbs-link img').attr('style', ''); 
-		
+			jQuery('.expressomail-thumbs-link img').attr('style', '');
+
 		//fancybox
 			jQuery(".expressomail-thumbs-list li a").attr('onclick', 'return true;');
 			jQuery(".expressomail-thumbs-list li a").fancybox({
 				'hideOnContentClick': true,
-					'type': 'image', 
-					'titlePosition': 'over',                                         
-					'titleFormat' : function(name, currentArray, currentIndex, currentOpts) {                        
-							var image_info = $('#thumb_'+ID+'_'+currentIndex).val(); 
+					'type': 'image',
+					'titlePosition': 'over',
+					'titleFormat' : function(name, currentArray, currentIndex, currentOpts) {
+							var image_info = $('#thumb_'+ID+'_'+currentIndex).val();
 
-							return '<div id="fancybox-title" class="fancybox-title-over" style="width: 100%; display: block;">' + 
-										'<div id="fancybox-title-over">' + 
-											'<a title="Anterior" onclick="javascript:$.fancybox.prev();" style="float:left;">' + 
-													'<img src="./templates/'+template+'/images/left_arrow_white.png" width="30" height="30" />' + 
-											'</a>'+ 
-											'<a title="Baixar imagem" onclick="javascript:save_image2(\''+image_info+'\');" style="padding:0 5px;">' + 
-													'<img src="./templates/'+template+'/images/image_down.png" width="22" height="22" />' + 
-											'</a>'+ 
-											'<a title="Baixar todas de uma vez" onclick="javascript:download_all_attachments(\''+info_msg.msg_folder+"','"+info_msg.msg_number+'\')" style="padding:0 5px;">'+ 
-													'<img src="./templates/'+template+'/images/package_down.png" width="26" height="26" />' + 
-											'</a>'+ 
-											'<span style="margin-left:5px; margin-top:7px; position:absolute;">'+name+'</span>'+ 
-											'<a title="Próxima" onclick="javascript:$.fancybox.next();" style="float:right;">' + 
-												'<img src="./templates/'+template+'/images/right_arrow_white.png" width="30" height="30" />' + 
-											'</a>' + 
-										'</div>' + 
-									'</div>'; 
-					} 
+							return '<div id="fancybox-title" class="fancybox-title-over" style="width: 100%; display: block;">' +
+										'<div id="fancybox-title-over">' +
+											'<a title="Anterior" onclick="javascript:$.fancybox.prev();" style="float:left;">' +
+													'<img src="./templates/'+template+'/images/left_arrow_white.png" width="30" height="30" />' +
+											'</a>'+
+											'<a title="Baixar imagem" onclick="javascript:save_image2(\''+image_info+'\');" style="padding:0 5px;">' +
+													'<img src="./templates/'+template+'/images/image_down.png" width="22" height="22" />' +
+											'</a>'+
+											'<a title="Baixar todas de uma vez" onclick="javascript:download_all_attachments(\''+info_msg.msg_folder+"','"+info_msg.msg_number+'\')" style="padding:0 5px;">'+
+													'<img src="./templates/'+template+'/images/package_down.png" width="26" height="26" />' +
+											'</a>'+
+											'<span style="margin-left:5px; margin-top:7px; position:absolute;">'+name+'</span>'+
+											'<a title="Prï¿½xima" onclick="javascript:$.fancybox.next();" style="float:right;">' +
+												'<img src="./templates/'+template+'/images/right_arrow_white.png" width="30" height="30" />' +
+											'</a>' +
+										'</div>' +
+									'</div>';
+					}
 			});
 		});
-	}  
+	}
 	if ( is_webkit ){ //Corrige o bug de foco no Chrome
 	       var ev = document.createEvent('MouseEvents');
            ev.initEvent(
-				'click'    
-				,false 
+				'click'
+				,false
 				,true
 			);
 	       var divScroll = Element('div_message_scroll_'+ID);
@@ -3454,11 +3467,11 @@ function draw_message(info_msg, ID){
 	else  $("#div_message_scroll_"+ID).focus();
 	update_labeleds_msg();
 
-	resizeWindow(); 
-	
+	resizeWindow();
+
 	$("#div_message_scroll_"+ID).scrollTo( 0, 400, {queue:true} );
 }
- 
+
 function changeLinkState(el,state){
 	el.innerHTML = get_lang(state);
 	switch (state){
@@ -3528,8 +3541,8 @@ function valid_emails(email){
 	var reSimpleEmail = /^[_a-z0-9-]+(\.[_a-z0-9-]+)*@[_a-z0-9-]+(\.[_a-z0-9-]+)+$/;
 	var reComplexEmail = /<([^<]*)>[\s]*$/;
 	var validation = email.split('"');
-	
-	//FUNÇÃO QUE VALIDA OS DADOS QUANDO O EMAIL É DIGITADO COM ("NOME SOBRENOME" <Email@dominio.com>)
+
+	//FUNï¿½ï¿½O QUE VALIDA OS DADOS QUANDO O EMAIL ï¿½ DIGITADO COM ("NOME SOBRENOME" <Email@dominio.com>)
 	var complexValidation = function(complexMail){
 		var Objct = {};
 		if($.trim(complexMail[1]).match(reComplexEmail)){
@@ -3549,11 +3562,11 @@ function valid_emails(email){
 			validation.unshift("");
 			ContactBox = complexValidation(validation);
 			break;
-		//CORRIGI ERRO DE DIGITAÇÃO COMO ( huahua"<huhau@hauhau.com>) ou (hahahaha"huahua@email.com) ou ainda (hahahaha"huahua@ema  il.com)
-		case 2: 
+		//CORRIGI ERRO DE DIGITAï¿½ï¿½O COMO ( huahua"<huhau@hauhau.com>) ou (hahahaha"huahua@email.com) ou ainda (hahahaha"huahua@ema  il.com)
+		case 2:
 			ContactBox = complexValidation(validation);
 			break;
-		//RECEBE O EMAIL CORRETAMENTE SÓ VALIDA POSSIVEIS ERROS COMO O DE CIMA E OS CORRIGI CASO ACONTEÇAM
+		//RECEBE O EMAIL CORRETAMENTE Sï¿½ VALIDA POSSIVEIS ERROS COMO O DE CIMA E OS CORRIGI CASO ACONTEï¿½AM
 		case 3:
 			//RETIRA O PRIMEIRO INDICE QUE FICOU "INUTIL"
 			validation.shift();
@@ -3568,7 +3581,7 @@ function valid_emails(email){
 			}else{
 				ContactBox.mail = $.trim(complexMail[1]);
 			}
-			ContactBox.valid = reSimpleEmail.test(ContactBox.mail.toLowerCase());	
+			ContactBox.valid = reSimpleEmail.test(ContactBox.mail.toLowerCase());
 	}
 	return ContactBox;
 }
@@ -3586,22 +3599,22 @@ function input_keydowns(input, ID){
 			if ( e.keyCode === $.ui.keyCode.TAB && $( this ).data( "ui-autocomplete" ).menu.active ) {
 				e.preventDefault();
 				return false;
-			}		
-			
-			//FECHA OS CONTATOS DINÂMICOS
+			}
+
+			//FECHA OS CONTATOS DINï¿½MICOS
 			if( (e.keyCode == 27) && $( this ).data( "ui-autocomplete" ).menu.active ){
 				   e.stopPropagation();
 				   e.preventDefault();
 			}
             if ( (e.keyCode == 8) && (input.val().length == 1) ){
                 $( this ).data( "ui-autocomplete" ).close();
-            }			
+            }
 			//SELECIONA O CONTATO E EVITA OUTROS COMANDOS
 			if(e.keyCode == $.ui.keyCode.ENTER && $( this ).data( "ui-autocomplete" ).menu.active){
 				e.preventDefault();
 				return false;
 			}
-			
+
 			if(e.keyCode == $.ui.keyCode.DELETE && $( this ).data( "ui-autocomplete" ).menu.active){
 				if($($( this ).data( "ui-autocomplete" ).menu.element).find(".ui-state-hover").parents("li:first").hasClass("dynamic-recent"))
 					$($( this ).data( "ui-autocomplete" ).menu.element).find(".ui-state-hover").next().trigger("click");
@@ -3658,7 +3671,7 @@ function input_keydowns(input, ID){
 			}
 		}
 		setTimeout(function(){
-            // CASO FOR PRESSIONADO "," OU ";", É CRIADA UMA CAIXINHA.
+            // CASO FOR PRESSIONADO "," OU ";", ï¿½ CRIADA UMA CAIXINHA.
 			if(input.val()[input.val().length-1] == ";"){
 				draw_email_box(input.val().substring(0, input.val().length-1), input);
 				input.val("");
@@ -3667,17 +3680,17 @@ function input_keydowns(input, ID){
                 input.val("");
             }
 		}, 100);
-		//INPUT AUTO RESIZE	
+		//INPUT AUTO RESIZE
 		setTimeout(function(){
 			input_search = $(input).val();
 			var vchar = input.val().charAt(input.val().length-1);
 			var maiusculas = RegExp("[A-Z]");
-			/*Se o ultimo caracter for ">" é porque o campo está sendo editado (a partir de duplo clique)*/
+			/*Se o ultimo caracter for ">" ï¿½ porque o campo estï¿½ sendo editado (a partir de duplo clique)*/
 			var tamanho = 0;
 			if(vchar == ">"){
-				/*Faz um calculo prévio do tamanho do campo de acordo com o tamanho de cada caracter da string*/
+				/*Faz um calculo prï¿½vio do tamanho do campo de acordo com o tamanho de cada caracter da string*/
 				for(i=0; i<input.val().length; i++){
-					/*Se o caracter for maiúsculo, o valor de pixel é maior*/
+					/*Se o caracter for maiï¿½sculo, o valor de pixel ï¿½ maior*/
 					if(maiusculas.test(input.val().substr(i, 1)) == true){
 						tamanho += 9;
 					}
@@ -3687,17 +3700,17 @@ function input_keydowns(input, ID){
 				}
 				input.css("width", tamanho);
 			}
-			/*Ao inserir novo contato, não existe a necessidade de calcular tamanho do campo*/
+			/*Ao inserir novo contato, nï¿½o existe a necessidade de calcular tamanho do campo*/
 			else{
 				input.css("width", 15+(input.val().length * 9));
 			}
-			input.parent().scrollTo(":last");	
+			input.parent().scrollTo(":last");
 		}, 10);
 	})
 	//AO SAIR DO FOCO MONTAGEM DA CAIXA DE EMAIL
 	.focusout(function(e){
 		var these = $(this);
-		// Função para montar a caixinha de e-mail.
+		// Funï¿½ï¿½o para montar a caixinha de e-mail.
 		function makeBoxMail(){
 			if(canMakeBox && !fastSearch){
 				if(!(	f9	||	click	||	$(this).parents("tr:first").find("button").hasClass("ui-state-active")	)){
@@ -3723,7 +3736,7 @@ function input_keydowns(input, ID){
 		var pthis = $(this);
 		setTimeout(function() {
 			if(pthis.val().split('"').length > 1){
-				var str = break_comma(pthis.val());//.replace(/[,;\t]/gi, ",");	
+				var str = break_comma(pthis.val());//.replace(/[,;\t]/gi, ",");
 			}else{
 				var str = pthis.val().replace(/[,;\t\n]/gi, ",");
 				str = str.split(",");
@@ -3736,13 +3749,13 @@ function input_keydowns(input, ID){
 			}else if(str[0].split(" ").length == 1){
 				draw_email_box(str[0], pthis);
 			}else{
-				$(pthis).val(str[0]);				
+				$(pthis).val(str[0]);
 				return false;
 			}
 			$(pthis).val("");
 		}, 50);
 	});
-	//SE FOR EDIÇÃO DE EMAILS RECALCULA O INPUT E SETA O FOCO
+	//SE FOR EDIï¿½ï¿½O DE EMAILS RECALCULA O INPUT E SETA O FOCO
 	if(input.hasClass("box-input")){
 		input.css("max-width",parseInt(input.parents(".email-area:first").css("width"))-15);
 		input.trigger("keydown");
@@ -3755,7 +3768,7 @@ var input_search = "";
 var click = false;
 //EVENTOS DA CAIXA
 function box_actions(box){
-	//AO PRESSIONAR UMA TECLA COM A CAIXA SELECIONADA	
+	//AO PRESSIONAR UMA TECLA COM A CAIXA SELECIONADA
 	box.keydown(function(e){
 		switch (e.keyCode) {
 			case $.ui.keyCode.LEFT:
@@ -3764,7 +3777,7 @@ function box_actions(box){
 					$(this).removeClass("box-selected").prev().focus();
 				break;
 			case $.ui.keyCode.RIGHT:
-				//VERIFICA SE EXISTE ALGUMA CAIXA A DIREITA 
+				//VERIFICA SE EXISTE ALGUMA CAIXA A DIREITA
 				if($(this).next().hasClass("box"))
 					$(this).removeClass("box-selected").next().focus();
 				//SENAO FOCO O INPUT DO EMAIL
@@ -3801,7 +3814,7 @@ function box_actions(box){
 				//SENAO HOUVER NEM A DIREITA NEM A ESQUERDA SETO O FOCO NO INPUT DO EMAIL
 				else
 					$(this).next().focus();
-				//REMOVO ESTA CAIXA	
+				//REMOVO ESTA CAIXA
 				$(this).remove();
 				e.preventDefault();
 				break;
@@ -3874,7 +3887,7 @@ function show_detais(box, value, personal, shared){
 		});
 		return;
 	}
-	
+
 	if(personal){
 		REST.get("/"+ (shared ? "shared" : "") +"personalContact/"+value, {}, function(data){
 			if(!data.error){
@@ -3903,7 +3916,7 @@ function show_detais(box, value, personal, shared){
 		});
 		return;
 	}
-	
+
 	REST.get("/usersldap", {field : ldap_id,value: value}, function(data){
 		if(!data.error){
 			if(data.collection.error)
@@ -3969,7 +3982,7 @@ function normalizeContacts(data){
 dynamicData = false;
 currentTypeContact = '';
 
-//FUNÇÃO QUE "SETA" OS BINDS DOS CAMPOS PARA - CC - CCO
+//FUNï¿½ï¿½O QUE "SETA" OS BINDS DOS CAMPOS PARA - CC - CCO
 function input_binds(div, ID){
 
 	//AO CLICAR NA DIV SETA O FOCO NO INPUT
@@ -3979,7 +3992,7 @@ function input_binds(div, ID){
 			$(this).find("div").removeClass("box-selected");
 		}
 	})
-	
+
 	//AO SAIR DO FOCO DA DIV ELE RETIRA TODAS AS CLASSES DE CAIXAS SELECIONADAS
 	.focusout(function(e){
 		if(!$(e.target).parents(".email-area:first").length)
@@ -3994,7 +4007,7 @@ function input_binds(div, ID){
 			if(box.find(".box-info").length){
 				box.unbind("dblclick").bind("dblclick", function(e){
 					new $.Zebra_Dialog('<strong>Impossivel editar</strong> um contato do ldap\n' +
-						'<strong>Porém</strong>é possivel remove-lo', {
+						'<strong>Porï¿½m</strong>ï¿½ possivel remove-lo', {
 						'buttons':  false,
 						'modal': false,
 						'position': ['right - 20', 'top + 20'],
@@ -4007,17 +4020,17 @@ function input_binds(div, ID){
 			ui.draggable.remove();
 		}
 	});
-	
+
 	//MAKE KEYDOWN
 	input_keydowns(div.find("textarea:first"), ID);
-	
-	
-	//VERIFICA PREFERENCIA DE CONTATOS DINÂMICOS ESTA ATIVA
+
+
+	//VERIFICA PREFERENCIA DE CONTATOS DINï¿½MICOS ESTA ATIVA
 	if(parseInt(preferences.use_dynamic_contacts)){
 
         //REST.get("/usercontacts", false, updateDynamicContact);
 
-		//PREPARAÇÃO DA ARRAY DOS CONTATOS DINÂMICOS
+		//PREPARAï¿½ï¿½O DA ARRAY DOS CONTATOS DINï¿½MICOS
 
         var decodeType = {
             '/dynamiccontacts': {
@@ -4070,7 +4083,7 @@ function input_binds(div, ID){
                 return false;
             },
 
-            //EVENTO AO SELECIONAR UM CONTATO DINÂMICO
+            //EVENTO AO SELECIONAR UM CONTATO DINï¿½MICO
             select: function( event, ui ) {
                 canMakeBox = true;
 
@@ -4103,7 +4116,7 @@ function input_binds(div, ID){
             $(this).data('is_open',false);
             $(this).blur().focus();
         }).data( "ui-autocomplete" )._renderItem = function( ul, item ) {
-            
+
             var autocomplete = $(this)[0].element;
 
             ul.css({"width":'50%',"min-width":'600px', "max-height" : "180px", "overflow-y" : "auto", "min-height": "30px"});
@@ -4124,7 +4137,7 @@ function input_binds(div, ID){
                 li = '<li class="dynamic-separator"><div class="line-separator">&nbsp;</div></li>';
             }
             li += '<li class="dynamic-'+ decodeType[item.type].css +'">';
-            li += '<a style="width:'+(item.type == '/dynamiccontacts' ? '91%' : '97.5%')+';  display: inline-block; background: none;">';
+            li += '<a style="width:'+(item.type == '/dynamiccontacts' ? '91%' : '95%')+';  display: inline-block; background: none;">';
             li += '<img style="position:relative; top:2px; "src="../prototype/modules/mail/img/'+ decodeType[item.type].img +'.png" title="'+ decodeType[item.type].text +'"/>';
             li += ($.trim(item.name) != "" ? ((item.name.length > 20 ? item.name.substring(0,17)+"..." : item.name) + " - " ) : '')  + item.mail;
             li += item.type == '/dynamiccontacts' ? '<div class="dynamic-stars" style="display: inline-block;float: right;" id="'+item.raty+'_'+item.id+'"/>' : ''
@@ -4151,7 +4164,7 @@ function input_binds(div, ID){
                     $.Zebra_Dialog('Deseja remover <b>'+(item.name ? (item.name.length <= 30 ? item.name: item.name.substr(0,27)+"...")+" - " : "")+ item.mail+'</b>?', {
                         'type':     'question',
                         'custom_class': (is_ie ? 'configure-zebra-dialog custom-zebra-filter' : 'custom-zebra-filter'),
-                        'buttons': ['Sim','Não'],
+                        'buttons': ['Sim','Nï¿½o'],
                         'overlay_opacity': '0.5',
                         'onClose':  function(caption) {
                             if(caption == 'Sim'){
@@ -4159,7 +4172,7 @@ function input_binds(div, ID){
                                 REST['delete']("/dynamiccontact/"+item.id);
                                 updateDynamicContact();
                                 cache = new Array();
-                            }else if(caption == 'Não'){
+                            }else if(caption == 'Nï¿½o'){
                                 $(focusIn).focus();
                             }
                         }
@@ -4188,7 +4201,8 @@ function input_binds(div, ID){
         };
 	}
 
-	//FUNÇÃO DOS BOTÕES PARA - CC - CCO
+
+	//FUNï¿½ï¿½O DOS BOTï¿½ES PARA - CC - CCO
 	div.parents("tr:first").find("button").button().click(function(){
 		click = true;
 		fastSearch = true;
@@ -4198,101 +4212,101 @@ function input_binds(div, ID){
 	});
 }
 
-/* 
-	Anexa uma mensagem a mensagem sendo enviada. 
-	Parâmetros: 
-		folder_name: nome da pasta na qual a mensagem sendo anexada se encontra. 
-		message_number: id da mensagem sendo anexada. 
-*/ 
-function attach_message (folder_name, message_number) { 
-    var ID = currentTab; 
-    var fileUploadMSG = $('#fileupload_msg'+ID); 
-    fileUploadMSG.find(' .attachments-list').show(); 
-    var att = new Object(); 
+/*
+	Anexa uma mensagem a mensagem sendo enviada.
+	Parï¿½metros:
+		folder_name: nome da pasta na qual a mensagem sendo anexada se encontra.
+		message_number: id da mensagem sendo anexada.
+*/
+function attach_message (folder_name, message_number) {
+    var ID = currentTab;
+    var fileUploadMSG = $('#fileupload_msg'+ID);
+    fileUploadMSG.find(' .attachments-list').show();
+    var att = new Object();
 
-   
 
-    var attach = {}; 
-    attach.fileName = onceOpenedHeadersMessages[folder_name][message_number].subject + '.eml'; 
-    attach.fullFileName = onceOpenedHeadersMessages[folder_name][message_number].subject + '.eml'; 
-    if(attach.fileName.length > 20){ 
-        attach.fileName = attach.fileName.substr(0, 17) + "... " + attach.fileName.substr(attach.fileName.length - 9, attach.fileName.length); 
-    } 
-    attach.error = false; 
+
+    var attach = {};
+    attach.fileName = onceOpenedHeadersMessages[folder_name][message_number].subject + '.eml';
+    attach.fullFileName = onceOpenedHeadersMessages[folder_name][message_number].subject + '.eml';
+    if(attach.fileName.length > 20){
+        attach.fileName = attach.fileName.substr(0, 17) + "... " + attach.fileName.substr(attach.fileName.length - 9, attach.fileName.length);
+    }
+    attach.error = false;
     attach.OK = true;
     if (folder_name.indexOf('local_messages_') == 0){
         attach.fileSize = formatBytes(onceOpenedHeadersMessages[folder_name][message_number].size);
     } else {
-        attach.fileSize = formatBytes(onceOpenedHeadersMessages[folder_name][message_number].Size); 
+        attach.fileSize = formatBytes(onceOpenedHeadersMessages[folder_name][message_number].Size);
     }
-    var upload = $(DataLayer.render("../prototype/modules/mail/templates/attachment_add_itemlist.ejs", { 
-        file: attach 
-    })); 
-    $("#content_id_" + currentTab + " .save").button("enable"); 
-    upload.find('.att-box-loading').remove(); 
- 
-    upload.find('.att-box-delete').click(function() 
-    { 
-        $("#content_id_" + currentTab + " .save").button("enable"); 
-        var idAttach = $(this).parent().find('input[name="fileId[]"]').val(); 
-        fileUploadMSG.find(' .attachments-list').find('input[value="' + idAttach + '"]').remove(); 
-        delAttachment(ID, idAttach); 
-        $(this).parent().qtip("destroy"); 
-        $(this).parent().remove(); 
-        if(!fileUploadMSG.find(' .attachments-list').find(".att-box").length) 
-        { 
-            fileUploadMSG.find(' .attachments-list').hide(); 
-        } 
-    }); 
- 
+    var upload = $(DataLayer.render("../prototype/modules/mail/templates/attachment_add_itemlist.ejs", {
+        file: attach
+    }));
+    $("#content_id_" + currentTab + " .save").button("enable");
+    upload.find('.att-box-loading').remove();
+
+    upload.find('.att-box-delete').click(function()
+    {
+        $("#content_id_" + currentTab + " .save").button("enable");
+        var idAttach = $(this).parent().find('input[name="fileId[]"]').val();
+        fileUploadMSG.find(' .attachments-list').find('input[value="' + idAttach + '"]').remove();
+        delAttachment(ID, idAttach);
+        $(this).parent().qtip("destroy");
+        $(this).parent().remove();
+        if(!fileUploadMSG.find(' .attachments-list').find(".att-box").length)
+        {
+            fileUploadMSG.find(' .attachments-list').hide();
+        }
+    });
+
     var addtip = function(attach){
-        fileUploadMSG.find('.attachments-list .att-box:last').qtip( 
-        { 
-            content: DataLayer.render("../prototype/modules/mail/templates/attachment_add_itemlist_tooltip.ejs", { 
-                attach: attach 
-            }), 
-            position: { 
-                corner: { 
-                    tooltip: 'bottomMiddle', 
-                    target: 'topMiddle' 
-                }, 
-                adjust: { 
-                    resize: true, 
-                    scroll: true 
-                } 
-            }, 
-            show: { 
-                when: 'mouseover', 
-                // Don't specify a show event 
-                ready: false // Show the tooltip when ready 
-            }, 
-            hide: 'mouseout', 
-            // Don't specify a hide event 
-            style: { 
-                border: { 
-                    width: 1, 
-                    radius: 5 
-                }, 
-                width: { 
-                    min: 75, 
-                    max: 1000 
-                }, 
-                padding: 5, 
-                textAlign: 'center', 
-                tip: true, 
-                // Give it a speech bubble tip with automatic corner detection 
-                name: 'blue' // Style it according to the preset 'cream' style 
-            } 
-        }); 
-    } 
+        fileUploadMSG.find('.attachments-list .att-box:last').qtip(
+        {
+            content: DataLayer.render("../prototype/modules/mail/templates/attachment_add_itemlist_tooltip.ejs", {
+                attach: attach
+            }),
+            position: {
+                corner: {
+                    tooltip: 'bottomMiddle',
+                    target: 'topMiddle'
+                },
+                adjust: {
+                    resize: true,
+                    scroll: true
+                }
+            },
+            show: {
+                when: 'mouseover',
+                // Don't specify a show event
+                ready: false // Show the tooltip when ready
+            },
+            hide: 'mouseout',
+            // Don't specify a hide event
+            style: {
+                border: {
+                    width: 1,
+                    radius: 5
+                },
+                width: {
+                    min: 75,
+                    max: 1000
+                },
+                padding: 5,
+                textAlign: 'center',
+                tip: true,
+                // Give it a speech bubble tip with automatic corner detection
+                name: 'blue' // Style it according to the preset 'cream' style
+            }
+        });
+    }
 
     var idATT = "";
     if(folder_name.indexOf("local_messages_") != 0)
     {
-        att.folder = folder_name; 
-        att.uid = message_number; 
-        att.type = 'imapMSG'; 
-        att.name = Base64.encode(onceOpenedHeadersMessages[folder_name][message_number].subject + '.eml'); 
+        att.folder = folder_name;
+        att.uid = message_number;
+        att.type = 'imapMSG';
+        att.name = Base64.encode(onceOpenedHeadersMessages[folder_name][message_number].subject + '.eml');
         idATT = JSON.stringify(att);
         addAttachment(ID, idATT);
 
@@ -4312,19 +4326,19 @@ function attach_message (folder_name, message_number) {
                     data = JSON.parse(connector.unserialize(data));
                     data = data[0];
                     att.folder = folder_trash;
-                    att.uid = data.uid; 
-                    att.type = 'imapMSG'; 
-                    att.name = Base64.encode(onceOpenedHeadersMessages[folder_name][message_number].subject + '.eml'); 
+                    att.uid = data.uid;
+                    att.type = 'imapMSG';
+                    att.name = Base64.encode(onceOpenedHeadersMessages[folder_name][message_number].subject + '.eml');
                     idATT = JSON.stringify(att);
                     addAttachment(ID, idATT);
                     fileUploadMSG.find('.attachments-list').append(upload);
                     addtip(attach);
                 },
             });
-        }); 
+        });
     }
     upload.append('<input type="hidden" name="fileId[]" value=\'' + idATT + '\'/>');
-    upload.find('.att-box-loading').remove();     
+    upload.find('.att-box-loading').remove();
 }
 
 function organize_input_focus( start , borderID )
@@ -4350,8 +4364,8 @@ function organize_input_focus( start , borderID )
 function draw_new_message(border_ID){
 	connector.loadScript("color_palette");
 	connector.loadScript('wfolders');
-	connector.loadScript("ccQuickAdd"); 
-	
+	connector.loadScript("ccQuickAdd");
+
 	if(typeof(RichTextEditor) == 'undefined' || typeof(ColorPalette) == 'undefined' || typeof(wfolders) == 'undefined')
 		return false;
 
@@ -4359,21 +4373,21 @@ function draw_new_message(border_ID){
 		$.lazy({
 			src: '../prototype/plugins/jquery-elastic/jquery.elastic.source.js',
 			name: 'elastic'
-		});	
+		});
 	}
 	var ID = create_border("",border_ID);
-	
+
 	if (ID == 0)
 		return 0;
 	else if(ID == 'maximo')
 		return 'maximo';
-		
+
 	hold_session = true;
 
 	if ($("#footer_menu").length){
 		$("#footer_menu").css('display','none');
 	}
-	var content = $("#content_id_"+ID).html(DataLayer.render("../prototype/modules/mail/templates/new_message.ejs", {id: ID}));    
+	var content = $("#content_id_"+ID).html(DataLayer.render("../prototype/modules/mail/templates/new_message.ejs", {id: ID}));
 	RichTextEditor.loadEditor2(ID);
 
 	content.find('[name="input_aux_to"],[name="input_aux_cc"],[name="input_aux_cco"],[name="input_aux_reply_to"],[name="input_subject"]').keydown( function( e )
@@ -4391,36 +4405,36 @@ function draw_new_message(border_ID){
 	});
 
 	draw_from_field(content.find(".from-select")[0], content.find(".from-tr")[0]);
-	
+
 	var check_input = function(field){
 		var check = field.attr("checked");
 		field.attr("checked", (!check ? true : false));
 		return (!check ? true : false);
 	}
-	
-	//AÇÃO GENERICA PARA ADICIONAR/REMOVER
+
+	//Aï¿½ï¿½O GENERICA PARA ADICIONAR/REMOVER
 	var change_text = function(field, text, to_text){
 		var text = (field.html() == text ? to_text : text);
 		field.html(text);
 	}
-	
-	//AÇÃO GENERICA PARA ADICIONAR/REMOVER CC & CCO
+
+	//Aï¿½ï¿½O GENERICA PARA ADICIONAR/REMOVER CC & CCO
 	var show_hide = function(field, button){
 		button.toggleClass("expressomail-button-icon-ative");
 		field.toggle();
 		field.find("textarea").val("").parent().find("input").focus();
 		field.find(".email-area div").remove();
 		if(!field.find("textarea").hasClass("track")){
-			field.find("textarea").css({"max-height" : "115px", "overflow-y" : "hidden", "max-width" : parseInt(content.find(".email-area").css("width"))-28}).addClass("track").focus();	
+			field.find("textarea").css({"max-height" : "115px", "overflow-y" : "hidden", "max-width" : parseInt(content.find(".email-area").css("width"))-28}).addClass("track").focus();
 			input_binds(field.find(".email-area"), ID);
 		}
-	} 
-	
-	input_binds(content.find('[name="input_aux_to"]').css("max-width" , parseInt(content.find(".email-area").css("width"))-28).focus().parent().css({"max-height" : "115px", "overflow-y" : "auto"}), ID);	
-	
-	//Botão TextoRico/TextoSimples
+	}
+
+	input_binds(content.find('[name="input_aux_to"]').css("max-width" , parseInt(content.find(".email-area").css("width"))-28).focus().parent().css({"max-height" : "115px", "overflow-y" : "auto"}), ID);
+
+	//Botï¿½o TextoRico/TextoSimples
 	content.find(".new-msg-head-right-buttons").find(".button").button().filter(".rich-button").click(function(){
-		/*Se o texto do botão for "Texto simples" exibirá a mensagem antes de alterar para texto simples*/
+		/*Se o texto do botï¿½o for "Texto simples" exibirï¿½ a mensagem antes de alterar para texto simples*/
 		if($(".rich-button").find("span").text() == get_lang("Simple Text")){
 			$.Zebra_Dialog(get_lang("Convert this message into plain text can make parts of it are removed. Continue?"), {
 	            'type':     'warning',
@@ -4432,32 +4446,32 @@ function draw_new_message(border_ID){
 	                if(clicked == get_lang('Yes')){
 	            		RichTextEditor.setPlain(check_input(content.find('[name="textplain_rt_checkbox"]')), ID);
 		            	$(".rich-button").find("span").text(get_lang("Rich Text"));
-	                } 
+	                }
 	            }
 			})
 		}
-		/*Se o texto do botão for "Texto rico" simplesmente altera para texto rico*/
+		/*Se o texto do botï¿½o for "Texto rico" simplesmente altera para texto rico*/
 		else{
 			RichTextEditor.setPlain(check_input(content.find('[name="textplain_rt_checkbox"]')), ID);
 			$(".rich-button").find("span").text(get_lang("Simple Text"));
 		}
 	})
-	
-	//Botão Adicionar/Remover CCO
+
+	//Botï¿½o Adicionar/Remover CCO
 	.end().filter(".cco-button").click(function(){
 		show_hide(content.find(".cco-tr"), $(this));
 		change_text($(this).find(".ui-button-text"), get_lang("Add BCC"), get_lang('Remove CCo'));
 	})
-	//Botão Adicionar/Remover CC
+	//Botï¿½o Adicionar/Remover CC
 	.end().filter(".cc-button").click(function(){
 		show_hide(content.find(".cc-tr"), $(this));
 		change_text($(this).find(".ui-button-text"), get_lang("Add CC"), get_lang('Remove CC'));
 	})
-    //Botão Responder a
+    //Botï¿½o Responder a
     .end().filter(".reply-to-button").click(function(){
         show_hide(content.find(".reply-to-tr"), $(this));
     });
-	
+
 	//BOTAO ENVIAR
 	content.find(".send").button({
 		icons : {
@@ -4504,7 +4518,7 @@ function draw_new_message(border_ID){
 	// botao de busca de usuarios (caso esteja habilitado)
 	.end().find(".search-user").button({
 		icons : {
-		       primary : "expressomail-icon-search_user"
+			primary : "expressomail-icon-search_user"
 		}
 	}).click(function(){
 		check_input(content.find('[name="input_important_message"]'));
@@ -4528,11 +4542,11 @@ function draw_new_message(border_ID){
 		check_input(content.find('[name="input_return_cripto"]'));
 		$(this).toggleClass("expressomail-button-icon-ative");
 	});
-	
+
 	content.find(".attachment td").filter(".value").prepend(DataLayer.render("../prototype/modules/mail/templates/attachment.ejs", {ID:ID}));
 	var fileUploadMSG = $('#fileupload_msg'+ID);
 	var maxAttachmentSize = (preferences.max_attachment_size !== "" && preferences.max_attachment_size != 0) ? (parseInt(preferences.max_attachment_size.replace('M', '')) * 1048576 ) : 41943040;
-	
+
 	content.find(".new-msg-head-data").scroll(function(){
 		$.each(fileUploadMSG.find(".attachments-list .att-box"), function(index, value){
 			$(this).qtip("api").updatePosition();
@@ -4548,7 +4562,7 @@ function draw_new_message(border_ID){
 
     fileUploadMSG.find(".button").button().filter(".fileinput-button").find(".ui-button-text").css("margin-top","2px").find("input:file").fileupload({
 		//singleFileUploads : true,fileUploadMSG
-		sequentialUploads: true, 
+		sequentialUploads: true,
 		type: 'post',
 		dataType : 'json',
 		url: "../prototype/post.php",
@@ -4569,7 +4583,7 @@ function draw_new_message(border_ID){
 					value : maxAttachmentSize
 				}
 			];
-		},	
+		},
 		add: function (e, data) {
             var iterator = idattachbycontent;
 			if(!maxAttachmentSize || data.files[0].size < maxAttachmentSize || is_ie) {
@@ -4590,7 +4604,7 @@ function draw_new_message(border_ID){
 					attach.error = 'Tamanho de arquivo nao permitido'
 				else
 					attach.error = true;
-				var upload = $(DataLayer.render("../prototype/modules/mail/templates/attachment_add_itemlist.ejs", {file : attach}));				
+				var upload = $(DataLayer.render("../prototype/modules/mail/templates/attachment_add_itemlist.ejs", {file : attach}));
 				upload.find('.att-box-delete').click(function(){
                     $("#content_id_"+currentTab+" .save").button("enable");
 					var idAttach = $(this).parent().find('input[name="fileId[]"]').val();
@@ -4605,7 +4619,7 @@ function draw_new_message(border_ID){
                         jqXHR[iterator].abort();
                     }
 				});
-                   
+
                 fileUploadMSG.find('.attachments-list').append(upload);
 
               	fileUploadMSG.find('.attachments-list .att-box:last').qtip({
@@ -4635,7 +4649,7 @@ function draw_new_message(border_ID){
 							 min: 75,
 							 max : 1000
 						},
-						padding: 3, 
+						padding: 3,
 						textAlign: 'left',
 						tip: true, // Give it a speech bubble tip with automatic corner detection
 						name: (typeof(attach.error) == 'boolean' ? 'light' : 'red') // Style it according to the preset 'cream' style
@@ -4649,14 +4663,14 @@ function draw_new_message(border_ID){
 				if(!maxAttachmentSize || file.size < maxAttachmentSize){
 					if(data.fileInput){
 						fileUploadMSG.find('.fileinput-button.new').append(data.fileInput[0]).removeClass('new');
-						fileUploadMSG.find('.attachments-list').find('[type=file]').addClass('hidden');	
+						fileUploadMSG.find('.attachments-list').find('[type=file]').addClass('hidden');
 					}
 				}else
 					fileUploadMSG.find(' .fileinput-button.new').removeClass('new');
 
 				idattachbycontent++
 			});
-			
+
 		},
 		done: function(e, data){
             $("#content_id_"+currentTab+" .save").button("enable");
@@ -4667,13 +4681,13 @@ function draw_new_message(border_ID){
                 error : false
             };
 			if(!!data.result && data.result != "[]" ){
-				var newAttach = data.result;                             
+				var newAttach = data.result;
 				if(!newAttach.mailAttachment.error || newAttach.rollback !== false){
 					attach_box.append('<input type="hidden" name="fileId[]" value="'+newAttach['mailAttachment'][0][0].id+'"/>');
 					addAttachment(ID,newAttach['mailAttachment'][0][0].id);
                 }else {
 				    attach_box.addClass('invalid-email-box');
-                    attach.error = newAttach.mailAttachment.error ? newAttach.mailAttachment.error : 'Erro ao anexar...';//.append(newAttach.mailAttachment.error).addClass('message-attach-error');   
+                    attach.error = newAttach.mailAttachment.error ? newAttach.mailAttachment.error : 'Erro ao anexar...';//.append(newAttach.mailAttachment.error).addClass('message-attach-error');
                 }
 			}else {
 				attach_box.addClass('invalid-email-box');//.qtip("api").updateContent("oi", true);
@@ -4706,7 +4720,7 @@ function draw_new_message(border_ID){
 						 min: 75,
 						 max : 1000
 					},
-                    padding: 3, 
+                    padding: 3,
                     textAlign: 'left',
                     tip: true, // Give it a speech bubble tip with automatic corner detection
                     name: (attach.error == false ? 'blue' : 'red')// Style it according to the preset 'cream' style
@@ -4723,13 +4737,13 @@ function draw_new_message(border_ID){
             });
         }*/
 	}).css({
-        "height" : "20px", 
+        "height" : "20px",
         // "width": (is_webkit ? "205px" : "100px"),
         "width" : "100px",
         "margin-top" : ($.browser.mozilla ? "3px" : "0"),
         "margin-right" : ($.browser.mozilla ? "15px" : "0"),
-        "border-width": "0 0 0px 0px", 
-        "transform" : "rotate(-360deg) translate(5px, -0.5px) scale(1.1)",  
+        "border-width": "0 0 0px 0px",
+        "transform" : "rotate(-360deg) translate(5px, -0.5px) scale(1.1)",
         "-webkit-transform" : "rotate(-360deg) translate(0px, 0px)"
 	});/*.end().end().end().*/
 
@@ -4743,15 +4757,15 @@ function draw_new_message(border_ID){
 			resizable:false,
 			modal: true,
 			closeOnEscape:true,
-			close:function(event, ui) 
+			close:function(event, ui)
             {
                 event.stopPropagation();
                  if(typeof(shortcut) != 'undefined') shortcut.disabled = false;
                  lastFolderSelected.toggleClass('selected');
             },
-            open: function(event, ui) 
+            open: function(event, ui)
             {
-                if(typeof(shortcut) != 'undefined') shortcut.disabled = true; 
+                if(typeof(shortcut) != 'undefined') shortcut.disabled = true;
             },
 			autoOpen:false
 	});
@@ -4760,9 +4774,9 @@ function draw_new_message(border_ID){
 		jQuery('#message-attach-attach-btn').unbind('click');
 		jQuery('#message-attach-attach-btn').click(function(event){
 			jQuery.each(selectedMessages, function(folder_name, messages) {
-				jQuery.each(selectedMessages[folder_name], function(message_number, message) { 
+				jQuery.each(selectedMessages[folder_name], function(message_number, message) {
 					if (message) {
-						/* Anexa a mensagem especificada (por folder e id_msg) 
+						/* Anexa a mensagem especificada (por folder e id_msg)
 						   na mensagem sendo criada.*/
 						attach_message(folder_name, message_number);
 					}
@@ -4772,13 +4786,13 @@ function draw_new_message(border_ID){
 		});
 		jQuery('#message-attach-cancel-btn').click(function(event){
 			jQuery('#message-attach-dialog').dialog('close');
-		});			
+		});
 	});
 	});
 	$(document).bind('drop dragover', function (e) {
 	    e.preventDefault();
 	});
-	//DRAG and DROP DE ARQUIVOS NÃO FUNCIONA NO IE
+	//DRAG and DROP DE ARQUIVOS Nï¿½O FUNCIONA NO IE
 	if(!is_ie){
 		$("body").bind('dragenter', function (e) {
 		    var dropZone = $("#fileupload_msg"+ID+"_droopzone");
@@ -4821,106 +4835,137 @@ function draw_new_message(border_ID){
         	dropZone.hide();
         	dropZone.prev().show();
 		});
-	}	
+	}
 	return ID;
 }
 
 //	Verify if any user is sharing his name/email address
 //	for use in the new messages's "From " field.
-function draw_from_field(sel_from,tr1_1){
+function draw_from_field(from_field, container)
+{
+	'use strict';
 
-	var el_shared_users = Element("el_shared_users");
-	/* Recupera a pasta atual do usuário (selecionada) */
-    if ((typeof(folder) == "object") && folder.id){ 
-        folder = folder.id; 
-    } 
-	var user_shared = folder.split(cyrus_delimiter);
-	/* Verifica se está nas próprias pastas */
-	if(user_shared[0] == "INBOX"){
-		user_shared = User.me.uid;
-	}else{
-		user_shared = user_shared[1];
-	}	
-	// The element was loaded and populated...so return.
-	if(el_shared_users){
-		// Nothing to work...so return.
-		if(el_shared_users.options.length == 0)
+	// criamos variaveis locais para trabalhar pra nao mexer nas "globais"
+	// sem querer
+	var folder = window.folder;
+	var preferences = window.preferences;
+
+	// funcao que popula e seleciona o email padrao
+	// do campo "remetente" baseando-se nas caixas
+	// compartilhadas e permissoes de envio
+	var select_default_from = function ()
+	{
+		// necessario pegar nesse escopo pois pode ter sido modificado
+		var el_shared_users = $('#el_shared_users');
+		// o padrao eh sempre o proprio email (independente
+		// da preferencia estar ou nao setada
+		var shared_default_sender = 0;
+		// quantas caixas temos permissao de envio
+		var length = $('option', el_shared_users).length;
+
+		if(length == 0)
+		{
 			return;
-		tr1_1.style.display = '';
-		for (var x = 0; x < el_shared_users.options.length; x++) {
-			var _option = document.createElement("OPTION");
-			_option.text = el_shared_users.options[x].text;
-			_option.value = el_shared_users.options[x].value;
-			/* Faz o tratamento do nome da pasta para fazer a verificação e selecionar o valor no select */
-			var str_begin_name = _option.text.indexOf('<') + 1;
-			var str_end_name = _option.text.indexOf('@');
-			var user_selected_name = _option.text.substring(str_begin_name, str_end_name);
-			/* Verifica se é o usuário da pasta selecionada */			
-			if(user_selected_name == user_shared){
-				_option.selected = 'selected';
-			}
-			sel_from.options[sel_from.options.length] = _option	;
 		}
-		return;
-	}
-	// Get the shared folders.....
- 	var sharedFolders = new Array();
-	for(var i = 0; i < folders.length; i++) {
-		var x = folders[i].folder_id;
-	  	if (folders[i].folder_parent == 'user'){
-	  		sharedFolders[sharedFolders.length] = x;
-	  	}
-	}
 
-	var matchUser = '#';
-	var sharedUsers = new Array();
-  	// Filter the shared folders (only root folders) .....
-   	for(var i = 0; i < sharedFolders.length; i++) {
-		matchUser = sharedFolders[i];
-		sharedUsers[sharedUsers.length] = matchUser.substring(("user"+cyrus_delimiter).length,matchUser.length);
-	}
+		// se a caixa for compartilhada, e a preferencia
+		// estiver setada para tal, verifica se tem
+		// permissao de envio por aquele email, se tiver
+		// marca-o para depois selecionar
+		if (folder.indexOf('user.') == 0 && parseInt(preferences.shared_email_as_default))
+		{
+			// pega o uid do usuario na qual estamos olhando a caixa
+			var user = folder.split('.')[1];
 
-	// Handler function for cExecute
-	var h_user = function(data) {
-		if(data.length > 0) {
-			tr1_1.style.display = '';
-            var mycn = typeof(data.myname != 'undefined') ? data.myname : '';
-			var _option = document.createElement("OPTION");
-			_option.text =  '"'+mycn+'" <'+Element("user_email").value+'>';
-			_option.value  = mycn+";"+Element("user_email").value;
-			/* Verifica se é o usuário logado */
-			if(user_shared == User.me.uid)
-				_option.selected = 'selected';
-			sel_from.options[sel_from.options.length] = _option;
-
-			var options = '';
-            var cn = '';
-			for (var x = 0; x < data.length; x++)	{
-                                cn = typeof(data[x].cn[0] != 'undefined') ? data[x].cn[0] : '';
-				var _option = document.createElement("OPTION");
-				_option.text = '"'+cn+'" <'+data[x].mail[0]+'>';
-				_option.value = cn+';'+data[x].mail[0]+';'+data[x].save_shared[0]+';'+data[x].uid[0];
-				/* Faz o tratamento do nome da pasta para fazer a verificação e selecionar o valor no select */
-				var str_begin_name = _option.text.indexOf('<') + 1;
-				var str_end_name = _option.text.indexOf('@');
-				var user_selected_name = _option.text.substring(str_begin_name, str_end_name); 
-				/* Verifica se é o usuário da pasta selecionada */
-				if(user_selected_name == user_shared){
-					_option.selected = 'selected';
+			$('#el_shared_users option').each(function (index)
+			{
+				var shared = $(this).val().split(';');
+				if(shared[shared.length - 1] == user)
+				{
+					shared_default_sender = index;
 				}
-				sel_from.options[sel_from.options.length] = _option	;
+			});
+		}
+
+		$(container).css('display', '');
+		// popula o elemento de remetente com as caixas
+		for (var i = 0; i < length; i++)
+		{
+			var option = $(document.createElement('option'));
+			var original = $('option:nth-child(' + (i + 1).toString() + ')', el_shared_users);
+			option.text(original.text());
+			option.val(original.val());
+			if (i == shared_default_sender)
+			{
+				option.attr('selected', 'selected');
+			}
+			$(from_field).append(option);
+		}
+	};
+
+	// se jah tivermos as caixas compartilhadas que
+	// possuimos permissao de escrita/envio, apenas
+	// criamos o select-option com os dados e selecionamos
+	// o email padrao de resposta
+	var el_shared_users = $('#el_shared_users');
+	if(el_shared_users.length)
+	{
+		select_default_from();
+	}
+	else
+	{
+		// Get the shared folders.....
+		var sharedFolders = new Array();
+		for(var i = 0; i < folders.length; i++)
+		{
+			var x = folders[i].folder_id;
+			if (folders[i].folder_parent == 'user')
+			{
+				sharedFolders[sharedFolders.length] = x;
 			}
 		}
-		var shared_users_from = Element("el_shared_users");
-		if(!shared_users_from) {
-			shared_users_from = sel_from.cloneNode(true);
-			shared_users_from.id = "el_shared_users";
-			shared_users_from.style.display = 'none';
-			document.body.appendChild(shared_users_from);
+
+		var matchUser = '#';
+		var sharedUsers = new Array();
+		// Filter the shared folders (only root folders)
+	 	for(var i = 0; i < sharedFolders.length; i++)
+	 	{
+			matchUser = sharedFolders[i];
+			sharedUsers[sharedUsers.length] = matchUser.substring(('user' + cyrus_delimiter).length, matchUser.length);
 		}
+
+		// callback function for cExecute
+		var callback = function(data)
+		{
+			if(data.length > 0)
+			{
+				var shared_send_mails = $(from_field).clone();
+				var option = $(document.createElement('option'));
+				var length = data.length;
+
+				shared_send_mails.attr('id', 'el_shared_users');
+				shared_send_mails.css('display', 'none');
+				$(container).css('display', '');
+				// adiciona o email padrao do usuario
+				option.text('"' + data.myname + '" <' + $('#user_email').val() + '>');
+				option.val(data.myname + ';' + $('#user_email').val());
+				shared_send_mails.append(option);
+
+				// repete o processo mas para os emails compartilhados
+				for (var i = 0; i < length; i++)
+				{
+					var option = $(document.createElement('option'));
+					option.text('"' + data[i].cn[0] + '" <' + data[i].mail[0] + '>');
+					option.val(data[i].cn[0] + ';' + data[i].mail[0] + ';' + data[i].save_shared[0] + ';' + data[i].uid[0]);
+					shared_send_mails.append(option);
+				}
+				$(window.document.body).append(shared_send_mails);
+				select_default_from();
+			}
+		}
+		// First time, so execute.....
+		cExecute('$this.ldap_functions.getSharedUsersFrom&uids=' + sharedUsers.join(';'), callback);
 	}
-	// First time, so execute.....
-	cExecute ("$this.ldap_functions.getSharedUsersFrom&uids="+sharedUsers.join(';'), h_user);
 }
 
 function changeBgColorToON(all_messages, begin, end){
@@ -4980,13 +5025,13 @@ function changeBgColor(event, msg_number) {
 			$(event.target).parents("tr:first").addClass("selected_msg");
 		}else{
 			$(event.target).parents("tr:first").removeClass("selected_msg");
-		} 
+		}
 	}
 	else{
 		//if ( exist_className(actual_tr, 'selected_msg') )
 		if ( document.getElementById(getTabPrefix()+'check_box_message_' + msg_number).checked ){
 			if( document.getElementById("chk_box_select_all_messages").checked) {
-				add_className(actual_tr, 'selected_msg selected_shortcut_msg'); 
+				add_className(actual_tr, 'selected_msg selected_shortcut_msg');
 			}else
 			add_className(actual_tr, 'selected_msg');
 		}else{
@@ -5047,7 +5092,7 @@ function build_quota( data )
                                         {
                                             $(this).dialog("destroy");
                                         }
-                                   }]               
+                                   }]
 
                 });
 
@@ -5075,7 +5120,7 @@ function build_quota( data )
                     divQuotaUsed.css({"background": imageBackground });
 
                     $(this).append(divQuotaUsed);
-                }); 
+                });
             }
 
             cExecute ("$this.imap_functions.get_quota_folders", showQuota );
@@ -5093,7 +5138,7 @@ function build_quota( data )
                 write_msg(get_lang("Your Mailbox is 100% full! You must free more space or will not receive messages."));
             else
                 write_msg(get_lang("Warning: Your Mailbox is almost full!"));
-            
+
             imageBackground = "url(./templates/"+template+"/images/dsalert.gif)";
         }
         else if( value > 80 )
@@ -5104,7 +5149,7 @@ function build_quota( data )
         {
             imageBackground = "url(./templates/"+template+"/images/dsused.gif)";
         }
-        
+
         divQuotaUsed.css({"background": imageBackground });
         divDrawQuota.append(divQuotaUsed);
 
@@ -5130,7 +5175,7 @@ function draw_search(headers_msgs){
 
 	var tbody = Element('tbody_box');
 	for (var i=0; i<(headers_msgs.length); i++){
-            // passa parâmetro offset
+            // passa parï¿½metro offset
 		var tr = this.make_tr_message(headers_msgs[i], headers_msgs[i].msg_folder);
 		if (tr)
 			tbody.appendChild(tr);
@@ -5318,12 +5363,12 @@ function draw_plugin_cc(ID, addrs, notValidUser){
 	else
 		cc_data[3] = array_addrs[0];
 
-	var onclick = '';		
+	var onclick = '';
 	$.each(cc_data, function(index, value){
 		onclick += "'"+value+"',";
 	});
 	onclick = onclick.substr(0, onclick.length-1);
-	
+
 	var to_addybook_add = "<SPAN id='insert_plugin_"+idx_cc+"_"+ID+"'>";
 	to_addybook_add += addrs;
 
@@ -5361,8 +5406,8 @@ function show_div_address_full(id, type) {
 		var isOverLimit = (_address.length > 100);
 
 		if(isOverLimit) {
-			alert("Esse campo possui muitos endereços ("+_address.length+" destinatários).\r\n"+
-			"Para evitar o travamento do navegador, o botão 'Adicionar Contato' foi desabilitado!");
+			alert("Esse campo possui muitos endereï¿½os ("+_address.length+" destinatï¿½rios).\r\n"+
+			"Para evitar o travamento do navegador, o botï¿½o 'Adicionar Contato' foi desabilitado!");
 		}
 
 		for(var idx = 1 ; idx  < _address.length;idx++) {
@@ -5409,25 +5454,29 @@ function draw_footer_box(num_msgs){
 		((expresso_offline)?" ":'<span class="message_options_export"><span ' + change_font_color + ' title="'+get_lang("Export")+'" class="message_options" onclick="proxy_mensagens.export_all_messages()">'+get_lang("Export")+'</span></span>') +
 		((expresso_offline)?" ":'<span class="message_options_import"><span ' + change_font_color + ' title="'+get_lang("Import")+'" class="message_options" onclick="import_window()">'+get_lang("Import")+'</span></span>');
 
-    
-    //Link arquivar e desarquivar com ação
+
+    //Link arquivar e desarquivar com aï¿½ï¿½o
     //MAILARCHIVER
     if(preferences.use_local_messages==1){
         if(expresso_mail_archive.enabled){
            if(proxy_mensagens.is_local_folder(current_folder))//Unarchive link
              span_options.innerHTML += '&nbsp; <span title="'+get_lang("Unarchive")+'" class="message_options" onclick="verifyContext(\'unarchive\')">'+get_lang("Unarchive")+'</span>';
-           else//Archive link                 
+           else//Archive link
              span_options.innerHTML += '&nbsp; <span title="'+get_lang("Archive")+'" class="message_options" onclick="verifyContext(\'archive\')">'+get_lang("Archive")+'</span>';
         }
     }
 
 	if (use_spam_filter) {
-		if ( current_folder == 'INBOX'+cyrus_delimiter+'Spam' )	{
-			span_options.innerHTML += ' | <span ' + change_font_color + ' title="'+get_lang("Not Spam")+'" class="message_options" onclick="nospam(\'selected\',\'null\',\'null\')">'+get_lang("Not Spam")+'</span>';
+		var btnSpam = '';
+		var re = new RegExp("(user"+cyrus_delimiter+"(.*)|INBOX)"+cyrus_delimiter+spamfolder,"g");
+		if (re.test(current_folder)) {
+			btnSpam = '<span class="message_options_not_spam"><span ' + change_font_color + ' title="Nï¿½o Spam" class="message_options" onclick="nospam(\'selected\',\'null\',\'null\')">Nï¿½o Spam</span></span>';
 		}
 		else {
-			span_options.innerHTML += ' | <span ' + change_font_color + ' title="'+get_lang("Mark as Spam")+'" class="message_options" onclick="spam(\'null\', \'selected\',\'null\')">'+get_lang("Mark as Spam")+'</span>';
+			btnSpam = '<span class="message_options_spam"><span ' + change_font_color + ' title="Spam" class="message_options" onclick="spam(\'null\', \'selected\',\'null\')">Spam</span></span>';
 		}
+		span_options.innerHTML += btnSpam;
+		document.getElementById("btn-spam-top").innerHTML = btnSpam;
 	}
 	var span_D = Element("span_D");
 	if(!span_D){
@@ -5437,7 +5486,12 @@ function draw_footer_box(num_msgs){
 		span_D.id = "span_D";
 		span_R.appendChild(span_D);
 	}
-    
+
+	if(!span_DTop){
+		span_DTop = span_D;
+		span_R.appendChild(span_DTop);
+	}
+
     var answer = '<span ' + change_font_color + ' id="span_flag_ANSWERED" class="'+(search_box_type == 'ANSWERED' ? 'message_options_over' : 'message_options')+'" title="'+get_lang("title_answered")+'" onclick="if(\'ANSWERED\' == \''+search_box_type+'\') return false;sort_box(\'ANSWERED\',\''+sort_box_type+'\')">'+get_lang("l_answered")+'</span>, ';
 
 	span_D.innerHTML =
@@ -5447,8 +5501,28 @@ function draw_footer_box(num_msgs){
   	'<span ' + change_font_color + ' id="span_flag_SEEN" class="'+(search_box_type == 'SEEN' ? 'message_options_over' : 'message_options')+'" title="'+get_lang("l_seen")+'" onclick="if(\'SEEN\' == \''+search_box_type+'\') return false;sort_box(\'SEEN\',\''+sort_box_type+'\')">'+get_lang("l_seen")+'</span>, '+
    	answer+
    	'<span ' + change_font_color + ' id="span_flag_FLAGGED" class="'+(search_box_type == 'FLAGGED' ? 'message_options_over' : 'message_options')+'" title="'+get_lang("l_important")+'" onclick="if(\'FLAGGED\' == \''+search_box_type+'\') return false;sort_box(\'FLAGGED\',\''+sort_box_type+'\')">'+get_lang("l_important")+'</span>&nbsp;&nbsp;';
+	span_DTop.innerHTML = span_D.innerHTML;
     if(!proxy_mensagens.is_local_folder(current_folder)){
         draw_paging(num_msgs);
         Element("tot_m").innerHTML = num_msgs;
     }
+}
+
+function setPageTitle() {
+    var newTitle = titlePage;
+    var curr_folder = get_current_folder();
+    var folder_name = $("[id='"+curr_folder+"'] span[title]").attr("title");
+    var folder_unseen = $("[id='dftree_"+curr_folder+"_unseen']");
+    var num_msg_unseen = -1;
+    if (!folder_unseen.length) {
+        folder_unseen = $("[id='dftree_"+curr_folder+"_children_unseen']");
+    }
+    if (folder_unseen.length) {
+        num_msg_unseen = parseInt(folder_unseen.html());
+    }
+    newTitle = folder_name + " - " + newTitle;
+    if (num_msg_unseen > 0) {
+        newTitle = "(" + num_msg_unseen + ") " + newTitle;
+    }
+    document.title = newTitle;
 }

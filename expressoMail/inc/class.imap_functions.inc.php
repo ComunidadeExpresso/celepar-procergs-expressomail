@@ -1,17 +1,21 @@
 <?php
-		/*************************************************************************** 
-		* Expresso Livre                                                           * 
-		* http://www.expressolivre.org                                             * 
-		* --------------------------------------------                             * 
-		*  This program is free software; you can redistribute it and/or modify it * 
-		*  under the terms of the GNU General Public License as published by the   * 
-		*  Free Software Foundation; either version 2 of the License, or (at your  * 
-		*  option) any later version.                                              * 
-		\**************************************************************************/ 
-		
+		/***************************************************************************
+		* Expresso Livre                                                           *
+		* http://www.expressolivre.org                                             *
+		* --------------------------------------------                             *
+		*  This program is free software; you can redistribute it and/or modify it *
+		*  under the terms of the GNU General Public License as published by the   *
+		*  Free Software Foundation; either version 2 of the License, or (at your  *
+		*  option) any later version.                                              *
+		\**************************************************************************/
+
 include_once("class.functions.inc.php");
 include_once("class.ldap_functions.inc.php");
 include_once("class.exporteml.inc.php");
+include_once("class.message_components.inc.php");
+
+// caso seja chamada pela prototype
+include_once(dirname(__FILE__).'/../../prototype/library/utils/Logger.php');
 
 class imap_functions
 {
@@ -42,7 +46,7 @@ class imap_functions
 	var $useCache = false;
 	var $expirationCache = false;
     var $msgIds = array();// Usado para guardar o messagesIds
-        
+
 	function imap_functions (){
 		$this->init();
 	}
@@ -59,7 +63,7 @@ class imap_functions
 		$this->imap_sentfolder	= $_SESSION['phpgw_info']['expressomail']['email_server']['imapDefaultSentFolder']   ? $_SESSION['phpgw_info']['expressomail']['email_server']['imapDefaultSentFolder']   : str_replace("*","", $this->functions->getLang("Sent"));
 		$this->has_cid			= false;
 		$this->prefs 		   	= $_SESSION['phpgw_info']['user']['preferences']['expressoMail'];
-		
+
 		//armazena os caminhos das pastas ( sent, spam, drafts, trash )
 		$this->folders['sent']    =  empty($_SESSION['phpgw_info']['expressomail']['email_server']['imapDefaultSentFolder']) ? 'Sent' : $_SESSION['phpgw_info']['expressomail']['email_server']['imapDefaultSentFolder']; //Variavel folders armazena o caminho /sent
 		$this->folders['spam']    =  empty($_SESSION['phpgw_info']['expressomail']['email_server']['imapDefaultSpamFolder']) ? 'Spam' : $_SESSION['phpgw_info']['expressomail']['email_server']['imapDefaultSpamFolder'];
@@ -68,32 +72,32 @@ class imap_functions
 
         if(isset($_SESSION['phpgw_info']['expresso']['expressoMail']['expressoMail_enable_memcache']) && $_SESSION['phpgw_info']['expresso']['expressoMail']['expressoMail_enable_memcache'] === 'true')
             $this->useCache = true;
-         
+
         if(isset($_SESSION['phpgw_info']['expresso']['expressoMail']['expressoMail_time_memcache']) && trim($_SESSION['phpgw_info']['expresso']['expressoMail']['expressoMail_time_memcache']) != '')
             $this->expirationCache = $_SESSION['phpgw_info']['expresso']['expressoMail']['expressoMail_time_memcache'];
-                
+
 		if( $_SESSION['phpgw_info']['expressomail']['email_server']['imapTLSEncryption'] == 'yes' )
 			$this->imap_options = '/tls/novalidate-cert';
 		else
 			$this->imap_options = '/notls/novalidate-cert';
 	}
-	
+
 	function mount_url_folder($folders)
 	{
 		return implode($this->imap_delimiter,$folders);
 	}
-	
+
 	// BEGIN of functions.
 	function open_mbox( $folder = false, $force_die = true)
-	{	
+	{
 			$newFolder = mb_convert_encoding($folder, 'UTF7-IMAP','UTF-8, ISO-8859-1, UTF7-IMAP');
-		
+
 			if($newFolder ===  $this->mboxFolder && is_resource( $this->mbox ))
 				return $this->mbox;
-			
+
             $this->mboxFolder =  $newFolder;
             $url = '{'.$this->imap_server.":".$this->imap_port.$this->imap_options.'}'.$this->mboxFolder;
-            
+
             if (is_resource($this->mbox))
                  if ($force_die)
                     imap_reopen($this->mbox, $url ) or die(serialize(array('imap_error' => $this->parse_error(imap_last_error()))));
@@ -114,12 +118,12 @@ class imap_functions
 	* @license    http://www.gnu.org/copyleft/gpl.html GPL
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
 	* @sponsor    Caixa Econômica Federal
-	* @author     Gustavo Pereira dos Santos Stabelini	
+	* @author     Gustavo Pereira dos Santos Stabelini
 	* @param      array $params Contem dois indices : um contem o caminho atual da pasta, e o outro contem o caminho futuro da pasta
 	* @return     boolean
 	* @access     public
 	*/
-	 
+
 	function move_folder($params){
 		//preg_match( '/[a-zA-Z0-9]+$/',$params['folder_to_move'], $new_folder);
 		$old_folder = mb_convert_encoding($params['folder_to_move'], 'UTF7-IMAP','UTF-8, ISO-8859-1, UTF7-IMAP');
@@ -131,10 +135,10 @@ class imap_functions
 			$result = imap_last_error();
 		}
 
-		imap_close($mbox); 
+		imap_close($mbox);
 		return $result;
-	} 
-	
+	}
+
 	function parse_error($error, $field = ''){
 		// This error is returned from Imap.
 		if(strstr($error,'Connection refused')) {
@@ -171,10 +175,10 @@ class imap_functions
 
 		return $return;
 	}
-	
+
 	function getMessagesIds($params){
-		$folder = $params['folder'];				
-		$sort_box_type = $params['sort_box_type']; 
+		$folder = $params['folder'];
+		$sort_box_type = $params['sort_box_type'];
 		$search_box_type = $params['search_box_type'];
 		$sort_box_reverse = $params['sort_box_reverse'];
 		if( !$this->mbox || !is_resource( $this->mbox ) )
@@ -191,9 +195,9 @@ class imap_functions
 		}
 		return $sort;
 	}
-	
+
 	function get_range_msgs2($params)
-	{ 	
+	{
 		include_once dirname(__FILE__).'/../../prototype/api/controller.php';
         // Free others requests
         session_write_close();
@@ -234,8 +238,8 @@ class imap_functions
                     if( (isset($this->prefs['preview_msg_subject']) && ($this->prefs['preview_msg_subject'] === '1')) ||
                         (isset($this->prefs['preview_msg_tip']    ) && ($this->prefs['preview_msg_tip']     === '1')) )
                         $sample = true;
-                                
-                        $return[$i++] = $this->get_info_head_msg( $msg_number , $sample );					
+
+                        $return[$i++] = $this->get_info_head_msg( $msg_number , $sample );
                 }
 
                 if( isset($_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_followupflags_and_labels']) && $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_followupflags_and_labels'] == "1")
@@ -251,9 +255,9 @@ class imap_functions
                         false,
                         array('filter' => $filter, 'criteria' => array('deepness' => '2'))
                     );
-                    
+
                     $sort_array_msg_count = count($sort_array_msg);
-                    
+
                     for($i=0; $i<$sort_array_msg_count; ++$i)
                     {
                         if(!isset($return[$i]['msg_number']))
@@ -271,7 +275,7 @@ class imap_functions
                             }
                         }
                         $numLabels = count($labeleds);
-                        
+
                         for($ii=0; $ii<$numLabels; ++$ii)
                         {
                             if($return[$i]['msg_number'] == $labeleds[$ii]['messageNumber'])
@@ -284,7 +288,7 @@ class imap_functions
                     }
                 }
             }
-            $return['num_msgs'] =  $num_msgs;   
+            $return['num_msgs'] =  $num_msgs;
 		}
         else
         {
@@ -318,19 +322,19 @@ class imap_functions
         $return['messagesIds'] = $this->msgIds;
         return $return;
     }
-	
-	
+
+
 	function getMessages($params) {
 		$result = array();
 
 		$exporteml = new ExportEml();
 		$unseen_msgs = array();
-		
+
 		foreach($params['messages'] as $folder => $messages) {
 			foreach($messages as $msg_number) {
 
 				$this->mbox = $this->open_mbox($folder);
-			
+
 				if (isset($params['details']) && $params['details'] == 'all') {
 					$message = $this->get_info_msg(array('msg_number' => $msg_number, 'msg_folder' =>urlencode($folder)));
 				} else {
@@ -344,7 +348,7 @@ class imap_functions
 				if($msg_info['Unseen'] == "U" || $msg_info['Recent'] == "N") {
 					array_push($unseen_msgs,$msg_number);
 				}
-				
+
 				$result[$folder][] = $message;
 			}
 			if($unseen_msgs){
@@ -353,9 +357,9 @@ class imap_functions
 				$this->set_messages_flag($array_msgs);
 			}
 		}
-		
+
 		return $result;
-	}	
+	}
 
         /**
         *  Decodifica uma string no formato mime RFC2047
@@ -373,7 +377,7 @@ class imap_functions
           $string =  preg_replace('/\?\=(\s)*\=\?/', '?==?', $string);
           return preg_replace_callback( '/\=\?([^\?]*)\?([qb])\?([^\?]*)\?=/i' ,array( 'self' , 'decodeMimeStringCallback'), $string);
         }
-      
+
         /**
         *  Decodifica os tokens encontrados na função decodeMimeString
         *
@@ -390,7 +394,7 @@ class imap_functions
            $str = (strtolower($mathes[2]) == 'q') ?  quoted_printable_decode(str_replace('_','=20',$mathes[3])) : base64_decode( $mathes[3]) ;
            return ( strtoupper($mathes[1]) != 'ISO-8859-1') ? mb_convert_encoding($str, 'ISO-8859-1', strtoupper($mathes[1])) : $str;
         }
-        
+
         /**
         *  Formata um mailObject para um array com name e email
         *
@@ -408,7 +412,7 @@ class imap_functions
             $return['name'] = ( isset( $obj->personal ) && trim($obj->personal) !== '' ) ? self::decodeMimeString($obj->personal) :  $return['email'];
             return $return;
         }
-        
+
         /**
         *   Retorna informações do cabeçario da mensagem e um preview caso appendSample = true
         *   Utiliza memCache caso esta preferencia esteja ativada.
@@ -420,8 +424,8 @@ class imap_functions
         * @return     bool
         * @access     public
         */
-	function get_info_head_msg( $msg_number , $appendSample = false )
-	{         
+	function get_info_head_msg( $msg_number , $appendSample = false, $getBody = false )
+	{
         $return = false;
         $cached = false;
         if( $this->useCache === true )
@@ -431,9 +435,9 @@ class imap_functions
                 $this->cache = ServiceLocator::getService( 'memCache' ); //Serviço Cache
                 $this->cache->connect( $_SESSION['phpgw_info']['expressomail']['server']['server_memcache'] , $_SESSION['phpgw_info']['expressomail']['server']['port_server_memcache'] );
             }
-            
+
             if( $return = $this->cache->get( 'infoHead://'.$this->username.'://'.$this->mboxFolder.'://'.$msg_number ))
-               $cached = true;   
+               $cached = true;
 		}
 
         $header = imap_headerinfo($this->mbox,imap_msgno( $this->mbox, $msg_number )); //Resgata o objeto Header da mensagem , nescessario mesmo com o cache pois as flags podem ser atualizadas por outro cliente de email
@@ -441,17 +445,23 @@ class imap_functions
         $return['Unseen'] = $header->Unseen;
         $return['Deleted'] = $header->Deleted;
         $return['Flagged'] = $header->Flagged;
+		$return['Calendar'] = 0;
 
         if($header->Answered =='A' && $header->Draft == 'X')
         {
             $return['Forwarded'] = 'F';
         }
-        else 
+        else
         {
             $return['Answered']	= $header->Answered;
             $return['Draft']	= $header->Draft;
-        }    
-        
+        }
+
+		$msg = new message_components($this->mbox);
+		$msg->fetch_structure($msg_number);
+
+		
+
         if( $cached === true ) //Caso a mensagem ja tenha vindo do cache da o return
         {
             if($appendSample !== false && !isset($return['msg_sample'])) //verifica o msg_sample caso seja alterada a preferencia e não esteja em cache carregar
@@ -459,16 +469,28 @@ class imap_functions
                 $return['msg_sample'] = $this->get_msg_sample($msg_number);
                 $this->cache->set( 'infoHead://'.$this->username.'://'.$this->mboxFolder.'://'.$msg_number , $return , $this->expirationCache);
             }
-           
+
             return $return;
         }
 
         $importance = array();
         $mimeHeader = imap_fetchheader( $this->mbox, $msg_number , FT_UID ); //Resgata o Mime Header da mensagem
-		
-        $mimeBody = imap_body( $this->mbox, $msg_number  , FT_UID|FT_PEEK  ); //Resgata o Mime Body da mensagem sem marcar como lida
+        
+        
+        //die(($mimeHeader));
+        $calendar = false;
+        $return['Calendar'] = 0;
+        $calendar = preg_match("/AgendaExpresso: (\d+)/", $mimeHeader);
+        $calendar = $calendar || preg_match("/DiretoAgenda:/", $mimeHeader);
+        
+        
+
+        if($getBody){
+        	$mimeBody = imap_body( $this->mbox, $msg_number  , FT_UID|FT_PEEK  ); //Resgata o Mime Body da mensagem sem marcar como lida
+        	$return['ContentType'] = $this->getMessageType( $msg_number , $mimeHeader , $mimeBody );
+        }
         $offsetToGMT =  $this->functions->CalculateDateOffset();
-        $return['ContentType'] = $this->getMessageType( $msg_number , $mimeHeader , $mimeBody ); 
+        
         $return['Importance'] = ( preg_match('/importance *: *(.*)\r/i', $mimeHeader , $importance) === 0 ) ? 'Normal' : $importance[1];
         $return['msg_number'] = $msg_number;
         $return['udate'] = $header->udate;
@@ -478,7 +500,16 @@ class imap_functions
         $return['Size'] = $header->Size;
         $return['from'] =  (isset( $header->from[0] )) ? self::formatMailObject( $header->from[0] ) : array( 'name' => '' , 'email' => '');
         $return['subject']  =  ( isset($header->subject) && trim($header->subject) !== '' ) ?  self::decodeMimeString($header->subject) : $this->functions->getLang('(no subject)   ');
-        $return['attachment'] = ( preg_match('/((Content-Disposition:(.)*([\r\n\s]*filename))|(Content-Type:(.)*([\r\n\s]*name))|(BEGIN:VCALENDAR))/i', $mimeBody) ) ? '1' : '0'; //Verifica se a anexos na mensagem
+        
+
+        if($calendar){
+        	$return['Calendar']=1;//' $calendar?1:0;
+        	$return['attachment']=1;
+             
+        }else{
+        	$return['attachment'] =count($msg->fname[$msg_number])>0?'1':'0';
+        }
+        
         $return['reply_toaddress'] = isset($header->reply_toaddress) ? self::decodeMimeString($header->reply_toaddress) : '';
         $return['flag'] = $header->Unseen.
             $header->Recent.
@@ -494,7 +525,7 @@ class imap_functions
 				{
 					$return['to'][$i] = self::formatMailObject( $v );
 				}
-		} 
+		}
 		else if (!empty($header->cc))
 		{
 			foreach ($header->cc as $i => $v)
@@ -513,7 +544,7 @@ class imap_functions
 		{
             $return['to'] = array( 'name' => '' , 'email' => '');
         }
-			
+
 		if (!empty($return['to']))
 		{
 			foreach ($return['to'] as $i => $v)
@@ -521,13 +552,13 @@ class imap_functions
 				if($v['name'] == 'undisclosed-recipients@' || $v['name'] == '@')
 					$return['to'][$i] = $return['from'];
 			}
-		}	
+		}
 
         if($appendSample !== false)
-		{ 
+		{
 			$return['msg_sample'] = $this->get_msg_sample($msg_number);
 		}
-        
+
         if( $this->useCache === true )
         {
             $this->cache->set( 'infoHead://'.$this->username.'://'.$this->mboxFolder.'://'.$msg_number , $return , $this->expirationCache);
@@ -581,54 +612,54 @@ class imap_functions
 
               return str_replace("\t", "", $decoded);
 		}
-		else if(strpos(strtolower($string), '=?us-ascii') !== false) 
- 	   { 
-			$retun = ''; 
-			$tmp = imap_mime_header_decode($string); 
-			foreach ($tmp as $tmp1) 
-				$return .= $this->htmlspecialchars_encode(quoted_printable_decode($tmp1->text)); 
- 	        
-			return str_replace("\t", "", $return); 
- 	 
+		else if(strpos(strtolower($string), '=?us-ascii') !== false)
+ 	   {
+			$retun = '';
+			$tmp = imap_mime_header_decode($string);
+			foreach ($tmp as $tmp1)
+				$return .= $this->htmlspecialchars_encode(quoted_printable_decode($tmp1->text));
+
+			return str_replace("\t", "", $return);
+
  	    }
-        else if( strpos( $string , '=?' ) !== false ) 
+        else if( strpos( $string , '=?' ) !== false )
             return $this->htmlspecialchars_encode(iconv_mime_decode( $string ));
-        
+
 
 			return $this->htmlspecialchars_encode($string);
 	}
-	
+
 	/**
 	* Função que importa arquivos .eml exportados pelo expresso para a caixa do usuário. Testado apenas
 	* com .emls gerados pelo expresso, e o arquivo pode ser um zip contendo vários emls ou um .eml.
 	*/
-	function import_msgs($params) {		
+	function import_msgs($params) {
 		if(!$this->mbox)
 			$this->mbox = $this->open_mbox();
 
  		if( preg_match('/local_/',$params["folder"]) ){
-			
+
 			// PLEASE, BE CAREFULL!!! YOU SHOULD USE EMAIL CONFIGURATION VALUES (EMAILADMIN MODULE)
 			//$tmp_box = mb_convert_encoding('INBOX'.$this->folders['trash'].$this->imap_delimiter.'tmpMoveToLocal', "UTF7-IMAP", "UTF-8");
 			$tmp_box = mb_convert_encoding($this->mount_url_folder(array("INBOX",$this->folders['trash'],"tmpMoveToLocal")), "UTF7-IMAP", "UTF-8");
-			
+
 			if ( ! imap_createmailbox( $this->mbox,"{".$this -> imap_server."}$tmp_box" ) )
 				return $this->functions->getLang( 'Import to Local : fail...' );
 			imap_reopen($this->mbox, "{".$this->imap_server.":".$this->imap_port.$this->imap_options."}".$tmp_box);
 			$params["folder"] = $tmp_box;
 		}
-		
+
 		$errors = array();
 		$invalid_format = false;
 		$filename = $params['FILES'][0]['name'];
 		$params["folder"] = mb_convert_encoding($params["folder"], "UTF7-IMAP","ISO-8859-1, UTF-8");
 		$quota = imap_get_quotaroot($this->mbox, $params["folder"]);
-		
+
 		if((($quota['limit'] - $quota['usage'])*1024) <= $params['FILES'][0]['size']){
 			return array( 'error' => $this->functions->getLang("fail in import:").
 							" ".$this->functions->getLang("Over quota"));
 		}
-		
+
 		if(substr($filename,strlen($filename)-4)==".zip") {
 			$zip = zip_open($params['FILES'][0]['tmp_name']);
 			if ($zip) {
@@ -661,7 +692,7 @@ class imap_functions
 					$ids[ ] = $overview -> uid;
 				return implode( ',', $ids );
 			}
-		
+
 		}else if(substr($filename,strlen($filename)-4)==".eml") {
 			$email = implode("",file($params['FILES'][0]['tmp_name']));
 
@@ -671,10 +702,10 @@ class imap_functions
 			$email = str_replace("\n", "\r\n", $email);
 
 			$status = imap_append($this->mbox,"{".$this->imap_server.":".$this->imap_port.$this->imap_options."}".$params["folder"],$email);
-				
+
 			if(!$status)
 				return "Error importing";
-			
+
 			if ( isset( $tmp_box ) && ! sizeof( $errors ) ) {
 				$mc = imap_check($this->mbox);
 
@@ -737,7 +768,7 @@ class imap_functions
 		$all_body_type = strtolower($msg->file_type[$params["msg_num"]][0]);
 		$all_body_encoding = $msg->encoding[$params["msg_num"]][0];
 		$all_body_charset = $msg->charset[$params["msg_num"]][0];
-		
+
 		if($all_body_type=='multipart/alternative') {
 			if(strtolower($msg->file_type[$params["msg_num"]][2]=='text/html') &&
 					$msg->pid[$params["msg_num"]][2] == '1.2') {
@@ -779,24 +810,29 @@ class imap_functions
 		{
 			$status = imap_status($this->mbox, "{".$this->imap_server.":".$this->imap_port."}".$params['folder'], SA_UIDNEXT);
 			$return['msg_no'] = $status->uidnext - 1;
+            // precisamos gravar o message_id do email que teve os anexos removidos
+            $header = $this->get_header($params["msg_num"]);
+            $message_id = $header->message_id;
+            $subj = ( isset( $header->fetchsubject ) ) ? $this->decode_string($header->fetchsubject) : '';
 			imap_delete($this->mbox, imap_msgno($this->mbox, $params["msg_num"]));
 			imap_expunge($this->mbox);
+            Logger::info('expressomail', 'delattach', $message_id . '|# Subject: ' . $subj);
 		}
 
 		return $return;
 
 	}
-	
+
 	function msgs_to_archive($params) {
-		
+
 		$folder = $params['folder'];
 		$all_ids = $this-> get_msgs($folder, 'SORTARRIVAL', false, 0,-1,-1);
 
 		$messages_not_to_copy = explode(",",$params['mails']);
 		$ids = array();
-		
+
 		$cont = 0;
-		
+
 		foreach($all_ids as $each_id=>$value) {
 			if(!in_array($each_id,$messages_not_to_copy)) {
 				array_push($ids,$each_id);
@@ -810,11 +846,11 @@ class imap_functions
 			return array();
 
 		$params = array("folder"=>$folder,"msgs_number"=>implode(",",$ids));
-		
-		
+
+
 		return $this->get_info_msgs($params);
-		
-		
+
+
 	}
 
 /**
@@ -824,7 +860,7 @@ class imap_functions
 	 */
 	function get_info_msgs($params) {
 		include_once("class.exporteml.inc.php");
-		
+
 		if(array_key_exists('messages', $params)){
 			$sel_msgs = explode(",", $params['messages']);
 			@reset($sel_msgs);
@@ -838,17 +874,17 @@ class imap_functions
 					$sorted_msgs[$sel_msg[0]] = $sel_msg[1];
 				}
 			}
-			unset($sorted_msgs['']);	
-		
+			unset($sorted_msgs['']);
+
 			$return = array();
 			$array_names_keys = array_keys($sorted_msgs);
 
             $sorted_msgs_count = count($sorted_msgs);
 			for($i = 0; $i < $sorted_msgs_count; ++$i){
-			
+
 				$new_params = array();
 				$attach_params = array();
-			
+
 				$new_params["msg_folder"]= $array_names_keys[$i];
 				$attach_params["folder"] = $params["folder"];
 				$msgs = explode(",",$sorted_msgs[$array_names_keys[$i]]);
@@ -867,7 +903,7 @@ class imap_functions
 					imap_close($this->mbox);
 					$this->mbox=false;
 					array_push($return,serialize($msg_info));
-				
+
 					if($msg_info['Unseen'] == "U" || $msg_info['Recent'] == "N"){
 							array_push($unseen_msgs,$msg_number);
 					}
@@ -910,8 +946,8 @@ class imap_functions
 			$msgs_list = implode(",",$unseen_msgs);
 			$array_msgs = array('folder' => $new_params["msg_folder"], "msgs_to_set" => $msgs_list, "flag" => "unseen");
 			$this->set_messages_flag($array_msgs);
-		}					
-					
+		}
+
 		return $return;
 	}
 }
@@ -925,7 +961,7 @@ class imap_functions
     {
 		return imap_fetchheader($this->mbox, $msg_number, FT_UID);
 	}
-	
+
 	/**
 	* @license    http://www.gnu.org/copyleft/gpl.html GPL
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
@@ -933,10 +969,10 @@ class imap_functions
 	*/
 	function getRawBody($msg_number)
     {
-		return  imap_body($this->mbox, $msg_number, FT_UID);	
+		return  imap_body($this->mbox, $msg_number, FT_UID);
 	}
 
-	
+
 	/**
 	* @license    http://www.gnu.org/copyleft/gpl.html GPL
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
@@ -945,7 +981,7 @@ class imap_functions
 	function builderMsgHeader($msg)
     {
 
-  
+
             $fromMail =  str_replace('<','', str_replace('>','',$msg->headers['from']));
             $tosMails =  str_replace('<','', str_replace('>','',$msg->headers['to']));
 
@@ -970,7 +1006,7 @@ class imap_functions
 
           return $header;
     }
-	
+
 	/**
         * Constroe o corpo da msg direto na variavel de conteudo
         * @param Mail_mimeDecode $structure
@@ -1009,8 +1045,11 @@ class imap_functions
                                    $content .= '<pre>'. htmlentities($this->decodeMailPart($part->body,$part->ctype_parameters['charset'],false)).'</pre>';
                                    $i = -1;
                                 }
-                                if(strtolower($part->ctype_secondary) == 'calendar')
-                                    $content.= $this->builderMsgCalendar($this->decodeMailPart($part->body, $part->ctype_parameters['charset']));
+								if (LDAP_ENTRY_CONFIG != true)
+								{
+	                                if(strtolower($part->ctype_secondary) == 'calendar')
+	                                    $content.= $this->builderMsgCalendar($this->decodeMailPart($part->body, $part->ctype_parameters['charset']));
+								}
                            }
 
                             break;
@@ -1074,7 +1113,7 @@ class imap_functions
                                 }
                                 if(strtolower($part->ctype_secondary) == 'calendar')
                                     $content .= $this->builderMsgCalendar($part->body);
-                        
+
                            }
                             break;
                        case 'multipart':
@@ -1102,8 +1141,8 @@ class imap_functions
             }
         }
         }
-	
-	
+
+
 	/**
 	* @license    http://www.gnu.org/copyleft/gpl.html GPL
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
@@ -1112,11 +1151,11 @@ class imap_functions
 	function get_msg_sample($msg_number)
 	{
                 $content = '';
-		$return = array(); 
+		$return = array();
 
 		include_once('class.message_components.inc.php');
 		$msg = new message_components($this->mbox);
-		$msg->fetch_structure($msg_number);  
+		$msg->fetch_structure($msg_number);
 
 		if(!isset($msg->structure[$msg_number]->parts))
 		{
@@ -1135,43 +1174,43 @@ class imap_functions
                         }
                     }
 		}
-   
+
 		$tags_replace = array("<br>","<br/>","<br />");
 		$content = str_replace($tags_replace," ", nl2br($content));
-		$content = $this->html2txt($content);	
+		$content = $this->html2txt($content);
 		$content != "" ? $return['body'] = " - " . $content: $return['body'] = "";
                 $return['body'] = base64_encode(mb_convert_encoding(substr($return['body'], 0, 305),'UTF-8' , 'UTF-8,ISO-8859-1'));
 		return $return;
 	}
-        
+
     function html2txt($document){
         $search = array('@<script[^>]*?>.*?</script>@si',  // Strip out javascript
                        '@<[\/\!]*?[^<>]*?>@si',            // Strip out HTML tags
                        '@<style[^>]*?>.*?</style>@siU',    // Strip style tags properly
-                       '@<![\s\S]*?--[ \t\n\r]*>@si'         // Strip multi-line comments including CDATA                    
+                       '@<![\s\S]*?--[ \t\n\r]*>@si'         // Strip multi-line comments including CDATA
         );
         $text = preg_replace($search, '', $document);
         return html_entity_decode($text);
-    } 
+    }
 
     function ope_msg_part($params)
     {
         $return = array();
         require_once dirname(__FILE__).'/class.attachment.inc.php';
-	
+
         $atObj = new attachment();
         $atObj->setStructureFromMail($params['msg_folder'],$params['msg_number']);
         $mbox_stream = $this->open_mbox($params['save_folder']);
         $return['append'] = imap_append($mbox_stream, "{".$this->imap_server.":".$this->imap_port."}".$params['save_folder'], $atObj->getAttachment($params['msg_part']), "\\Seen \\Draft");
         $status = imap_status($mbox_stream, "{".$this->imap_server.":".$this->imap_port."}".$params['save_folder'], SA_UIDNEXT);
-	
+
         $return['msg_folder']  = $params['save_folder'];
-        $return['msg_number'] = $status->uidnext - 1;        
+        $return['msg_number'] = $status->uidnext - 1;
 
         return $return;
 
     }
-	
+
 	function get_info_msg($params)
 	{
 		if(isset($params['alarm'])){
@@ -1179,13 +1218,13 @@ class imap_functions
 		}else{
 			$alarm = false;
 		}
-		
+
 		$return = array();
 		$msg_number = $params['msg_number'];
 		$msg_folder = isset($params['decoded']) ? $params['msg_folder'] : urldecode($params['msg_folder']);
 		$params['folder'] = $msg_folder;
 		$msg_ids = array_values($this->getMessagesIds($params));
-		
+
 		if($msg_ids[0] == $msg_number){
 			$return['next_message'] = $msg_ids[1];
 			$return['prev_message'] = null;
@@ -1202,7 +1241,7 @@ class imap_functions
 			}
 		}
 
-		if(preg_match('/(.+)(_[a-zA-Z0-9]+)/',$msg_number,$matches)) { //Verifies if it comes from a tab diferent of the main one. 
+		if(preg_match('/(.+)(_[a-zA-Z0-9]+)/',$msg_number,$matches)) { //Verifies if it comes from a tab diferent of the main one.
 			$msg_number = $matches[1];
 			$plus_id = $matches[2];
 		}
@@ -1211,7 +1250,7 @@ class imap_functions
 		}
 
 		$this->mbox = $this->open_mbox($msg_folder);
-		
+
 		$header = $this->get_header($msg_number);
 		if (!$header) {
 			$return['status_get_msg_info'] = "false";
@@ -1238,7 +1277,7 @@ class imap_functions
 
 		$pattern = '/^[ \t]*Disposition-Notification-To:.*/mi';
 		if (preg_match($pattern, $header_, $fields))
-			$return['DispositionNotificationTo'] = base64_encode(trim(str_ireplace('Disposition-Notification-To:', '', $fields[0]))); 
+			$return['DispositionNotificationTo'] = base64_encode(trim(str_ireplace('Disposition-Notification-To:', '', $fields[0])));
 
 		$return['Recent']	= $header->Recent;
 		$return['Unseen']	= $header->Unseen;
@@ -1258,8 +1297,8 @@ class imap_functions
 		$return['msg_folder'] = mb_convert_encoding( $msg_folder, "ISO-8859-1", "UTF-8" );
 		//isset($params['decoded']) ? mb_convert_encoding( $msg_folder, "ISO-8859-1", "UTF-8" ) : $msg_folder;
 
-		
-		
+
+
 		$msgTimesTamp = $header->udate + $this->functions->CalculateDateOffset(); //Aplica offset do usuario
 		$date_msg = gmdate("d/m/Y",$msgTimesTamp);
 
@@ -1268,7 +1307,7 @@ class imap_functions
 //			$return['udate'] = gmdate("H:i",$header->udate);
 //		else
 
-//      Passa o a data completa para mensagem.		
+//      Passa o a data completa para mensagem.
 		$return['udate'] = $header->udate;
 
 		$return['msg_day'] = $date_msg;
@@ -1278,15 +1317,15 @@ class imap_functions
 		{
 			$return['fulldate'] = gmdate("d/m/Y H:i",$msgTimesTamp);
 			$return['smalldate'] = gmdate("H:i",$msgTimesTamp);
-			
+
 
 				$timestamp_now = strtotime("now");
 			//	removido offset nao esta sendo parametrizado
 			//	$timestamp_now = strtotime("now") + $offset;
-			
-			
+
+
 			$timestamp_msg_time = $msgTimesTamp;
-			// $timestamp_now is GMT and $timestamp_msg_time is MailDate TZ. 
+			// $timestamp_now is GMT and $timestamp_msg_time is MailDate TZ.
 			// The variable $timestamp_diff is calculated without MailDate TZ.
 			$pdate = date_parse($header->MailDate);
 			$timestamp_diff = $timestamp_now - $timestamp_msg_time  + ($pdate['zone']*(-60));
@@ -1375,7 +1414,7 @@ class imap_functions
 		else
 		{
 			$return['toaddress2'] = "";
-		}	
+		}
 		if(isset($header->cc))
 		$cc = $header->cc;
 		$return['cc'] = "";
@@ -1415,7 +1454,7 @@ class imap_functions
 		# @DATE 2008/09/12
 		# @BRIEF Adding the BCC field.
 		##
-        if(isset($header->bcc)){        
+        if(isset($header->bcc)){
 		$bcc = $header->bcc;
 		}
 		$return['bcc'] = "";
@@ -1452,7 +1491,7 @@ class imap_functions
 
 		$reply_to = $header->reply_to;
 		$return['reply_to'] = "";
-		
+
 		if (is_object($reply_to[0]))
 		{
 			if ($return['from']['email'] != ($reply_to[0]->mailbox."@".$reply_to[0]->host))
@@ -1495,39 +1534,40 @@ class imap_functions
                 $return['timestamp'] = $header->udate;
 		$return['login'] = $_SESSION['phpgw_info']['expressomail']['user']['account_id'];//$GLOBALS['phpgw_info']['user']['account_id'];
 		$return['reply_toaddress'] = $header->reply_toaddress;
-  		
+
 		if(($return['from']['email'] ==  '@unspecified-domain' || $return['sender']['email'] == null) && $return['msg_folder'] == 'INBOX/Drafts'){
 			$return['from']['email'] = "Rascunho";
 		}
 
 		if(strpos($return['toaddress2'], 'undisclosed-recipients') !== false){
 			$return['toaddress2'] = $this->functions->getLang('without destination');
-		}  
+		}
 		$return['alarm'] = $alarm;
 
+        Logger::info('expressomail','readmsg', $header->message_id.' FROM ' . $return['msg_folder'] . ' # '. $return['subject']);
 		return $return;
 	}
 
-	
-	/* 
+
+	/*
 	* Converte textos utf8 para o padrão html.
 	 * Modificado por Cristiano Corrêa Schmidt
- 	 * @link http://php.net/manual/en/function.utf8-decode.php 
-	* @author     luka8088 <luka8088@gmail.com> 
-	*/	
- 	static function utf8_to_html ($data) 
+ 	 * @link http://php.net/manual/en/function.utf8-decode.php
+	* @author     luka8088 <luka8088@gmail.com>
+	*/
+ 	static function utf8_to_html ($data)
 	{
- 	    return preg_replace("/([\\xC0-\\xF7]{1,1}[\\x80-\\xBF]+)/e", 'self::_utf8_to_html("\\1")', $data); 
- 	} 
+ 	    return preg_replace("/([\\xC0-\\xF7]{1,1}[\\x80-\\xBF]+)/e", 'self::_utf8_to_html("\\1")', $data);
+ 	}
 
- 	static function _utf8_to_html ($data) 
-	{ 
- 	    $ret = 0; 
-		foreach((str_split(strrev(chr((ord($data{0}) % 252 % 248 % 240 % 224 % 192) + 128) . substr($data, 1)))) as $k => $v) 
-			$ret += (ord($v) % 128) * pow(64, $k); 
- 		    return html_entity_decode("&#$ret;" , ENT_QUOTES); 
-	} 
- 	//------------------------------------------------------------------------------// 
+ 	static function _utf8_to_html ($data)
+	{
+ 	    $ret = 0;
+		foreach((str_split(strrev(chr((ord($data{0}) % 252 % 248 % 240 % 224 % 192) + 128) . substr($data, 1)))) as $k => $v)
+			$ret += (ord($v) % 128) * pow(64, $k);
+ 		    return html_entity_decode("&#$ret;" , ENT_QUOTES);
+	}
+ 	//------------------------------------------------------------------------------//
 
 
 		/**
@@ -1553,7 +1593,7 @@ class imap_functions
             }
 	}
 
-	
+
 	function get_body_msg($msg_number, $msg_folder)
 	{
             /*
@@ -1572,11 +1612,11 @@ class imap_functions
 
             $content = '';
 
-            /* 
-            * Chamada original  $this->getRawHeader($msg_number)."\r\n".$this->getRawBody($msg_number); 
-            * Inserido replace para corrigir um bug que acontece raramente em mensagens vindas do outlook com muitos destinatarios 
-            */ 
-            $rawMessageData = str_replace("\r\n\t", '', $this->getRawHeader($msg_number))."\r\n".$this->getRawBody($msg_number); 
+            /*
+            * Chamada original  $this->getRawHeader($msg_number)."\r\n".$this->getRawBody($msg_number);
+            * Inserido replace para corrigir um bug que acontece raramente em mensagens vindas do outlook com muitos destinatarios
+            */
+            $rawMessageData = str_replace("\r\n\t", '', $this->getRawHeader($msg_number))."\r\n".$this->getRawBody($msg_number);
 
             $decoder = new Mail_mimeDecode($rawMessageData);
 
@@ -1615,8 +1655,8 @@ class imap_functions
 
             switch (strtolower($structure->ctype_primary))
 		{
-			case 'text': 
- 		                        if(strtolower($structure->ctype_secondary) == 'x-pkcs7-mime') 
+			case 'text':
+ 		                        if(strtolower($structure->ctype_secondary) == 'x-pkcs7-mime')
  		                        {
 				$return['body']='isCripted';
 				return $return;
@@ -1632,19 +1672,19 @@ class imap_functions
                         if(($msg_subtype == "html" || $msg_subtype == 'plain') && ($disposition != 'attachment'))
 			{
                                 if(strtolower($msg_subtype) == 'plain')
-					{ 
+					{
                         if(isset($structure->ctype_parameters['charset']))
                                         $content = $this->decodeMailPart($structure->body, $structure->ctype_parameters['charset'],false);
                         else
                             $content = $this->decodeMailPart($structure->body, null,false);
-						$content = str_replace(array('<', '>'), array('#$<$# ', ')#$>$#'), $content); 
-						$content = htmlentities( $content ); 
+						$content = str_replace(array('<', '>'), array('#$<$# ', ')#$>$#'), $content);
+						$content = htmlentities( $content );
                                         $this->replace_links($content);
-						$content = str_replace(array('#$&lt;$#', ')#$&gt;$#'), array('&lt;', '&gt;'), $content); 
-						$content = '<pre>' . $content . '</pre>'; 
+						$content = str_replace(array('#$&lt;$#', ')#$&gt;$#'), array('&lt;', '&gt;'), $content);
+						$content = '<pre>' . $content . '</pre>';
                                                 $return[ 'body' ] = $content;
-						return $return; 
-					} 
+						return $return;
+					}
 								$content = $this->decodeMailPart($structure->body, $structure->ctype_parameters['charset']);
 				}
                     if(strtolower($structure->ctype_secondary) == 'calendar')
@@ -1673,38 +1713,38 @@ class imap_functions
 
             case 'application':
                 if(strtolower($structure->ctype_secondary) == 'x-pkcs7-mime')
-                {   
+                {
                   //  $return['body']='isCripted';
                   // return $return;
-				  
-				  //TODO: Descartar código após atualização do módulo de segurança da SERPRO
-					$rawMessageData2 = $this->extractSignedContents($rawMessageData); 
-					if($rawMessageData2 === false){ 
-						$return['body']='isCripted'; 
-						return $return; 
-					} 
-					$decoder2 = new Mail_mimeDecode($rawMessageData2); 
- 		            $structure2 = $decoder2->decode($params); 
- 		            $this-> builderMsgBody($structure2 , $content);  
- 		 
- 		            $attachmentManager->setStructure($structure2); 
- 		            /* 
- 		            * Monta informações dos anexos para o cabecarios 
- 		            */ 
- 		            $attachments = $attachmentManager->getAttachmentsInfo(); 
- 	                $return['attachments'] = $attachments; 
 
- 		            //----------------------------------------------// 
- 		 
- 		            /* 
-	                * Monta informações das imagens 
- 		            */ 
- 		            $images = $attachmentManager->getEmbeddedImagesInfo(); 
- 		            //----------------------------------------------// 
- 		 
- 		            if(!$this->has_cid){ 
- 		                $return['thumbs']    = $this->get_thumbs($images,$msg_number,$msg_folder); 
- 		                $return['signature'] = $this->get_signature($msg,$msg_number,$msg_folder); 
+				  //TODO: Descartar código após atualização do módulo de segurança da SERPRO
+					$rawMessageData2 = $this->extractSignedContents($rawMessageData);
+					if($rawMessageData2 === false){
+						$return['body']='isCripted';
+						return $return;
+					}
+					$decoder2 = new Mail_mimeDecode($rawMessageData2);
+ 		            $structure2 = $decoder2->decode($params);
+ 		            $this-> builderMsgBody($structure2 , $content);
+
+ 		            $attachmentManager->setStructure($structure2);
+ 		            /*
+ 		            * Monta informações dos anexos para o cabecarios
+ 		            */
+ 		            $attachments = $attachmentManager->getAttachmentsInfo();
+ 	                $return['attachments'] = $attachments;
+
+ 		            //----------------------------------------------//
+
+ 		            /*
+	                * Monta informações das imagens
+ 		            */
+ 		            $images = $attachmentManager->getEmbeddedImagesInfo();
+ 		            //----------------------------------------------//
+
+ 		            if(!$this->has_cid){
+ 		                $return['thumbs']    = $this->get_thumbs($images,$msg_number,$msg_folder);
+ 		                $return['signature'] = $this->get_signature($msg,$msg_number,$msg_folder);
  		            }
                 }
 			///////////////////////////////////////////////////////////////////////////////////////////
@@ -1712,7 +1752,7 @@ class imap_functions
                     if(count($attachments) > 0)
                        $content .= '';
                     break;
-								} 
+								}
 
 		$params = array('folder' => $msg_folder, "msgs_to_set" => $msg_number, "flag" => "seen");
 		$this->set_messages_flag($params);
@@ -1721,7 +1761,7 @@ class imap_functions
         $content = $this->replace_email_mailto($content);
               $this->replace_links($content);
 		$return['body'] = &$content;
-                
+
 		return $return;
 	}
 
@@ -1731,37 +1771,37 @@ class imap_functions
 		$replacement = '<a href="mailto:$1">$1</a>';
 		return preg_replace($pattern, $replacement, $content);
 	}
-	
+
 	//TODO: Descartar código após atualização do módulo de segurança da SERPRO
-	function extractSignedContents( $data ) 
-    { 
-		$pipes_desc = array( 
-			0 => array('pipe', 'r'), 
-			1 => array('pipe', 'w') 
-	    ); 
-	 
-	    $fp = proc_open( 'openssl smime -verify -noverify -nochain', $pipes_desc, $pipes); 
-	    if (!is_resource($fp)) { 
-			return false; 
-	    } 
-	 
-	    $output = ''; 
-	 
- 		/* $pipes[0] => writeable handle connected to child stdin 
- 		$pipes[1] => readable handle connected to child stdout */ 
- 	    fwrite($pipes[0], $data); 
- 	    fclose($pipes[0]); 
- 	 
- 	    while (!feof($pipes[1])) { 
-			$output .= fgets($pipes[1], 1024); 
- 	    } 
- 	    fclose($pipes[1]); 
- 	    proc_close($fp); 
- 	 
- 	    return $output; 
+	function extractSignedContents( $data )
+    {
+		$pipes_desc = array(
+			0 => array('pipe', 'r'),
+			1 => array('pipe', 'w')
+	    );
+
+	    $fp = proc_open( 'openssl smime -verify -noverify -nochain', $pipes_desc, $pipes);
+	    if (!is_resource($fp)) {
+			return false;
+	    }
+
+	    $output = '';
+
+ 		/* $pipes[0] => writeable handle connected to child stdin
+ 		$pipes[1] => readable handle connected to child stdout */
+ 	    fwrite($pipes[0], $data);
+ 	    fclose($pipes[0]);
+
+ 	    while (!feof($pipes[1])) {
+			$output .= fgets($pipes[1], 1024);
+ 	    }
+ 	    fclose($pipes[1]);
+ 	    proc_close($fp);
+
+ 	    return $output;
  	}
     ///////////////////////////////////////////////////////////////////////////////////////
-    
+
         function builderMsgCalendar($calendar)
         {
             $icalService = ServiceLocator::getService('ical');
@@ -1785,7 +1825,7 @@ class imap_functions
                           $content.= '<b>'.$this->functions->getLang('Event Calendar').'</b><br /><br />';
                           $content.= '<span style="font-size: 12" >';
                           $content.= '<b><span style="color:red">'.$this->functions->getLang('Your event has been canceled').'</span></b>';
-   
+
                           if($ical['description']['value'])
                               $content.= ' <br /> <br /> '.str_replace('\n','<br />',nl2br($ical['description']['value']));
 
@@ -1853,11 +1893,11 @@ class imap_functions
                     default:
                         break;
                 }
-      
+
             }
             return $content;
         }
-        
+
 	function htmlfilter($body)
 	{
 		require_once('htmlfilter.inc');
@@ -1997,7 +2037,7 @@ class imap_functions
 			return $body;
 	}
 
-				
+
 	/**
 	* @license   http://www.gnu.org/copyleft/gpl.html GPL
 	* @author    Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
@@ -2005,7 +2045,7 @@ class imap_functions
 	* @param     $msgno
 	* @param     $body
 	* @param     $msg_folder
-	*/			
+	*/
 	function process_embedded_images($images, $msgno, $body, $msg_folder)
 	{
 
@@ -2013,14 +2053,14 @@ class imap_functions
 		{
                 $image['cid'] = preg_replace('/</i', '', $image['cid']);
                 $image['cid'] = preg_replace('/>/i', '', $image['cid']);
-				
+
                 $body = str_replace("src=\"cid:".$image['cid']."\"", " src=\"./inc/get_archive.php?msgFolder=$msg_folder&msgNumber=$msgno&indexPart=".$image['pid']."\" ", $body);
                 $body = str_replace("src='cid:".$image['cid']."'", " src=\"./inc/get_archive.php?msgFolder=$msg_folder&msgNumber=$msgno&indexPart=".$image['pid']."\"", $body);
-                $body = str_replace("src=cid:".$image['cid'], " src=\"./inc/get_archive.php?msgFolder=$msg_folder&msgNumber=$msgno&indexPart=".$image['pid']."\"", $body); 
+                $body = str_replace("src=cid:".$image['cid'], " src=\"./inc/get_archive.php?msgFolder=$msg_folder&msgNumber=$msgno&indexPart=".$image['pid']."\"", $body);
 			}
 		return $body;
 	}
-	
+
     /**
      * Exibe style inline de mensagens vindas do MSO
      *
@@ -2038,7 +2078,7 @@ class imap_functions
         return $matches[1] . $matches[2] . $matches[3];
     }
 
-	function replace_special_characters($body) 
+	function replace_special_characters($body)
         {
         //Correção para exibir style inline do MSO
         if(preg_match('~Mso~i', $body))
@@ -2047,7 +2087,7 @@ class imap_functions
 
 
             if(trim($body) === '') return;
-            
+
             $body = str_ireplace('POSITION: ABSOLUTE;','', $body);
             $body = str_ireplace('<o:p>&nbsp;</o:p>','<br />', $body);//Qubra de linha do MSO
             $body = preg_replace('/<(meta|base|link|html|\/html)[^>]*>/i', '', $body);
@@ -2060,14 +2100,14 @@ class imap_functions
                 if (!(preg_match("/javascript:window\.open\(\"([^'\"]*)\/index\.php\?menuaction=calendar\.uicalendar\.set_action\&cal_id=([^;'\"]+);?['\"]/i", $rest[1][$i]) && strtoupper($rest[4][$i]) == "CLICK" )) //Calendar events
                     $body = str_replace($rest[1][$i], "<" . $rest[2][$i] . $rest[3][$i] . $rest[7][$i] . ">", $body);
             }
-            
+
             require_once(dirname(__FILE__).'/../../prototype/library/CssToInlineStyles/css_to_inline_styles.php');
             $cssToInlineStyles = new CSSToInlineStyles($body);
             $cssToInlineStyles->setUseInlineStylesBlock(true);
             $cssToInlineStyles->setCleanup(TRUE);
             $body = $cssToInlineStyles->convert(); //Converte as tag style em inline styles
 
-            ///--------------------------------// 
+            ///--------------------------------//
             // tags to be removed doe to security reasons
             $tag_list = Array(
                 'blink', 'object', 'frame', 'iframe',
@@ -2075,17 +2115,17 @@ class imap_functions
                 'applet', 'embed', 'frameset', 'xml', 'xmp','style','head'
             );
 
-            foreach ($tag_list as $index => $tag) 
+            foreach ($tag_list as $index => $tag)
                 $body = @mb_eregi_replace("<$tag\\b[^>]*>(.*?)</$tag>", '', $body);
 
             /*
             * Remove deslocamento a esquerda colocado pelo Outlook.
-            * Este delocamento faz com que algumas palavras fiquem escondidas atras da barra lateral do expresso. 
+            * Este delocamento faz com que algumas palavras fiquem escondidas atras da barra lateral do expresso.
             */
             $body = mb_ereg_replace("(<p[^>]*)(text-indent:[^>;]*-[^>;]*;)([^>]*>)", "\\1\\3", $body);
             $body = mb_ereg_replace("(<p[^>]*)(margin-right:[^>;]*-[^>;]*;)([^>]*>)", "\\1\\3", $body);
             $body = mb_ereg_replace("(<p[^>]*)(margin-left:[^>;]*-[^>;]*;)([^>]*>)", "\\1\\3", $body);
-            //--------------------------------------------------------------------------------------------// 	
+            //--------------------------------------------------------------------------------------------//
             $body = str_ireplace('position:absolute;', '', $body);
 
             //Remoção de tags <span></span> para correção de erro no firefox
@@ -2097,25 +2137,25 @@ class imap_functions
             $body = mb_ereg_replace('<!--\[', '<!-- [', $body);
             $body = mb_ereg_replace('&lt;!\[endif\]--&gt;', '<![endif]-->', $body);
             $body  = preg_replace("/<p[^\/>]*>([\s]?)*<\/p[^>]*>/", '', $body); //Remove paragrafos vazios (evita duplo espaçamento em emails do MSO)
-           
+
             return  $body ;
     }
-	
-	function replace_links_callback($matches)  
+
+	function replace_links_callback($matches)
 	{
         if ($matches[1] == "background-image:url(") {
             return $matches[0];
         }
-		
-        if($matches[4]) 
-            $pref = $matches[4]; 
-        else 
-            $pref = $matches[4] = 'http';  
-			
+
+        if($matches[4])
+            $pref = $matches[4];
+        else
+            $pref = $matches[4] = 'http';
+
 		$url = isset($matches[6]) ? $matches[5].$matches[6] : $matches[5];
 
- 	    return '<a href="'.$pref.'://'.$url.'" target="_blank">'.$matches[0].'</a>'; 
- 	} 
+ 	    return '<a href="'.$pref.'://'.$url.'" target="_blank">'.$matches[0].'</a>';
+ 	}
 
 
 	/**
@@ -2124,12 +2164,12 @@ class imap_functions
 	* @param     $body corpo da mensagem
 	*/
 	function replace_links(&$body)
-	{ 
-		// Trata urls do tipo aaaa.bbb.empresa  
-		// Usadas na intranet. 
+	{
+		// Trata urls do tipo aaaa.bbb.empresa
+		// Usadas na intranet.
 
 		$pattern = '/(background-image\:url\()?(?<=[\s|(<br>)|\n|\r|;])(((http|https|ftp|ftps)?:\/\/((?:[\w]\.?)+(?::[\d]+)?[:\/.\-~&=?%;@#,+\w]*))|((?:www?\.)(?:\w\.?)*(?::\d+)?[\:\/\w.\-~&=?%;@+]*))/i';
-       
+
 		$body = preg_replace_callback($pattern,array( &$this, 'replace_links_callback'), $body);
 
 	}
@@ -2185,7 +2225,7 @@ class imap_functions
                                 }
                                 $sign[] = $check_msg;
                             }
-                                                
+
                             $sign[] = 'Message signed by: ###' . $certificado->dados['NOME'];
                             $sign[] = 'Certificate email: ###' . $certificado->dados['EMAIL'];
                             $sign[] = 'Mail from: ###' . $fromaddress;
@@ -2220,7 +2260,7 @@ class imap_functions
                             $sign[] = $sign_alert;
 
                             $this->db = new db_functions();
-                            
+
                             // TODO: testar se existe um certificado no banco e verificar qual ï¿½ o mais atual.
                             if(!$certificado->dados['EXPIRADO'] && !$certificado->dados['REVOGADO'] && count($certificado->erros_ssl) < 1)
                                 $this->db->insert_certificate(strtolower($certificado->dados['EMAIL']), $certificado->cert_assinante, $certificado->dados['SERIALNUMBER'], $certificado->dados['AUTHORITYKEYIDENTIFIER']);
@@ -2237,7 +2277,7 @@ class imap_functions
             return $sign;
 	}
 
-	
+
 	/**
 	* @license   http://www.gnu.org/copyleft/gpl.html GPL
 	* @author    Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
@@ -2249,14 +2289,14 @@ class imap_functions
 	{
 
 		if (!count($images)) return '';
-               
-		foreach ($images as $key => $value) {                    
-			$images[$key]['width']  = 160; 
-			$images[$key]['height'] = 120; 
-			$images[$key]['url']    = "inc/get_archive.php?msgFolder=".$msg_folder."&msgNumber=".$msg_number."&indexPart=".$value['pid']."&image=true"; 
+
+		foreach ($images as $key => $value) {
+			$images[$key]['width']  = 160;
+			$images[$key]['height'] = 120;
+			$images[$key]['url']    = "inc/get_archive.php?msgFolder=".$msg_folder."&msgNumber=".$msg_number."&indexPart=".$value['pid']."&image=true";
     		}
 
-		return json_encode($images); 
+		return json_encode($images);
 	}
 
 	/*function delete_msg($params)
@@ -2295,10 +2335,20 @@ class imap_functions
 		//$mbox_stream = $this->open_mbox($folder);
 	 	$mbox_stream = @imap_open("{".$this->imap_server.":".$this->imap_port.$this->imap_options."}".$folder, $this->username, $this->password) or die(serialize(array('imap_error' => $this->parse_error(imap_last_error()))));
 
+        $deletedMsgs = '';
         foreach ($msgs_number as $msg_number)
 		{
-			if (imap_delete($mbox_stream, $msg_number, FT_UID));
+            // Precisamos gravar o nome das mensagens excluidas.
+            if(!$this->mbox || !is_resource($this->mbox)) {
+                $this->mbox = $this->open_mbox($params['folder']);
+            }
+            $header = $this->get_header($msg_number);
+            $subj = ( isset( $header->fetchsubject ) ) ? $this->decode_string($header->fetchsubject) : '';
+
+			if (imap_delete($mbox_stream, $msg_number, FT_UID)) {
 				$return['msgs_number'][] = $msg_number;
+                $deletedMsgs .= "#[ID: ".$header->message_id."|".$subj."]";
+            }
 		}
 
 		$return['folder'] = $folder;
@@ -2306,7 +2356,7 @@ class imap_functions
 
 		if($mbox_stream)
 			imap_close($mbox_stream, CL_EXPUNGE);
-					
+
 		$return['status'] = true;
 
 		//Este bloco tem a finalidade de averiguar as permissoes para pastas compartilhadas
@@ -2334,6 +2384,10 @@ class imap_functions
 			}
         }
 
+        if ($deletedMsgs != '') {
+            Logger::info('expressomail', 'delmsg', $deletedMsgs . " FROM " . $params['folder']);
+        }
+
 		return $return;
 	}
 
@@ -2358,11 +2412,11 @@ class imap_functions
 			$msg_range_begin -= $dif;
 			$msg_range_end -= $dif;
 			$msgs_in_the_server = $this->get_msgs($folder, $sort_box_type, $search_box_type, $sort_box_reverse,$msg_range_begin,$msg_range_end);
-			$msgs_in_the_server = array_keys($msgs_in_the_server);	
+			$msgs_in_the_server = array_keys($msgs_in_the_server);
 			$num_msgs = NULL;
 			$return['msg_range_begin'] = $msg_range_begin;
 			$return['msg_range_end'] = $msg_range_end;
-		}		
+		}
 		$return['new_msgs'] = imap_num_recent($this->mbox);
 
         //Mensagens não lidas para sincronizar emails em diferentes clientes
@@ -2371,14 +2425,14 @@ class imap_functions
 
         if( $m_search && is_array($m_search) )
         {
-			foreach( $m_search as $m ) 
+			foreach( $m_search as $m )
 			{
 				$unseens[] = imap_uid($this->mbox, $m);
 			}
         }
 
         $return['unseens'] = $unseens;
-		
+
 		$msgs_in_the_client = explode(",", $msgs_existent);
 
 		$msg_to_insert  = array_diff($msgs_in_the_server, $msgs_in_the_client);
@@ -2402,10 +2456,10 @@ class imap_functions
 		}else if($num_msgs < $msg_range_end && $return['new_msgs'] == 0 && count($msg_to_insert) > 0 && $msg_range_end == $dif){
 			$return['tot_msgs'] = $num_msgs;
 		}
-		
+
 		if(!count($msgs_in_the_server)){
 			return Array();
-		}	
+		}
 
 		$msg_to_delete = array_diff($msgs_in_the_client, $msgs_in_the_server);
 		$msgs_to_exec = array();
@@ -2418,12 +2472,12 @@ class imap_functions
                     $sample = false;
                     if( (isset($this->prefs['preview_msg_subject']) || ($this->prefs['preview_msg_subject'] === '1')) && (isset($this->prefs['preview_msg_tip']    ) || ($this->prefs['preview_msg_tip']     === '1')) )
                           $sample = true;
-                    
+
                     $return[$i] = $this->get_info_head_msg($msg_number , $sample );
-                    
+
                     //get the next msg number to append this msg in the view in a correct place
                     $msg_key_position = array_search($msg_number, $msgs_in_the_server);
-			
+
                     $return[$i]['msg_key_position'] = $msg_key_position;
                     if($msg_key_position !== false && array_key_exists($msg_key_position + 1,$msgs_in_the_server) !== false)
                         $return[$i]['next_msg_number'] = $msgs_in_the_server[$msg_key_position + 1];
@@ -2437,7 +2491,7 @@ class imap_functions
 		$return['sort_box_type'] = $params['sort_box_type'];
                 if(!$this->mbox || !is_resource($this->mbox))
                     $this->open_mbox($folder);
-                
+
 		$return['msgs_to_delete'] = $msg_to_delete;
                 $return['offsetToGMT'] = $this->functions->CalculateDateOffset();
 		if($this->mbox && is_resource($this->mbox))
@@ -2458,7 +2512,7 @@ class imap_functions
     {
         //include_once(dirname( __FILE__ ) ."/../../security/classes/CertificadoB.php");
         $contentType = "normal";
-      
+
         if( !$headers ){ $headers = imap_fetchheader($this->mbox, $msg_number, FT_UID); }
 
         if( preg_match("/pkcs7-signature/i", $headers) == 1 )
@@ -2472,7 +2526,7 @@ class imap_functions
 
         return $contentType;
     }
-    
+
 		/**
         * Retorna a posição que a pasta esta dentro do array de pastas
         *
@@ -2482,15 +2536,15 @@ class imap_functions
         * @author     Cristiano Corrêa Schmidt
         * @access     public
 		*/
-		
+
 	function getFolderPos(&$array , $find)
-	{            
+	{
 		foreach($array as $i => $v)
 			if($v['id'] === $find)
 				return $i;
 		return false;
 	}
-	
+
         /**
         * Ordenas as pastas padrões do usuario na ordem INBOX > SENT > DRAFTS > SPAM > TRASH > OTHERS
         *
@@ -2506,7 +2560,7 @@ class imap_functions
 		for($x = 0; $x < 5 ; ++$x)
 		{
 			switch ($x) {
-				case 0:                             
+				case 0:
 					if( ($p = $this->getFolderPos($folders , $user )) || $p === 0 )
 						$principals[] = $folders[$p];
 					break;
@@ -2524,7 +2578,7 @@ class imap_functions
 					break;
 				case 4:
 					if( ($p = $this->getFolderPos($folders , $this->mount_url_folder(array($user , $this->folders['trash'])) )) || $p === 0  )
-						$principals[] = $folders[$p];                                           
+						$principals[] = $folders[$p];
 					break;
 			}
 			if($p !== false)
@@ -2532,7 +2586,7 @@ class imap_functions
 		}
 		$folders = array_merge($principals, $folders);
 	}
-        
+
         /**
         * Retorna lista de pastas do usuario no padrão que a lib javascript espera.
         *
@@ -2545,7 +2599,7 @@ class imap_functions
 	function get_folders_list($params = null)
 	{
 	    $return = $this->getFolders( $params );
-	
+
 	    foreach ($return as $i => &$vv)
 	    {
             if(!is_array($vv)) continue;
@@ -2555,37 +2609,39 @@ class imap_functions
             $vv['folder_parent'] = mb_convert_encoding($vv['folder_parent'],'ISO-8859-1','UTF7-IMAP');//DECODIFICA NOME DAS PASTAS COM ACENTOS
 	    }
 
-	    return ( $return );        
+	    return ( $return );
 	}
-	
+
 	function getFolders($params = null)
 	{
 		///Define Variaveis
 		$prefixShared = 'user'; //Prefixo das pastas compartilhadas
-		$uid2cn = (isset($_SESSION['phpgw_info']['user']['preferences']['expressoMail']['uid2cn'])) ? $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['uid2cn'] : false; 
+		$uid2cn = (isset($_SESSION['phpgw_info']['user']['preferences']['expressoMail']['uid2cn'])) ? $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['uid2cn'] : false;
 		$mboxStream = $this->open_mbox(); //abre conexão imap
 		$currentFolder = isset($params['folder']) ? $params['folder'] : 'INBOX';
 		$folders = array();
 		$return = array();
 		///////////////////////////////////////////////////////////////
-                    
+
 		if( isset($params['onload']) && $_SESSION['phpgw_info']['expressomail']['server']['certificado'])
 			$this->delete_mailbox(array('del_past' => 'INBOX'.$this->imap_delimiter.'decifradas')); //Deleta Pasta decifradas
-		
-		session_write_close(); // Free others requests 
-		$serverString = "{".$this->imap_server.":".$this->imap_port.$this->imap_options."}"; 
-		
+
+		session_write_close(); // Free others requests
+		$serverString = "{".$this->imap_server.":".$this->imap_port.$this->imap_options."}";
+
 		if ( isset($params['noSharedFolders']) )
 			$folders_list = array_merge(imap_getmailboxes($mboxStream, $serverString, 'INBOX' ), imap_getmailboxes($mboxStream, $serverString, 'INBOX/*' ) );
 		else
 			$folders_list = imap_getmailboxes($mboxStream, $serverString, '*' );
 
-		$folders_list = array_slice($folders_list,0,$this->foldersLimit); 
+		$folders_list = array_slice($folders_list,0,$this->foldersLimit);
 
 		if (!is_array($folders_list)) return false;
 			if($uid2cn)
 				$this->ldap = new ldap_functions();
-                
+
+
+
 		foreach ($folders_list as $i => $v ) //Separando Pastas e informações
 		{
 			$folderId = substr($v->name,(strpos($v->name , '}') + 1));
@@ -2617,10 +2673,10 @@ class imap_functions
 				}
 
 				$folders[$prefixShared.$this->imap_delimiter.$nameArray[1]][] = array(
-					'id' => $folderId , 
-					'stream' => $v->name , 
-					'attributes' => $v->attributes , 
-					'name' => $nameArray[($nameCount-1)] , 
+					'id' => $folderId ,
+					'stream' => $v->name ,
+					'attributes' => $v->attributes ,
+					'name' => $nameArray[($nameCount-1)] ,
 					//'user' => $nameCount ,
 					'user' => $nameArray[1] ,
 					'parent' => $parent ,
@@ -2633,31 +2689,32 @@ class imap_functions
 					)
 				);
 
- 			}	
+
+ 			}
 			else if( $folderId !== $decifrada)
-			{ 
+			{
 				//Escapa pasta decifrada
 				$folders['INBOX'][strtolower($folderId)] = array(
-					'id' => $folderId , 
-					'stream' => $v->name , 
+					'id' => $folderId ,
+					'stream' => $v->name ,
 					'attributes' => $v->attributes ,
-					'name' => $nameArray[($nameCount-1)] , 
-					'parent' => $parent 
+					'name' => $nameArray[($nameCount-1)] ,
+					'parent' => $parent
 				);
 			}
 		}
 
 		unset($folders_list); //destroy array de objetos desnecessarios
-		
+
 		ksort($folders['INBOX']);
-		
+
 		foreach($folders as $i => $v) //Ordenando e resgatando novas informações
 		{
 			$this->orderDefaultFolders($folders[$i] , $i);  //Ordenando Pastas Padrões
-			
+
 			foreach ($folders[$i] as $ii => $vv)
 			{
-				$append = array();				
+				$append = array();
 				$append['folder_id'] = $vv['id'];
 				//Nome da Pasta
 				$append['folder_name'] = (($uid2cn && isset($vv['user'])) && ($vv['name'] == $vv['user'])) ? $this->ldap->uid2cn($vv['user']) : $vv['name'];
@@ -2674,12 +2731,12 @@ class imap_functions
 				$return[] = $append;
 			}
 		}
-		
+
 		$quotaInfo =  (!isset($params['noQuotaInfo'])) ? $this->get_quota( array('folder_id' => $currentFolder)) : false; //VERIFICA SE O USUARIO TEM COTA
 
 		return ( ( is_array($quotaInfo) ) ?  array_merge($return, $quotaInfo) : $return );
 	}
-    
+
 
 	function create_mailbox($arr)
 	{
@@ -2687,6 +2744,7 @@ class imap_functions
 		$base_path = $arr['base_path'];
 		$mbox_stream = $this->open_mbox();
 		$imap_server = $_SESSION['phpgw_info']['expressomail']['email_server']['imapServer'];
+        $created = '';
         /* Quebra nome da pasta quando houver pontos ou barras (possíveis delimitadores do cyrus) */
         $test = preg_split("/\/|\./", $namebox);
 		if(count($test) < 1 || $base_path == null || $base_path == "" || $base_path == 'undefined'){
@@ -2695,11 +2753,12 @@ class imap_functions
 			}
 			$namebox =  mb_convert_encoding($namebox, "UTF7-IMAP", "UTF-8");
 			$result = "Ok";
-			
+
 			if(!imap_createmailbox($mbox_stream,"{".$imap_server."}".$namebox))
 			{
 				$result = imap_last_error();
 			}
+            $created .= "[$namebox]";
 		}else{
 			$child = $base_path.$this->imap_delimiter;
             $test_count = count($test);
@@ -2710,13 +2769,15 @@ class imap_functions
 
 				if(!imap_createmailbox($mbox_stream,"{".$imap_server."}$namebox"))
 				{
-					$result = imap_last_error();						
+					$result = imap_last_error();
 				}
 				$child .=$this->imap_delimiter;
+                $created .= "[$namebox]";
 			}
-		}		
+		}
 		if($mbox_stream)
 			imap_close($mbox_stream);
+        Logger::info('expressomail','createdir',$created);
 		return $result;
 	}
 
@@ -2724,6 +2785,7 @@ class imap_functions
 	{
 		$nameboxs = explode(";",$arr['nw_folders']);
 		$result = "";
+        $created = "";
 		$mbox_stream = $this->open_mbox();
 		$imap_server = $_SESSION['phpgw_info']['expressomail']['email_server']['imapServer'];
 		foreach($nameboxs as $key=>$tmp){
@@ -2734,10 +2796,14 @@ class imap_functions
 						imap_close($mbox_stream);
 					return $result;
 				}
+                $created .= "[$tmp]";
 			}
 		}
 		if($mbox_stream)
 			imap_close($mbox_stream);
+
+        Logger::info('expressomail','createdir',$created);
+
 		return true;
 	}
 
@@ -2758,12 +2824,13 @@ class imap_functions
 		if($mbox_stream)
 			imap_close($mbox_stream);
 		*/
+        Logger::info('expressomail','deldir',$namebox);
 		return $result;
 	}
 
 	function ren_mailbox($arr)
 	{
-		$namebox = $arr['current'];		
+		$namebox = $arr['current'];
 		$path_delimiter = strrpos($namebox,$this->imap_delimiter)+1;
 		$base_path = substr($namebox,0,$path_delimiter);
 		$rename = preg_split("/\/|\./",substr($arr['rename'], $path_delimiter));
@@ -2774,6 +2841,7 @@ class imap_functions
 		$result = "Ok";
 		$namebox = mb_convert_encoding($namebox, "UTF7-IMAP","UTF-8");
 		$new_box = mb_convert_encoding($base_path.$new_box, "UTF7-IMAP","UTF-8");
+        $created = '';
 
 		if(!imap_renamemailbox($mbox_stream,"{".$imap_server."}$namebox","{".$imap_server."}$new_box"))
 		{
@@ -2789,14 +2857,22 @@ class imap_functions
 				$result = "Ok";
 				if(!imap_createmailbox($mbox_stream,"{".$imap_server."}$namebox"))
 				{
-					$result = imap_last_error();						
+					$result = imap_last_error();
 				}
+                $created .= "[$namebox]";
 				$child .=$this->imap_delimiter;
-			}			
+			}
 		}
 
 		if($mbox_stream)
 			imap_close($mbox_stream);
+
+        $namebox = mb_convert_encoding($arr['current'], "UTF7-IMAP","UTF-8");
+        Logger::info('expressomail','renamedir',$namebox." TO ".$new_box);
+        if ($created != '') {
+            Logger::info('expressomail','createdir',$created);
+        }
+
 		return $result;
 
 	}
@@ -2818,9 +2894,9 @@ class imap_functions
 
 	function folder_exists($folder){
 		$mbox =  $this->open_mbox();
-		$serverString = "{".$this->imap_server.":".$this->imap_port.$this->imap_options."}";		
+		$serverString = "{".$this->imap_server.":".$this->imap_port.$this->imap_options."}";
 		$list = imap_getmailboxes($mbox,$serverString, $folder);
-		$return = is_array($list);		
+		$return = is_array($list);
 		imap_close($mbox);
 		return $return;
 	}
@@ -2852,7 +2928,7 @@ class imap_functions
             $db = new db_functions();
             $fromaddress = $params['input_from'] ? explode(';', $params['input_from']) : "";
             $message_attachments_contents = (isset($params['message_attachments_content'])) ? $params['message_attachments_content'] : false;
-			
+
             ##
             # @AUTHOR Rodrigo Souza dos Santos
             # @DATE 2008/09/17$fileName
@@ -2917,9 +2993,20 @@ class imap_functions
 			$params['attachments'] = mb_convert_encoding($params['attachments'], "UTF7-IMAP","UTF-8, ISO-8859-1, UTF7-IMAP");
             $message_attachments = $params['message_attachments'];
 
+            $user_info = $_SESSION['phpgw_info']['expressomail']['user'];
+            $sent_from = '"' . $user_info['fullname'] . '" <' . $user_info['email'] . '>';
+            if ($fromaddress)
+            {
+                $sent_from = $fromaddress;
+                if (is_array($sent_from))
+                {
+                    $sent_from = '"' . $sent_from[0] . '" <' . $sent_from[1] . '>';
+                }
+            }
 
+            $loginfo = "|# Subject: $subject #|# FROM: $sent_from #|# TO: $toaddress #|# CC: $ccaddress #|# BCC: $ccoaddress #|# REPLY_TO: $replytoaddress";
 
-            // Valida numero Maximo de Destinatarios 
+            // Valida numero Maximo de Destinatarios
             if ($_SESSION['phpgw_info']['expresso']['expressoMail']['expressoAdmin_maximum_recipients'] > 0) {
                 $sendersNumber = count(explode(',', $params['input_to']));
 
@@ -2949,7 +3036,7 @@ class imap_functions
                     }
                 }
             }
-            //Fim Valida numero maximo de destinatarios 
+            //Fim Valida numero maximo de destinatarios
             //Valida envio de email para shared accounts
             if ($_SESSION['phpgw_info']['expresso']['expressoMail']['expressoMail_block_institutional_comunication'] == 'true') {
                 $ldap = new ldap_functions();
@@ -3040,7 +3127,7 @@ class imap_functions
                 $body = str_replace("%nbsp;","&nbsp;",$body);
                 //$body = preg_replace("/\n/"," ",$body);
                 //$body = preg_replace("/\r/","" ,$body);
-                $body = html_entity_decode ( $body, ENT_QUOTES , 'ISO-8859-1' );	
+                $body = html_entity_decode ( $body, ENT_QUOTES , 'ISO-8859-1' );
 				$body = str_replace("&yzwkx;","&lt;",$body);
 				$body = str_replace("&xzwky;","&gt;",$body);
             }
@@ -3048,7 +3135,7 @@ class imap_functions
             $attachments = $_FILES;
             $forwarding_attachments = $params['forwarding_attachments'];
             $local_attachments = $params['local_attachments'];
-	
+
 
             //Test if must be saved in shared folder and change if necessary
             if ($fromaddress[2] == 'y') {
@@ -3065,7 +3152,7 @@ class imap_functions
 					$arr_new_folder['newp'] = $name_folder;
 					$arr_new_folder['base_path'] = $base_path;
 
-					$this->create_mailbox($arr_new_folder);	
+					$this->create_mailbox($arr_new_folder);
 					$has_new_folder = true;
                     $folder = $newfolder;
 				}
@@ -3089,7 +3176,7 @@ class imap_functions
 					  '" <' . $_SESSION['phpgw_info']['expressomail']['user']['email'] . '>');
 
 			$mailService->setFrom( mb_convert_encoding($from, "ISO-8859-1","UTF-8, ISO-8859-1"));
-        
+
 			$mailService->addHeaderField('Reply-To', !!$replytoaddress ? $replytoaddress : $from);
 
             $bol = $this->add_recipients('to', $toaddress, $mailService);
@@ -3111,7 +3198,7 @@ class imap_functions
                 }
             }
 
-            //Implementação para o In-Reply-To e References				
+            //Implementação para o In-Reply-To e References
             $msg_numb = $params['messageNum'];
             $msg_folder = $params['messageFolder'];
             $this->mbox = $this->open_mbox($msg_folder);
@@ -3120,7 +3207,7 @@ class imap_functions
             $header_ = imap_fetchheader($this->mbox, $msg_numb, FT_UID);
             $pattern = '/^[ \t]*Disposition-Notification-To:.*/mi';
 			if (preg_match($pattern, $header_, $fields))
-				$return['DispositionNotificationTo'] = base64_encode(trim(str_ireplace('Disposition-Notification-To:', '', $fields[0]))); 
+				$return['DispositionNotificationTo'] = base64_encode(trim(str_ireplace('Disposition-Notification-To:', '', $fields[0])));
 
             $message_id = $header->message_id;
             $references = array();
@@ -3216,7 +3303,13 @@ class imap_functions
 
             $attachment = json_decode($params['attachments'],TRUE);
             $message_size_total = 0;
-            foreach ($attachment as &$value) 
+
+            // se possui anexos, inserir informação no log
+            if (count($attachment) > 0) {
+                $loginfo .= "#|# ATTACH: ";
+            }
+
+            foreach ($attachment as &$value)
             {
                 if((int)$value > 0) //BD attachment
                 {
@@ -3226,10 +3319,13 @@ class imap_functions
                      {
                          $body = str_replace('"../prototype/getArchive.php?mailAttachment='.$att['id'].'"', '"'.mb_convert_encoding($att['name'], 'ISO-8859-1' , 'UTF-8,ISO-8859-1').'"', $body);
                          $mailService->addStringImage(base64_decode($att['source']), $att['type'], mb_convert_encoding($att['name'], 'ISO-8859-1' , 'UTF-8,ISO-8859-1'));
+                         $loginfo .= "[".$att['name'].":".$att['size']."]";
                      }
-                     else
+                     else {
                          $mailService->addStringAttachment(base64_decode($att['source']), mb_convert_encoding($att['name'], 'ISO-8859-1' , 'UTF-8,ISO-8859-1'), $att['type'], 'base64', isset($att['disposition']) ? $att['disposition'] :'attachment' );
-                     
+                         $loginfo .= "[".$att['name'].":".$att['size']."]";
+                     }
+
                      $message_size_total += $att['size'];
                      unset($att);
                 }
@@ -3245,24 +3341,27 @@ class imap_functions
                                 $att = $this->getForwardingAttachment(mb_convert_encoding($value['folder'] , 'ISO-8859-1' , 'UTF7-IMAP'),$value['uid'], $value['part']);
 
                                 if(strstr($body,'src="./inc/get_archive.php?msgFolder='.$value['folder'].'&msgNumber='.$value['uid'].'&indexPart='.$value['part'].'"') !== false)//Embeded IMG
-                                {    
+                                {
                                     $body = str_ireplace('src="./inc/get_archive.php?msgFolder='.$value['folder'].  '&msgNumber='.$value['uid'].'&indexPart='.$value['part'].'"' , 'src="'.$att['name'].'"', $body);
                                     $mailService->addStringImage($att['source'], $att['type'],mb_convert_encoding($att['name'], 'ISO-8859-1' , 'UTF-8,ISO-8859-1') );
                                 }
-                                else
+                                else {
                                     $mailService->addStringAttachment($att['source'], mb_convert_encoding($att['name'], 'ISO-8859-1' , 'UTF-8,ISO-8859-1'), $att['type'], 'base64', isset($att['disposition']) ? $att['disposition'] :'attachment' );
-                                 
-                                $message_size_total += $att['size']; //Adiciona o tamanho do anexo a variavel que controlao tamanho da msg.
+                                    $loginfo .= "[".$att['name'].":".$att['fsize']."]";
+                                }
+
+                                $message_size_total += $att['fsize']; //Adiciona o tamanho do anexo a variavel que controlao tamanho da msg.
                                 unset($att);
                             break;
                             case 'imapMSG':
                                 $mbox_stream = $this->open_mbox(mb_convert_encoding($value['folder'] , 'ISO-8859-1' , 'UTF7-IMAP'));
                                 $rawmsg = $this->getRawHeader($value['uid']) . "\r\n\r\n" . $this->getRawBody($value['uid']);
-                                
+
                                 $mailService->addStringAttachment($rawmsg, mb_convert_encoding(base64_decode($value['name']), 'ISO-8859-1' , 'UTF-8,ISO-8859-1'), 'message/rfc822', '7bit', 'attachment' );
                                 /*envia o anexo para o email*/
                                 $message_size_total += mb_strlen($rawmsg); //Adiciona o tamanho do anexo a variavel que controlao tamanho da msg.
                                 unset($rawmsg);
+                                //TODO: tem como fazer log deste tipo de anexo?
                             break;
 
                         default:
@@ -3270,10 +3369,10 @@ class imap_functions
                     }
                 }
             }
-	    
-            $message_size_total += strlen($params['body']);   /* Tamanho do corpo da mensagem. */        
 
-            ////////////////////////////////////////////////////////////////////////////////////////////////////	
+            $message_size_total += strlen($params['body']);   /* Tamanho do corpo da mensagem. */
+
+            ////////////////////////////////////////////////////////////////////////////////////////////////////
             /**
              * Faz a validação pelo tamanho máximo de mensagem permitido para o usuário. Se o usuário não estiver em nenhuma regra, usa o tamanho padrão.
              */
@@ -3347,13 +3446,13 @@ class imap_functions
                 $defaultStyle = '';
                 if(isset($_SESSION['phpgw_info']['user']['preferences']['expressoMail']['font_family_editor']) && $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['font_family_editor'])
                     $defaultStyle .= ' font-family:'.$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['font_family_editor'] .';';
-                
+
                 if(isset($_SESSION['phpgw_info']['user']['preferences']['expressoMail']['font_size_editor']) && $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['font_size_editor'])
                     $defaultStyle .= ' font-size:'.$_SESSION['phpgw_info']['user']['preferences']['expressoMail']['font_size_editor'].';';
-    
+
                 $body = '<span class="'.$defaultStyle.'">'.$body.'</span>';
                 $mailService->setBodyHtml($body);
-            }    
+            }
             else
                 $mailService->setBodyText(mb_convert_encoding($body, 'ISO-8859-1' , 'UTF-8,ISO-8859-1' ));
 
@@ -3388,14 +3487,15 @@ class imap_functions
                 }
                 if($params['uids_save'] )
 					$this->delete_msgs(array('folder'=> $params['save_folder'] , 'msgs_number' => $params['uids_save']));
-                       
+
                 //return array("success" => true, "folder" => $folder_list);
+                Logger::info('expressomail','sendmsg',$loginfo);
 				return array("success" => true, "load" => $has_new_folder);
-                
+
             }
     }
-	
-	
+
+
 	function add_recipients_cert($full_address)
 	{
 		$result = "";
@@ -3422,7 +3522,7 @@ class imap_functions
 		$full_address = preg_replace("/, ?,/",",",$full_address);
 		$parse_address = imap_rfc822_parse_adrlist($full_address, "");
 
-		$bolean = true;		
+		$bolean = true;
 		foreach ($parse_address as $val)
 		{
 			//echo "<script language=\"javascript\">javascript:alert('".$val->mailbox."@".$val->host."');</script>";
@@ -3435,7 +3535,7 @@ class imap_functions
 						$mail->AddAddress($val->mailbox."@".$val->host, $val->personal);
 					}else{
 						$mail->AddTo( ($val->personal ? "\"$val->personal\" <$val->mailbox@$val->host>" : "$val->mailbox@$val->host"));
-					} 
+					}
 					break;
 				case "cc":
 					if($mobile){
@@ -3454,7 +3554,7 @@ class imap_functions
 		}
 		return $bolean;
 	}
-        
+
         function getForwardingAttachment($folder, $uid, $part, $rfc_822bodies = true , $info = true )
         {
             include_once dirname(__FILE__).'/class.attachment.inc.php';
@@ -3462,7 +3562,7 @@ class imap_functions
             $attachment->decodeConf['rfc_822bodies'] = $rfc_822bodies; //Forçar a não decodificação de mensagens em anexo.
 			$folder = urldecode($folder);
     		$attachment->setStructureFromMail($folder, $uid);
-            
+
             if($info === true)
             {
                 $return = $attachment->getAttachmentInfo($part);
@@ -3471,7 +3571,7 @@ class imap_functions
             }
             return $attachment->getAttachment($part);
         }
-            
+
 	function del_last_caracter($string)
 	{
 		$string = substr($string,0,(strlen($string) - 1));
@@ -3503,7 +3603,7 @@ class imap_functions
 			$num_msgs = imap_num_msg($this->mbox);
 			if ($offsetEnd >  $num_msgs) {$offsetEnd = $num_msgs;}
 			$slice_array = true;
-            $from_to_sent = $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['from_to_sent'];  
+            $from_to_sent = $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['from_to_sent'];
 			$dates = array();
 			for ($i=$num_msgs; $i>0; $i--)
 			{
@@ -3511,7 +3611,7 @@ class imap_functions
 					break;
 				$iuid = @imap_uid($this->mbox,$i);
 				$header = $this->get_header($iuid);
-				
+
 				// List UNSEEN messages.
 				if($search_box_type == "UNSEEN" &&  (!trim($header->Recent) && !trim($header->Unseen))){
 					continue;
@@ -3534,7 +3634,7 @@ class imap_functions
 						$tmp = self::formatMailObject($header->to[0]);
 					else
 						$tmp = self::formatMailObject($header->from[0]);
-					$sort[$iuid] = ($tmp['name']) ? $tmp['name'] : $tmp['email'];	
+					$sort[$iuid] = ($tmp['name']) ? $tmp['name'] : $tmp['email'];
 				}
 				else if($sort_box_type=='SORTSUBJECT') {
 					$sort[$iuid] = $header->subject;
@@ -3548,7 +3648,7 @@ class imap_functions
 				$dates[$iuid] = $header->udate;
 			}
 			$keys = array_keys($sort);
-			
+
 			//Applies the strtolower() function in each element of $sort array name
 			$sort_lowercase = array_map('strtolower',$sort);
 			array_multisort($sort_lowercase, SORT_ASC,SORT_STRING,$sort,$keys, SORT_NUMERIC, SORT_DESC, $dates, SORT_DESC);
@@ -3571,7 +3671,7 @@ class imap_functions
 	function move_delete_search_messages($params){
 		$move = false;
 		$msg_no_move = "";
-	
+
 		$params['selected_messages'] = urldecode($params['selected_messages_move']);
 		$params['new_folder'] = urldecode($params['new_folder_move']);
 		$params['new_folder_name'] = urldecode($params['new_folder_name_move']);
@@ -3586,22 +3686,22 @@ class imap_functions
 			 else {
 				$sorted_msgs[$sel_msg[0]] = $sel_msg[1];
 			 }
-		}		
+		}
 		@ksort($sorted_msgs);
 		$last_return = false;
 		foreach($sorted_msgs as $folder => $msgs_number) {
 			$params['msgs_number'] = $msgs_number;
 			$params['folder'] = $folder;
-				
+
 			$last_return = $this->move_messages($params);
-			
+
 			if($last_return['status']){
 				$move = true;
 			}else{
 				$msg_no_move =  $params['msgs_number'];
 			}
 		}
-		$sel_msgs = null;		
+		$sel_msgs = null;
 		$params['selected_messages'] = urldecode($params['selected_messages_delete']);
 		$params['new_folder'] = urldecode($params['new_folder_delete']);
 		$params['new_folder_name'] = urldecode($params['new_folder_name_delete']);
@@ -3622,7 +3722,7 @@ class imap_functions
 		foreach($sorted_msgs as $folder => $msgs_number) {
 			$params['msgs_number'] = $msgs_number;
 			$params['folder'] = $folder;
-		
+
 			$params['folder'] = $params['new_folder_delete'];
 			$last_return = $this->delete_msgs($params);
 			$last_return['deleted'] = true;
@@ -3631,15 +3731,15 @@ class imap_functions
 			}else{
 				$msg_no_move =  $params['msgs_number'];
 			}
-		
+
 		}
-	
+
 		if($move)
 			$last_return['move'] = true;
-			
+
 		if($msg_no_move != "")
 			$last_return['no_move'] = $msg_no_move;
-		
+
 		return $last_return;
 	}
 
@@ -3650,7 +3750,7 @@ class imap_functions
 		$sel_msgs = explode(",", $params['selected_messages']);
 		$move = false;
 		$msg_no_move = "";
-		
+
 		@reset($sel_msgs);
 		$sorted_msgs = array();
 		foreach($sel_msgs as $idx => $sel_msg) {
@@ -3667,21 +3767,21 @@ class imap_functions
 		foreach($sorted_msgs as $folder => $msgs_number) {
 			$params['msgs_number'] = $msgs_number;
 			$params['folder'] = $folder;
-			
+
 		if($params['delete'] === 'true'){
 			$params['folder'] = $params['new_folder'];
 			$last_return = $this->delete_msgs($params);
 				$last_return['deleted'] = true;
-			
+
 			if($last_return['status']){
 				$move = true;
 			}else{
 				$msg_no_move =  $params['msgs_number'];
 			}
-			
+
 		}else{
 				$last_return = $this->move_messages($params);
-				
+
 				if($last_return['status']){
 					$move = true;
 				}else{
@@ -3689,13 +3789,13 @@ class imap_functions
 			}
 		}
 		}
-		
+
 		if($move)
 			$last_return['move'] = true;
-			
+
 		if($msg_no_move != "")
 			$last_return['no_move'] = $msg_no_move;
-			
+
 		return $last_return;
 	}
 
@@ -3716,9 +3816,23 @@ class imap_functions
 	function move_messages($params)
 	{
 		$folder = $params['folder'];
-                $newmailbox = mb_convert_encoding($params['new_folder'], "UTF7-IMAP", ( isset($params['decoded']) ? "" : "ISO-8859-1, " )."UTF-8, UTF7-IMAP" );
+        $newmailbox = mb_convert_encoding($params['new_folder'], "UTF7-IMAP", ( isset($params['decoded']) ? "" : "ISO-8859-1, " )."UTF-8, UTF7-IMAP" );
 		$new_folder_name = isset($params['decoded']) ? mb_convert_encoding($params['new_folder_name'], "ISO-8859-1", "UTF-8" ) : $params['new_folder_name'];
-                $msgs_number = $params['msgs_number'];
+        $msgs_number = $params['msgs_number'];
+
+        // Precisamos gravar o nome das mensagens movidas.
+        $moveds = split(',',$msgs_number);
+        $log_msgs = '';
+        foreach ($moveds as $msg_number){
+            if(!$this->mbox || !is_resource($this->mbox))
+            $this->mbox = $this->open_mbox($folder);
+            $header = $this->get_header($msg_number);
+            $message_id = $header->message_id;
+            $subj = ( isset( $header->fetchsubject ) ) ? $this->decode_string($header->fetchsubject) : '';
+            $log_msgs .= '#['.$subj.'|'.$message_id.']';
+        }
+        $log_msgs .= " FROM ".$folder." TO ".$newmailbox;
+
 		$return = array('msgs_number' => $msgs_number,
 						'folder' => $folder,
 						'new_folder_name' => $new_folder_name,
@@ -3780,6 +3894,7 @@ class imap_functions
 			imap_expunge($mbox_stream);
 			if($mbox_stream)
 				imap_close($mbox_stream);
+            Logger::info('expressomail','movemsg',$log_msgs);
 			return $return;
 		}else {
 			if(strstr(imap_last_error(),'Over quota')) {
@@ -3808,6 +3923,7 @@ class imap_functions
 							imap_close($mbox);
 						return "move_messages(): Error setting quota for MOVE or DELETE!! line ".__LINE__."\n";
 					}
+                    Logger::info('expressomail','movemsg',$log_msgs);
 					return $return;
 				}
 				else {
@@ -3825,18 +3941,18 @@ class imap_functions
 			else {
 				if($mbox_stream)
 					imap_close($mbox_stream);
-				
+
 				$msg_error = "move_messages() line ".__LINE__.": ". imap_last_error()." folder:".$newmailbox;
 				trigger_error($msg_error);
 				return $msg_error;
 			}
 		}
 	}
-	
+
 	function set_messages_flag_from_search($params){
 		$error = False;
 		$fileNames = "";
-		
+
 		$sel_msgs = explode(",", $params['msg_to_flag']);
 		@reset($sel_msgs);
 		$sorted_msgs = array();
@@ -3849,8 +3965,8 @@ class imap_functions
 				$sorted_msgs[$sel_msg[0]] = $sel_msg[1];
 			}
 		}
-		unset($sorted_msgs['']);			
-		$array_names_keys = array_keys($sorted_msgs);	
+		unset($sorted_msgs['']);
+		$array_names_keys = array_keys($sorted_msgs);
 		// Verifica se as n mensagens selecionadas
 		// se encontram em um mesmo folder
 		if (count($sorted_msgs)==1){
@@ -3880,7 +3996,7 @@ class imap_functions
     }
 
 	function set_messages_flag($params)
-	{		
+	{
 		$folder = ( isset($params['decoded']) ) ? $params['folder'] : mb_convert_encoding($params['folder'], "UTF7-IMAP", "ISO-8859-1, UTF-8, UTF7-IMAP");
 		$msgs_to_set = $params['msgs_to_set'];
 		$flag = $params['flag'];
@@ -3888,38 +4004,56 @@ class imap_functions
 		$return["msgs_to_set"] = $msgs_to_set;
 		$return["flag"] = $flag;
 		$return["msgs_not_to_set"] = "";
-			
+
 		$this->mbox = $this->open_mbox($folder);
-			
+
+        $msgs_to_log = array();
+
 		if ($flag == "unseen"){
 			$return["msgs_to_set"] = "";
 			$msgs = explode(",",$msgs_to_set);
 			foreach($msgs as $men){
-				if (imap_clearflag_full($this->mbox, $men, "\\Seen", ST_UID))
+				if (imap_clearflag_full($this->mbox, $men, "\\Seen", ST_UID)) {
 					$return["msgs_to_set"] .= $men.",";
-				else
+                    // Precisamos gravar o message_id da mensagem marcada como não vista.
+                    $header = $this->get_header($men);
+                    $message_id = $header->message_id;
+                    $msgs_to_log[] = $message_id;
+                }
+				else {
 					$return["msgs_not_to_set"] .= $men.",";
+                }
 			}
 			$return["status"] = true;
+            if(count($msgs_to_log) > 0) {
+                Logger::info('expressomail','unseen',implode(',', $msgs_to_log) . " FROM $folder");
+            }
 		}elseif ($flag == "seen"){
 			$return["msgs_to_set"] = "";
 			$msgs = explode(",",$msgs_to_set);
 			foreach($msgs as $men){
-
                 if($this->verify_disposition_notification($men)){
-
-                    if(!array_key_exists('disposition_notification_to', $return))
+                    if(!array_key_exists('disposition_notification_to', $return)) {
                         $return['disposition_notification_to'] = array();
-
+                    }
                     $return["disposition_notification_to"][] = $men;
                 }else{
-                    if (imap_setflag_full($this->mbox, $men, "\\Seen", ST_UID))
+                    if (imap_setflag_full($this->mbox, $men, "\\Seen", ST_UID)) {
                         $return["msgs_to_set"] .= $men.",";
-                    else
+                        // Precisamos gravar o message_id da mensagem marcada como vista.
+                        $header = $this->get_header($men);
+                        $message_id = $header->message_id;
+                        $msgs_to_log[] = $message_id;
+                    }
+                    else {
                         $return["msgs_not_to_set"] .= $men.",";
+                    }
                 }
 			}
 			$return["status"] = true;
+            if(count($msgs_to_log) > 0) {
+                Logger::info('expressomail','seen',implode(',', $msgs_to_log) . " FROM $folder");
+            }
 		}elseif ($flag == "answered"){
 			$return["status"] = imap_setflag_full($this->mbox, $msgs_to_set, "\\Answered", ST_UID);
 			imap_clearflag_full($this->mbox, $msgs_to_set, "\\Draft", ST_UID);
@@ -3960,7 +4094,7 @@ class imap_functions
 				$return["status"] = true;
 			}
 		}
-		
+
 		if(($flag == "seen") || ($flag == "unseen")){
 			if ($return["msgs_not_to_set"] != ""){
 				$return["msgs_not_to_set"] = substr($return["msgs_not_to_set"], 0, -1);
@@ -3971,7 +4105,7 @@ class imap_functions
 			}
 		}
 		if($this->mbox && is_resource($this->mbox))
-			imap_close($this->mbox);		
+			imap_close($this->mbox);
 		return $return;
 	}
 
@@ -4200,14 +4334,14 @@ class imap_functions
 
 	function send_notification($params)
 	{
-		$mailService = ServiceLocator::getService('mail'); 
+		$mailService = ServiceLocator::getService('mail');
 		$body = lang("Your message: %1",$params['subject']) . '<br>';
 		$body .= lang("Received in: %1",date("d/m/Y H:i",$params['date'])) . '<br>';
 		$body .= lang("Has been read by: %1 &lt; %2 &gt; at %3", $_SESSION['phpgw_info']['expressomail']['user']['fullname'], $_SESSION['phpgw_info']['expressomail']['user']['email'], date("d/m/Y H:i"));
-		return $mailService->sendMail(base64_decode($params['notificationto']), 
- 							   $_SESSION['phpgw_info']['expressomail']['user']['email'], 
- 							   $this->htmlspecialchars_decode(lang("Read receipt: %1",$params['subject'])), 
- 							   $body); 
+		return $mailService->sendMail(base64_decode($params['notificationto']),
+ 							   $_SESSION['phpgw_info']['expressomail']['user']['email'],
+ 							   $this->htmlspecialchars_decode(lang("Read receipt: %1",$params['subject'])),
+ 							   $body);
 
 	}
 
@@ -4215,11 +4349,30 @@ class imap_functions
 	{
 		$folder = (isset($params['shared']) ? $params['shared'] : 'INBOX') . $this->imap_delimiter . $_SESSION['phpgw_info']['expressomail']['email_server'][$params['clean_folder']];
 		$mbox_stream = $this->open_mbox($folder);
+
+        //Gravar no log a mensagem que está sendo excluída.
+        session_write_close();
+        $messages = imap_search($mbox_stream, 'ALL', SE_UID);
+
+        $log = '#';
+        if (is_array($messages)){
+            foreach ($messages as $msg_number){
+                if(!$this->mbox || !is_resource($this->mbox)) {
+                    $this->mbox = $this->open_mbox($folder);
+                }
+                $header = $this->get_header($msg_number);
+                $subj = ( isset( $header->fetchsubject ) ) ? $this->decode_string($header->fetchsubject) : '';
+                $message_id = $header->message_id;
+                $log = $log.'['.$subj.'|'.$message_id.']#';
+            }
+        }
+
 		$return = imap_delete($mbox_stream,'1:*');
 		if (!$return)
 			$return = imap_errors();
 		if($mbox_stream)
 			imap_close($mbox_stream, CL_EXPUNGE);
+        Logger::info('expressomail','CLEARFOLDER', $log);
 		return $return;
 	}
 
@@ -4323,7 +4476,7 @@ class imap_functions
 		$num_msgs = 0;
 		$max_msgs = $params['max_msgs'] + 1; //get one more because mobile paginate
 		$return["msgs"] = array();
-		
+
 		//get max_msgs of each folder order by date and later order all messages together and retur only max_msgs msgs
 		foreach($folders as $id =>$folder)
 		{
@@ -4335,13 +4488,13 @@ class imap_functions
 					$mbox_stream = $this->open_mbox($folder['folder_id']);
 
 					$messages = imap_sort($mbox_stream,SORTARRIVAL,1,SE_UID,$_filter);
-					
+
 					if ($messages == ''){
 						if($mbox_stream)
 							imap_close($mbox_stream);
-						continue;	
+						continue;
 					}
-					
+
 					foreach($messages as $msg_number)
 					{
 						$temp = $this->get_info_head_msg($msg_number);
@@ -4368,7 +4521,7 @@ class imap_functions
 		$return["has_more_msg"] = (sizeof($return["msgs"]) > $max_msgs);
 		$return["msgs"] = array_slice($return["msgs"], 0, $max_msgs);
 		$return["msgs"]['num_msgs'] = $num_msgs;
-		
+
 		return $return;
 	}
 
@@ -4389,23 +4542,67 @@ class imap_functions
 
 	function automatic_trash_cleanness($params)
 	{
+        $log = '#';
 		$before_date = date("m/d/Y", strtotime("-".$params['before_date']." day"));
 		$criteria =  'BEFORE "'.$before_date.'"';
 		//$mbox_stream = $this->open_mbox('INBOX'.$this->folders['trash']);
-		$mbox_stream = $this->open_mbox($this->mount_url_folder(array("INBOX",$this->folders['trash'])));
-		
-		// Free others requests 
-                session_write_close(); 
+		//$mbox_stream = $this->open_mbox($this->mount_url_folder(array("INBOX",$this->folders['trash'])));
+        $mbox_stream = $this->open_mbox('INBOX'.$this->imap_delimiter.$_SESSION['phpgw_info']['expressomail']['email_server']['imapDefaultTrashFolder']);
+
+		// Free others requests
+        session_write_close();
 		$messages = imap_search($mbox_stream, $criteria, SE_UID);
 		if (is_array($messages)){
-			foreach ($messages as $msg_number){
-				imap_delete($mbox_stream, $msg_number, FT_UID);
-			}
+            //Gravar no log a mensagem que está sendo excluída.
+            foreach ($messages as $msg_number){
+                if(!$this->mbox || !is_resource($this->mbox)) {
+                    $this->mbox = $this->open_mbox("INBOX.Lixeira");
+                }
+                $header = $this->get_header($msg_number);
+                $message_id = $header->message_id;
+                $subj = ( isset( $header->fetchsubject ) ) ? $this->decode_string($header->fetchsubject) : '';
+                $log = $log.'['.$subj.'|'.$message_id.']#';
+
+                imap_delete($mbox_stream, $msg_number, FT_UID);
+            }
+            Logger::info('expressomail','CLEANTRASH[AUTO]',$log);
 		}
-		if($mbox_stream)
+		if($mbox_stream) {
 			imap_close($mbox_stream, CL_EXPUNGE);
+        }
 		return $messages;
 	}
+
+    function automatic_spam_cleanness($params)
+    {
+        $log = '#';
+        $before_date = date("m/d/Y", strtotime("-".$params['before_date']." day"));
+        $criteria =  'BEFORE "'.$before_date.'"';
+        $mbox_stream = $this->open_mbox('INBOX'.$this->imap_delimiter.$_SESSION['phpgw_info']['expressomail']['email_server']['imapDefaultSpamFolder']);
+        // Free others requests
+        session_write_close();
+        $messages = imap_search($mbox_stream, $criteria, SE_UID);
+        if (is_array($messages)){
+            //Gravar no log a mensagem que está sendo excluída.
+            foreach ($messages as $msg_number){
+                if(!$this->mbox || !is_resource($this->mbox)) {
+                    $this->mbox = $this->open_mbox("INBOX".$this->imap_delimiter.$_SESSION['phpgw_info']['expressomail']['email_server']['imapDefaultSpamFolder']);
+                }
+                $header = $this->get_header($msg_number);
+                $message_id = $header->message_id;
+                $subj = ( isset( $header->fetchsubject ) ) ? $this->decode_string($header->fetchsubject) : '';
+                $log = $log.'['.$subj.'|'.$message_id.']#';
+
+                imap_delete($mbox_stream, $msg_number, FT_UID);
+            }
+            Logger::info('expressomail','CLEANSPAM[AUTO]',$log);
+        }
+        if($mbox_stream) {
+            imap_close($mbox_stream, CL_EXPUNGE);
+        }
+        return $messages;
+    }
+
 // 	Fix the search problem with special characters!!!!
 	function remove_accents($string) {
 		return strtr($string,
@@ -4426,7 +4623,12 @@ class imap_functions
 
 	function search_msg( $params = false )
 	{
-		include '../prototype/api/controller.php';
+
+
+
+		include '/prototype/api/controller.php';
+
+
 		if(strpos($params['condition'],"#")===false)
 		{ //local messages
 			$search=false;
@@ -4435,6 +4637,9 @@ class imap_functions
 		{
 			$search = explode(",",$params['condition']);
 		}
+
+
+
 
 		$params['page'] = $params['page'] * 1;
 
@@ -4470,7 +4675,7 @@ class imap_functions
 						}
 					}
 				}
-				
+
 				$name_box = mb_convert_encoding(utf8_decode($name_box), "UTF7-IMAP", "ISO-8859-1" );
 				$filter = $this->remove_accents($filter);
 
@@ -4479,7 +4684,7 @@ class imap_functions
 				{
 					$folder_name = explode($this->imap_delimiter,$name_box);
 					$this->ldap = new ldap_functions();
-					
+
 					if ($cn = $this->ldap->uid2cn($folder_name[1]))
 					{
 						$folder_name[1] = $cn;
@@ -4488,32 +4693,32 @@ class imap_functions
 				}
 				else
 					$folder_name = mb_convert_encoding(utf8_decode($name_box), "UTF7-IMAP", "ISO-8859-1" );
-				
-	
+
+
 			        $this->open_mbox($name_box);
 
 				if (preg_match("/^.?\bALL\b/", $filter))
-				{ 
+				{
 					// Quick Search, note: this ALL isn't the same ALL from imap_search
 					$all_criterias = array ("TO","SUBJECT","FROM","CC");
-					    
+
 					foreach($all_criterias as $criteria_fixed)
 					{
 						$_filter = $criteria_fixed . substr($filter,4);
-						
+
 						$search_criteria = imap_search($this->mbox, $_filter, SE_UID);
-						
+
 						if(is_array($search_criteria))
 						{
 							foreach($search_criteria as $new_search)
 							{
 								$elem = $this->get_info_head_msg($new_search);
-								$elem['udate']       = gmdate('d/m/Y', $elem['udate'] + $this->functions->CalculateDateOffset()); 
-								$elem['boxname'] = mb_convert_encoding( $name_box, "ISO-8859-1", "UTF7-IMAP" ); 
+								$elem['udate']       = gmdate('d/m/Y', $elem['udate'] + $this->functions->CalculateDateOffset());
+								$elem['boxname'] = mb_convert_encoding( $name_box, "ISO-8859-1", "UTF7-IMAP" );
 								$elem['uid'] = $new_search;
                                                                 /* compare dates in ordering */
 								$elem['udatecomp'] = substr ($elem['udate'], -4) ."-". substr ($elem['udate'], 3, 2) ."-". substr ($elem['udate'], 0, 2);
-								$retorno[] = $elem; 
+								$retorno[] = $elem;
 							}
 						}
 					}
@@ -4554,10 +4759,10 @@ class imap_functions
                                     {
                                         foreach($search_criteria as $new_search)
                                         {
-										
+
                                             $elem = $this->get_info_head_msg( $new_search );
-                                            $elem['udate']       = gmdate('d/m/Y', $elem['udate'] + $this->functions->CalculateDateOffset()); 
-											$elem['boxname'] = mb_convert_encoding( $name_box, "ISO-8859-1", "UTF7-IMAP" ); 
+                                            $elem['udate']       = gmdate('d/m/Y', $elem['udate'] + $this->functions->CalculateDateOffset());
+											$elem['boxname'] = mb_convert_encoding( $name_box, "ISO-8859-1", "UTF7-IMAP" );
                                             $elem['uid'] = $new_search;
                                             /* compare dates in ordering */
                                             $elem['udatecomp'] = substr ($elem['udate'], -4) ."-". substr ($elem['udate'], 3, 2) ."-". substr ($elem['udate'], 0, 2);
@@ -4593,7 +4798,7 @@ class imap_functions
 				}
 			}
 		}
-		
+
             imap_close($this->mbox);
 	    $num_msgs = count($retorno);
 	    /* Comparison functions, descendent is ascendent with parms inverted */
@@ -4614,7 +4819,7 @@ class imap_functions
 
 	    usort( $retorno, $params['sort_type']);
 	    $pageret = array_slice( $retorno, $params['page'] * $this->prefs['max_email_per_page'], $this->prefs['max_email_per_page']);
-	    
+
 	    $arrayRetorno['num_msgs']	=  $num_msgs;
 	    $arrayRetorno['data']		=  $pageret;
 	    $arrayRetorno['currentTab'] =  $params['current_tab'];
@@ -4629,7 +4834,7 @@ class imap_functions
 			return $size ." b";
 		}
 	}
-	
+
 	function ob_array($the_object)
 	{
 	   $the_array=array();
@@ -4666,7 +4871,7 @@ class imap_functions
 		$return = array();
 		foreach ($mbox_acl as $user => $acl)
 		{
-			if($user == $this->username) 
+			if($user == $this->username)
 				continue;
 
 			//Compatibiliza acls no padrão antigo para o novo
@@ -4687,7 +4892,7 @@ class imap_functions
 
 		$mbox_stream = $this->open_mbox();
 		$serverString = "{".$this->imap_server.":".$this->imap_port.$this->imap_options."}";
-		$mailboxes_list = imap_getmailboxes($mbox_stream, $serverString, "user".$this->imap_delimiter.$this->username."*");                
+		$mailboxes_list = imap_getmailboxes($mbox_stream, $serverString, "user".$this->imap_delimiter.$this->username."*");
 
 		foreach ($new_users as $user => $value) {
 			if(isset($old_users[$user]) && $value['acls'] == $old_users[$user]['acls'])
@@ -4697,6 +4902,7 @@ class imap_functions
 			}
 		}
 
+        $aclLog = '';
 		foreach ($new_users as $user => $value)
 		{
 	        if (is_array($mailboxes_list))
@@ -4704,16 +4910,20 @@ class imap_functions
 	            foreach ($mailboxes_list as $key => $val)
 	            {
 	                $folder = str_replace($serverString, "", imap_utf7_decode($val->name));
-	                //$folder = str_replace("&-", "&", $folder);			
+	                //$folder = str_replace("&-", "&", $folder);
 	                $trashFolder = explode($this->imap_delimiter,$folder);
 	                $acls = ($trashFolder[count($trashFolder) - 1] == "Trash") ? $value['acls']."i" : $value['acls'];
-	                $folder = imap_utf7_encode($folder);	                
+	                $folder = imap_utf7_encode($folder);
 	                imap_setacl ($mbox_stream, $folder, "$user", $acls);
 	            }
 	        }
+            $aclLog .= "($user -> [$acls])";
 	        if(isset($old_users[$user]))
 	        	unset($old_users[$user]);
 		}
+        if ($aclLog != '') {
+            Logger::info('expressomail','setacl',$this->username." TO ".$aclLog);
+        }
 
 		foreach ($old_users as $user => $value)
 		{
@@ -4728,8 +4938,9 @@ class imap_functions
 
 	            }
 	        }
+            Logger::info('expressomail','SETACL', $this->username." TO ".$user." ACL[]");
 		}
-		
+
 
 		return true;
 	}
@@ -4739,10 +4950,10 @@ class imap_functions
 	{
 		$return = array();
 		$mbox_stream = $this->open_mbox('INBOX');
-		
+
 		if( $decode )
 		    $user = mb_convert_encoding($user, 'UTF7-IMAP','UTF-8, ISO-8859-1, UTF7-IMAP');
-		
+
 		//Alterado, antes era 'imap_getacl($mbox_stream, 'user'.$this->imap_delimiter.$user);
 		//Afim de tratar as pastas compartilhadas, verificandos as permissoes de operacao sobre as mesmas
 		//No caso de se tratar da caixa do proprio usuario logado, utiliza a sintaxe abaixo
@@ -4750,9 +4961,9 @@ class imap_functions
 			$mbox_acl = imap_getacl($mbox_stream, 'user'.$this->imap_delimiter.$user);
 		else
 		  	$mbox_acl = imap_getacl($mbox_stream, $user);
-		
+
 		return (isset($mbox_acl[$this->username])) ? $mbox_acl[$this->username] : '';
-               
+
 	}
 
 	function download_attachment($msg,$msgno)
@@ -4780,7 +4991,7 @@ class imap_functions
 		return $array_parts_attachments;
 	}
 
-	
+
 	/**
 	* @license   http://www.gnu.org/copyleft/gpl.html GPL
 	* @author    Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
@@ -4788,7 +4999,7 @@ class imap_functions
 	*/
 	function spam($params)
 	{
-		
+
 		$mbox_stream = $this->open_mbox($params['folder']);
 		$msgs_number = explode(',',$params['msgs_number']);
 
@@ -4803,7 +5014,7 @@ class imap_functions
 
                     $user['name'] = $folderArray[1];
                     $user['email'] = $ldapObject->getMailByUid($user['name']);
-                
+
                 }
                 else
                 {
@@ -4820,7 +5031,7 @@ class imap_functions
 			strtok($user['email'], '@');
 			$domain = strtok('@');
 
-           
+
 
 			//Encontrar a assinatura do dspam no cabecalho
 			$v = explode("\r\n", $header);
@@ -4840,29 +5051,38 @@ class imap_functions
 				case 'false': $cmd = $_SESSION['phpgw_info']['server']['expressomail']['expressoMail_command_for_ham']; break;
 			}
 
-                      
-			$tags = array('##EMAIL##', '##USERNAME##', '##DOMAIN##', '##SIGNATURE##', '##MSGID##');
-			$cmd = str_replace($tags, array($user['email'], $user['name'], $domain, $signature, $msg_id), $cmd);
-                        
- 			system($cmd);
+
+			$tags = array('##EMAIL##', '##USERNAME##', '##DOMAIN##', '##SIGNATURE##', '##MSGID##',
+						  '##SMTP_SERVER##', '##SMTP_PORT##');
+			$smtpServer = $_SESSION['phpgw_info']['expressomail']['email_server']['smtpServer'];
+			$smtpPort   = $_SESSION['phpgw_info']['expressomail']['email_server']['smtpPort'];
+			$cmd = str_replace($tags, array($user['email'], $user['name'], $domain,
+						 $signature, $msg_id, $smtpServer, $smtpPort), $cmd);
+
+			$msg = system($cmd, $status);
+
+			if($status===0)
+				Logger::info('expressomail','dspam', $cmd);
+			else
+				Logger::error('expressomail','dspam', $cmd. ' error:'.$msg);
 		}
 
 		imap_close($mbox_stream);
 		return false;
 	}
-	
-	
+
+
 /**
 * Descrição do método
 *
 * @license    http://www.gnu.org/copyleft/gpl.html GPL
-* @author     
+* @author
 * @sponsor    Caixa Econômica Federal
-* @author     
+* @author
 * @param      <tipo> <$msg_number> <Número da mensagem>
 * @return     <cabeçalho da mensagem>
 * @access     <public>
-*/	
+*/
 	function get_header($msg_number)
 	{
                 $header = @imap_headerinfo($this->mbox, imap_msgno($this->mbox, $msg_number), 80, 255);
@@ -4893,7 +5113,7 @@ class imap_functions
 
         $folder = mb_convert_encoding( $folder, "UTF7-IMAP","ISO-8859-1");
         $mbox_stream = imap_open("{".$imap_server.":".$imap_port.$imap_options."}".$folder, $username, $password);
-        
+
         if(imap_last_error() === 'Mailbox already exists')
             imap_createmailbox($mbox_stream,imap_utf7_encode("{".$imap_server."}".$folder));
 
@@ -4901,11 +5121,11 @@ class imap_functions
             if(version_compare(PHP_VERSION, '5.3.2', '>=')){
                 $return['append'] = imap_append($mbox_stream, "{".$imap_server.":".$imap_port."}".mb_convert_encoding($folder, "UTF7-IMAP","ISO_8859-1"), $source,'',date('d-M-Y H:i:s O',$timestamp));
             }else{
-				$pdate = date_parse(date('r')); // pega a data atual do servidor (TODO: pegar a data da mensagem local) 
-				$timestamp += $pdate['zone']*(60); //converte a data da mensagem para o fuso horário GMT 0. Isto é feito devido ao Expresso Mail armazenar a data no fuso horário GMT 0 e para exibi-la converte ela para o fuso horário local. 
-				/* TODO: o diretorio /tmp deve ser substituido pelo diretorio temporario configurado no setup */ 
-				$file = "/tmp/sess_".$_SESSION[ 'phpgw_session' ][ 'session_id' ]; 
-			
+				$pdate = date_parse(date('r')); // pega a data atual do servidor (TODO: pegar a data da mensagem local)
+				$timestamp += $pdate['zone']*(60); //converte a data da mensagem para o fuso horário GMT 0. Isto é feito devido ao Expresso Mail armazenar a data no fuso horário GMT 0 e para exibi-la converte ela para o fuso horário local.
+				/* TODO: o diretorio /tmp deve ser substituido pelo diretorio temporario configurado no setup */
+				$file = "/tmp/sess_".$_SESSION[ 'phpgw_session' ][ 'session_id' ];
+
 	    		$f = fopen($file,"w");
 	        	fputs($f,base64_encode($source));
 	            fclose($f);
@@ -4927,9 +5147,9 @@ class imap_functions
         }
 
         $status = imap_status($mbox_stream, "{".$this->imap_server.":".$this->imap_port."}".$folder, SA_UIDNEXT);
-			
+
         $return['msg_no'] = $status->uidnext - 1;
-		
+
         $return['error'] = '';
 		if(imap_last_error() && imap_last_error() != "SECURITY PROBLEM: insecure server advertised AUTH=PLAIN")
             $return['error'] = imap_last_error();
@@ -4950,31 +5170,31 @@ class imap_functions
 			    $flags_fixed.="\\Answered \\Draft ";
 			imap_setflag_full($mbox_stream, $return['msg_no'], $flags_fixed, ST_UID);
 		}
-	
+
         //Ignorando erro de AUTH=Plain
         if($return['error'] === 'SECURITY PROBLEM: insecure server advertised AUTH=PLAIN')
             $return['error'] = false;
-                                
+
         if($mbox_stream)
             imap_close($mbox_stream);
         return $return;
     }
 
-        function show_decript($params,$dec=0){ 
+        function show_decript($params,$dec=0){
         $source = $params['source'];
-	 
-        if ($dec == 0) 
-        { 
-            $source = str_replace(" ", "+", $source,$i); 
- 		        if (version_compare(PHP_VERSION, '5.2.0', '>=')){ 
- 		            if(!$source = base64_decode($source,true)) 
-                    return "error ".$source."Espaï¿?os ".$i; 
- 		 
- 		        } 
- 		        else { 
- 		            if(!$source = base64_decode($source)) 
-                    return "error ".$source."Espaï¿?os ".$i; 
-            } 
+
+        if ($dec == 0)
+        {
+            $source = str_replace(" ", "+", $source,$i);
+ 		        if (version_compare(PHP_VERSION, '5.2.0', '>=')){
+ 		            if(!$source = base64_decode($source,true))
+                    return "error ".$source."Espaï¿?os ".$i;
+
+ 		        }
+ 		        else {
+ 		            if(!$source = base64_decode($source))
+                    return "error ".$source."Espaï¿?os ".$i;
+            }
         }
 
         $insert = $this->insert_email($source,'INBOX'.$this->imap_delimiter.'decifradas');
@@ -5041,7 +5261,7 @@ class imap_functions
 	//Por Bruno Costa(bruno.vieira-costa@serpro.gov.br - Recebe os fontes dos emails a serem desarquivados, separa e envia cada um para função insert_mail.
 
     function unarchive_mail($params)
-    {	
+    {
         $dest_folder = urldecode($params['folder']);
         $sources = explode("#@#@#@",$params['source']);
         $timestamps = explode("#@#@#@",$params['timestamp']);
@@ -5071,7 +5291,7 @@ class imap_functions
                 {
                     $error[] = $ids[$index];
                 }
-                else 
+                else
                 {
                     $archived[] = $ids[$index];
                 }
@@ -5079,7 +5299,7 @@ class imap_functions
                 $error[] = $ids[$index];
             }
 		}
-        
+
         if (!empty($error))
         {
             $return['error'] = $error;
@@ -5088,7 +5308,7 @@ class imap_functions
         {
             $return['archived'] = $archived;
         }
-        
+
         return $return;
     }
 
@@ -5102,38 +5322,38 @@ class imap_functions
         $params['folder']='INBOX'.$this->imap_delimiter.'decifradas';
         return $exporteml->download_all_attachments($params);
     }
-	
-	/** 
-	 * Método que envia um email reportando um erro no email do usuário 
-	 * @license http://www.gnu.org/copyleft/gpl.html GPL 
-	 * @author Prognus Software Livre (http://www.prognus.com.br) 
-	 */  
- 	function report_mail_error($params) 
- 	{        
- 		$params = $params['params']; 
- 		$array_params = explode(";;", $params); 
- 		$id_msg   = $array_params[0]; 
+
+	/**
+	 * Método que envia um email reportando um erro no email do usuário
+	 * @license http://www.gnu.org/copyleft/gpl.html GPL
+	 * @author Prognus Software Livre (http://www.prognus.com.br)
+	 */
+ 	function report_mail_error($params)
+ 	{
+ 		$params = $params['params'];
+ 		$array_params = explode(";;", $params);
+ 		$id_msg   = $array_params[0];
  		$msg_user = $array_params[1];
  		$msg_folder = $array_params[2];
- 		
- 		if($msg_user == '') 
-			$msg_user = "Sem mensagem!"; 
- 		         
-		$toname = $_SESSION['phpgw_info']['expressomail']['user']['fullname']; 
- 		 
- 		$exporteml = new ExportEml(); 
- 		$mail_content = $exporteml->export_msg_data($id_msg, $msg_folder); 
- 		$this->open_mbox($msg_folder);  
-		$title = "Erro de email reportado"; 
-		$body  = "<body>O usu&aacute;rio <strong>$toname</strong> reportou um erro na tentativa de acesso ao conte&uacute;do do email.<br><br>Segue em anexo o fonte da mensagem" .                           " reportada.<br><br><hr><strong><u>Mensagem do usu&aacute;rio:</strong></u><br><br><br>" . 
- 		                "$msg_user</body><br><br><hr>"; 
-						
+
+ 		if($msg_user == '')
+			$msg_user = "Sem mensagem!";
+
+		$toname = $_SESSION['phpgw_info']['expressomail']['user']['fullname'];
+
+ 		$exporteml = new ExportEml();
+ 		$mail_content = $exporteml->export_msg_data($id_msg, $msg_folder);
+ 		$this->open_mbox($msg_folder);
+		$title = "Erro de email reportado";
+		$body  = "<body>O usu&aacute;rio <strong>$toname</strong> reportou um erro na tentativa de acesso ao conte&uacute;do do email.<br><br>Segue em anexo o fonte da mensagem" .                           " reportada.<br><br><hr><strong><u>Mensagem do usu&aacute;rio:</strong></u><br><br><br>" .
+ 		                "$msg_user</body><br><br><hr>";
+
  		require_once dirname(__FILE__) . '/../../services/class.servicelocator.php';
- 		$mailService = ServiceLocator::getService('mail');      
- 		$mailService->addStringAttachment($mail_content, 'report.eml', 'application/text'); 
- 		$mailService->sendMail($_SESSION['phpgw_info']['expressomail']['server']['sugestoes_email_to'], $GLOBALS['phpgw_info']['user']['email'], $title, $body); 
-	} 
-	
+ 		$mailService = ServiceLocator::getService('mail');
+ 		$mailService->addStringAttachment($mail_content, 'report.eml', 'application/text');
+ 		$mailService->sendMail($_SESSION['phpgw_info']['expressomail']['server']['sugestoes_email_to'], $GLOBALS['phpgw_info']['user']['email'], $title, $body);
+	}
+
 	function array_msort($array, $cols)
 	{
 		$colarr = array();
@@ -5159,11 +5379,11 @@ class imap_functions
 			}
 			$first = false;
 		}
-		
+
 		return $ret;
 
 	}
-        
+
 	function parseCriteriaSearchMail($search)
 	{
 		$criteria = '';
@@ -5172,59 +5392,59 @@ class imap_functions
 		foreach ($searchArray as $v)
 			if(trim($v) !== '' )
 				$criteria .= 'TEXT "'.$v.'" ' ;
-	   
+
 		return $criteria;
 	}
-        
+
 	function quickSearchMail( $params )
-	{		
-		include '../prototype/api/controller.php';			
+	{
+		include '/prototype/api/controller.php';
 		set_time_limit(270); //Aumenta o tempo limit da requisição, em algumas buscas o imap demora para retornar o resultado.
 		$return = array();
 		$return['folder'] = $params['folder'];
 		if(!is_array($params['folder']))
 			$params['folder'] = array( $params['folder'] );
-		
+
 		if(!isset($params['sortType']))
 			$params['sortType'] = 'SORTDATE_REVERSE';
-				
+
 		$params['search'] = mb_convert_encoding($params['search'], 'UTF-8',mb_detect_encoding($params['search'].'x', 'UTF-8, ISO-8859-1'));
 
-		$i = 0;		
+		$i = 0;
 		if(!isset($params['page'])) $params['page'] = 0;
-		$end = ($this->prefs['max_email_per_page'] * ((int)$params['page'] + 1));	
+		$end = ($this->prefs['max_email_per_page'] * ((int)$params['page'] + 1));
 		$ini = $end - $this->prefs['max_email_per_page'] ;
 		$count = 0;
-		
+
 		if (!preg_match('/KEYWORD/i', $params['search'])){
 			$search = $this->parseCriteriaSearchMail($params['search']);
 		} else {
 			$search = $params['search'];
 		}
-	
-		foreach ($params['folder'] as $folder) 
+
+		foreach ($params['folder'] as $folder)
 		{
 			$imap = $this->open_mbox( $folder ) ;
 			$msgIds = imap_sort( $imap , SORTDATE , 1 , SE_UID , $search ,'UTF-8');
-						
-			$count += count($msgIds);  
-			
+
+			$count += count($msgIds);
+
 			foreach ($msgIds as $ii => $v)
-			{	
+			{
 				$msg = imap_headerinfo ( $imap,  imap_msgno($imap, $v) );
 
 				$return['msgs'][$i]['from'] = '';
-				
+
 				if(isset($msg->from[0]))
 				{
 					$from = self::formatMailObject( $msg->from[0] );
 					$return['msgs'][$i]['from'] 	= mb_convert_encoding($from['name'] ? $from['name'] : $from['email'], 'UTF-8');
 				}
 				else
-					$return['msgs'][$i]['from'] 	= ''; 
-				
+					$return['msgs'][$i]['from'] 	= '';
+
 				$return['msgs'][$i]['subject'] = ' ';
-				
+
 				$subject = imap_mime_header_decode($msg->subject);
 				foreach ($subject as $tmp)
 					$return['msgs'][$i]['subject'] .= mb_convert_encoding($tmp->text, 'UTF-8', 'UTF-8 , ISO-8859-1');
@@ -5259,38 +5479,44 @@ class imap_functions
                     }
                 }
 
-				$mimeBody = imap_body( $this->mbox, $v  , FT_UID|FT_PEEK  );
+                // os comandos abaixos foram retirados pois deixam a busca lenta.
+				// $mimeBody = imap_body( $this->mbox, $v  , FT_UID|FT_PEEK  );
+                // $return['msgs'][$i]['flag'] .= ( preg_match('/((Content-Disposition:(.)*([\r\n\s]*filename))|(Content-Type:(.)*([\r\n\s]*name)))/i', $mimeBody) ) ? 'T': '';         // 
+
 				$return['msgs'][$i]['flag'] = ' ';
 				$return['msgs'][$i]['flag'] .= $msg->Unseen ? $msg->Unseen : '';
 				$return['msgs'][$i]['flag'] .= $msg->Recent ? $msg->Recent : '';
-				$return['msgs'][$i]['flag'] .= $msg->Draft ? $msg->Draft : '';	
-				$return['msgs'][$i]['flag'] .= $msg->Answered ? $msg->Answered : '';	
-				$return['msgs'][$i]['flag'] .= $msg->Deleted ? $msg->Deleted : '';	
-				$return['msgs'][$i]['flag'] .= ( preg_match('/((Content-Disposition:(.)*([\r\n\s]*filename))|(Content-Type:(.)*([\r\n\s]*name)))/i', $mimeBody) ) ? 'T': '';
-				
+				$return['msgs'][$i]['flag'] .= $msg->Draft ? $msg->Draft : '';
+				$return['msgs'][$i]['flag'] .= $msg->Answered ? $msg->Answered : '';
+				$return['msgs'][$i]['flag'] .= $msg->Deleted ? $msg->Deleted : '';
+
+                $msgComponents = new message_components($this->mbox);
+                $msgComponents->fetch_structure($v);
+                $return['msgs'][$i]['flag'] .= count($msgComponents->fname[$v]) > 0 ? 'T' : '';
+
 				$header = imap_fetchheader( $imap, $v , FT_UID ); // Necessario para recuperar se a mensagem é importante ou não.
 				$importante = array();
-				
+
 				if($msg->Flagged != 'F')
 					$return['msgs'][$i]['flag'] .= ( preg_match('/importance *: *(.*)\r/i', $header , $importante) === 0 ) ? '' : 'F';
 				else
-					$return['msgs'][$i]['flag'] .= $msg->Flagged ? $msg->Flagged : '';	
-					
-				$return['msgs'][$i]['udate'] = gmdate("d/m/Y",$msg->udate + $this->functions->CalculateDateOffset()); 
+					$return['msgs'][$i]['flag'] .= $msg->Flagged ? $msg->Flagged : '';
+
+				$return['msgs'][$i]['udate'] = gmdate("d/m/Y",$msg->udate + $this->functions->CalculateDateOffset());
 				$return['msgs'][$i]['udatecomp'] = substr ($return['msgs'][$i]['udate'], -4) ."-". substr ($return['msgs'][$i]['udate'], 3, 2) ."-". substr ($return['msgs'][$i]['udate'], 0, 2);
 			    $return['msgs'][$i]['date'] =   $msg->udate;
 				$return['msgs'][$i]['size'] =  $msg->Size;
 				$return['msgs'][$i]['boxname'] = $folder;
 				$return['msgs'][$i]['uid'] = $v;
 				++$i;
-			} 	
+			}
 		}
-		
+
 		$return['num_msgs'] = $count;
-		
+
 		if(!isset($return['msgs']))
 			$return['msgs'] = array();
-		
+
 		define('SORTBOX', 69);
 		define('SORTWHO', 2);
 		define('SORTBOX_REVERSE', 69);
@@ -5298,77 +5524,77 @@ class imap_functions
 		define('SORTDATE_REVERSE', 0);
 		define('SORTSUBJECT_REVERSE', 3);
 		define('SORTSIZE_REVERSE', 6);
-		
+
 		switch (constant( $params['sortType'] )){
 			case 0 : $sA = 'date'; break;
 			case 2 : $sA = 'from'; break;
 			case 69 : $sA = 'boxname'; break;
 			case 3 : $sA = 'subject'; break;
 			case 6 : $sA = 'size'; break;
-	} 
-	
-			
+	}
+
+
 		if($params['sortType'] !== 'SORTDATE_REVERSE')
 		if(strpos($params['sortType'],'REVERSE') !== false)
 				$return['msgs'] = $this->array_msort($return['msgs'] , array( $sA => SORT_DESC));
 			else
 				$return['msgs'] = $this->array_msort($return['msgs'] , array( $sA => SORT_ASC));
-		
+
 		$k = -1;
 		$nMsgs = array();
-		
+
 		foreach ($return['msgs'] as $v)
-		{		
+		{
 			++$k;
-			if($k < $ini || $k >= $end ) continue;			
+			if($k < $ini || $k >= $end ) continue;
 			$nMsgs[] = $v;
 		}
 		$return['msgs'] = $nMsgs;
 
 		$return = json_encode($return);
 		$return = base64_encode($return);
-        
+
 		return $return;
 	}
-	
-    function get_quota_folders(){ 
 
-	    // Additional Imap Class for not-implemented functions into PHP-IMAP extension. 
-	    include_once("class.imapfp.inc.php");            
-	    $imapfp = new imapfp(); 
+    function get_quota_folders(){
 
-	    if(!$imapfp->open($this->imap_server,$this->imap_port)) 
-		    return $imapfp->get_error();             
-	    if (!$imapfp->login( $this->username,$this->password )) 
-		    return $imapfp->get_error(); 
+	    // Additional Imap Class for not-implemented functions into PHP-IMAP extension.
+	    include_once("class.imapfp.inc.php");
+	    $imapfp = new imapfp();
 
-	    $response_array = $imapfp->get_mailboxes_size(); 
-	    if ($imapfp->error) 
-		    return $imapfp->get_error(); 
+	    if(!$imapfp->open($this->imap_server,$this->imap_port))
+		    return $imapfp->get_error();
+	    if (!$imapfp->login( $this->username,$this->password ))
+		    return $imapfp->get_error();
 
-	    $data = array(); 
-	    $quota_root = $this->get_quota(array('folder_id' => "INBOX")); 
-	    $data["quota_root"] = $quota_root; 
+	    $response_array = $imapfp->get_mailboxes_size();
+	    if ($imapfp->error)
+		    return $imapfp->get_error();
 
-	    foreach ($response_array as $idx=>$line) { 
-		    $line2 = str_replace('"', "", $line); 
-		    $line2 = str_replace(" /vendor/cmu/cyrus-imapd/size (value.shared ",";",str_replace("* ANNOTATION ","",$line2)); 
-		    list($folder,$size) = explode(";",$line2); 
-		    $quota_used = str_replace(")","",$size); 
-		    $quotaPercent = (($quota_used / 1024) / $data["quota_root"]["quota_limit"])*100; 
-		    $folder = mb_convert_encoding($folder, "ISO-8859-1", "UTF7-IMAP"); 
-		    if(!preg_match('/user\\'.$this->imap_delimiter.$this->username.'\\'.$this->imap_delimiter.'/i',$folder)){ 
-			    $folder = $this->functions->getLang("Inbox"); 
-		    } 
-		    else 
-			    $folder = preg_replace('/user\\'.$this->imap_delimiter.$this->username.'\\'.$this->imap_delimiter.'/i','', $folder); 
+	    $data = array();
+	    $quota_root = $this->get_quota(array('folder_id' => "INBOX"));
+	    $data["quota_root"] = $quota_root;
 
-		    $data[$folder] = array("quota_percent" => sprintf("%.1f",round($quotaPercent,1)), "quota_used" => $quota_used); 
-	    } 
-	    $imapfp->close(); 
-	    return $data; 
-    }  
-    
+	    foreach ($response_array as $idx=>$line) {
+		    $line2 = str_replace('"', "", $line);
+		    $line2 = str_replace(" /vendor/cmu/cyrus-imapd/size (value.shared ",";",str_replace("* ANNOTATION ","",$line2));
+		    list($folder,$size) = explode(";",$line2);
+		    $quota_used = str_replace(")","",$size);
+		    $quotaPercent = (($quota_used / 1024) / $data["quota_root"]["quota_limit"])*100;
+		    $folder = mb_convert_encoding($folder, "ISO-8859-1", "UTF7-IMAP");
+		    if(!preg_match('/user\\'.$this->imap_delimiter.$this->username.'\\'.$this->imap_delimiter.'/i',$folder)){
+			    $folder = $this->functions->getLang("Inbox");
+		    }
+		    else
+			    $folder = preg_replace('/user\\'.$this->imap_delimiter.$this->username.'\\'.$this->imap_delimiter.'/i','', $folder);
+
+		    $data[$folder] = array("quota_percent" => sprintf("%.1f",round($quotaPercent,1)), "quota_used" => $quota_used);
+	    }
+	    $imapfp->close();
+	    return $data;
+    }
+
     function getaclfrombox($mail)
 	{
 			$mailArray = explode('@', $mail);
@@ -5387,13 +5613,13 @@ class imap_functions
 			}
 			return $return;
 	}
-		
-		
+
+
 	function searchSieveRule( $params )
 	{
 		$imap = $this->open_mbox( $params['folder']['criteria'] ? $params['folder']['criteria'] : 'INBOX' );
 		$msgs = imap_sort( $imap , SORTDATE , 0 , SE_UID);
-	
+
 		$rr = array();
 
         if(isset($params['from']))  $rr['from'] = array();
@@ -5406,9 +5632,9 @@ class imap_functions
 
 		foreach ($msgs as $i => $v)
 		{
-			
-			$msg = imap_headerinfo ( $imap,   imap_msgno($imap, $v)  );	
-			
+
+			$msg = imap_headerinfo ( $imap,   imap_msgno($imap, $v)  );
+
 			if(isset($params['from']))
 			{
 				$from['from'] = array();
@@ -5427,7 +5653,7 @@ class imap_functions
 				if($this->filterCheck( $from['from']['full'] , $params['from']['criteria'] , $params['from']['filter'] ))
 					$rr['from'][] = $v;
 			}
-			
+
 			if(isset($params['to']))
 			{
 				$tos = $msg->to;
@@ -5436,37 +5662,37 @@ class imap_functions
 				{
 					$tmp = imap_mime_header_decode($to->personal);
 					$val .= '"' . $tmp[0]->text . '" ' . '<' .  $to->mailbox . "@" . $to->host . '>';
-					
-				}				
+
+				}
 				if($this->filterCheck( $val , $params['to']['criteria'] , $params['to']['filter'] ))
 					$rr['to'][] = $v;
-				
+
 				$tos = $msg->cc;
 				$val = '';
 				foreach( $tos as $to)
 				{
 					$tmp = imap_mime_header_decode($to->personal);
 					$val .= '"' . $tmp[0]->text . '" ' . '<' .  $to->mailbox . "@" . $to->host . '>';
-					
+
 				}
 
 				if($this->filterCheck( $val , $params['to']['criteria'] , $params['to']['filter'] ))
 					$rr['to'][] = $v;
 			}
-			
+
 			if(isset($params['subject']))
-			{		
+			{
 				$ss = '';
 				$subject = imap_mime_header_decode($msg->subject);
 				foreach ($subject as $tmp)
 					$ss .= ($tmp->charset == "default") ? $tmp->text : utf8_encode($tmp->text);
-				
+
 				if($this->filterCheck($ss , $params['subject']['criteria'] , $params['subject']['filter'] ))
 				$rr['subject'][] = $v;
 			}
-			
+
 			if(isset($params['body']))
-			{			
+			{
 				$this->mbox = $this->open_mbox( $params['folder']['criteria'] ? $params['folder']['criteria'] : 'INBOX' );
 				$b = $this->get_body_msg( $v , $params['folder']['criteria'] ? $params['folder']['criteria'] : 'INBOX' );
 
@@ -5475,14 +5701,14 @@ class imap_functions
 
 				unset($b);
 			}
-			
+
 			if(isset($params['size']))
 			{
 				if( $this->filterCheck( $msg->Size , $params['size']['criteria'] , $params['size']['filter'] ))
 					$rr['size'][] = $v;
 			}
 		}
-		
+
 		$rrr = array();
 		$init = true;
 		foreach ($rr as $i => $v)
@@ -5497,29 +5723,29 @@ class imap_functions
 
 //		if($params['page'] && $params['rows'])
 //		{
-//		
-//			$end = ( $params['rows'] * $params['page'] );	
+//
+//			$end = ( $params['rows'] * $params['page'] );
 //			$ini = $end -  $params['rows'] ;
-//		
-//			//Pegando os do range da paginação			
+//
+//			//Pegando os do range da paginação
 //			$k = -1;
 //			$r = array();
 //			foreach ($rrr as $v)
-//			{		
+//			{
 //				++$k;
-//				if( $k < $ini || $k >= $end ) continue;			
+//				if( $k < $ini || $k >= $end ) continue;
 //				$r[] = $v;
 //			}
 //			//////////////////////////////////////
 //		}
 //		else
-			$r = $rrr;		
-					
+			$r = $rrr;
+
 		return $r ;
 	}
-	
+
 	function filterCheck( $val , $crit ,$fil )
-	{		
+	{
 		switch ( $fil ) {
 			case '=' : //Igual
 				if( $val == $crit ) return true; else return false;	break;
@@ -5528,18 +5754,18 @@ class imap_functions
 			case '!*' : //Não existe
 				if( strpos( $val , $crit ) === false ) return true; else return false; break;
 			case '^' : //Começa com
-				if( substr ($val , 0 , strlen($crit) ) == $crit ) return true; else return false; break;	
+				if( substr ($val , 0 , strlen($crit) ) == $crit ) return true; else return false; break;
 			case '$' : //Termina com
-				if( substr ($val , 0 , -(strlen($crit)) ) == $crit ) return true; else return false; break;	
+				if( substr ($val , 0 , -(strlen($crit)) ) == $crit ) return true; else return false; break;
 			case '>' : //Maior que
-				if( $val  > (int)($crit * 1024) ) return true; else return false; break;	
+				if( $val  > (int)($crit * 1024) ) return true; else return false; break;
 			case '<' : //Menor que
-				if( $val  < (int)($crit * 1024) ) return true; else return false; break;	
+				if( $val  < (int)($crit * 1024) ) return true; else return false; break;
 		}
 	}
-	
-	
-	
+
+
+
 	/**
 	* Método que aplica a ação do filtro nas mensagens da caixa de entrada
 	*
@@ -5547,7 +5773,7 @@ class imap_functions
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
 	* @sponsor    Caixa Econômica Federal
 	* @author     Airton Bordin Junior <airton@prognus.com.br>
-	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>	
+	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>
 	* @param      <Array> <$msgs> <Mensagens da caixa de entrada>
 	* @param      <Array> <$proc> <ações do filtro>
 	* @return     <Regras do usuário em Array>
@@ -5567,13 +5793,13 @@ class imap_functions
 					{
 						/* Está sempre copiando a mensagem para a pasta destino */
 					    //$ret[$msg][] = imap_mail_move($imap,$msg,$proc['parameter'], CP_UID);
-						$ret[$msg][] = imap_mail_move($imap,$msg,$proc['parameter'], CP_UID);						
+						$ret[$msg][] = imap_mail_move($imap,$msg,$proc['parameter'], CP_UID);
 						imap_expunge($imap);
 					}
 					break;
-				case 'redirect':											
+				case 'redirect':
 					foreach($msgs as $msg)
-					{				
+					{
 						$info = $this->get_info_msg(array('msg_folder' => 'INBOX','msg_number' => $msg));
 						Controller::create( array( 'service' => 'SMTP' ), array( 'body' => $info['body'],
 																			  'isHtml' => true,
@@ -5581,12 +5807,12 @@ class imap_functions
 																			  'from' => $info['from']['full'],
 																			  'to' => $proc['parameter'])
 										);
-						
+
 						if($proc['keep'] !== true)
 							$this->delete_msgs(array('msgs_number' => $msg , 'folder' => 'INBOX'));
-					}	
+					}
 					break;
-				
+
 				case 'setflag':
 					foreach($msgs as $msg)
 						$ret[$msg][] = $this->set_messages_flag( array( 'folder' => 'INBOX' , 'msgs_to_set' => $msg , 'flag' => $proc['parameter']) );
@@ -5609,10 +5835,10 @@ class imap_functions
     * @access     public
     */
    function rfc2397ToEmbeddedAttachment( &$mailService , &$body )
-   { 
+   {
        $matches = array();
-       preg_match_all("/src=[\'|\"]+data:([^,]*);base64,([a-zA-Z0-9\+\/\=]+)[\'|\"]+/i", $body, $matches,  PREG_SET_ORDER); //Resgata imagens em rfc2397       
-       
+       preg_match_all("/src=[\'|\"]+data:([^,]*);base64,([a-zA-Z0-9\+\/\=]+)[\'|\"]+/i", $body, $matches,  PREG_SET_ORDER); //Resgata imagens em rfc2397
+
        foreach ($matches as $i => &$v)
        {
             $ext = explode(';', $v[1]); //quebra todos os parametros em um array.
@@ -5635,13 +5861,13 @@ class imap_functions
     */
    function mimeToExtension($mimeType)
    {
-       switch ( $mimeType ) 
-       {   
-           case 'image/bmp' : 
+       switch ( $mimeType )
+       {
+           case 'image/bmp' :
            return 'bmp';
            case 'image/cgm' :
                return 'cgm';
-           case 'image/vnd.djvu' : 
+           case 'image/vnd.djvu' :
                return 'djv';
            case 'image/gif' :
                return 'gif';
@@ -5666,10 +5892,10 @@ class imap_functions
            default:
                return '';
        }
-       
+
    }
-	
-	
+
+
 	/**
 	* Método que retorna as mensagens com a flag $FilteredMessage que representa as mensagens filtradas que devem ser alertadas para o usuário
 	*
@@ -5677,20 +5903,20 @@ class imap_functions
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
 	* @sponsor    Caixa Econômica Federal
 	* @author     Airton Bordin Junior <airton@prognus.com.br>
-	* @author	  Marcieli <marcieli@prognus.com.br>	
-	* @author	  Marcos <marcosw@prognus.com.br>	
+	* @author	  Marcieli <marcieli@prognus.com.br>
+	* @author	  Marcos <marcosw@prognus.com.br>
 	* @param      <Array> <$paramFolders> <Pastas onde devem ser buscadas as mensagens>
 	* @return     <Mensagens encontradas com a flag $FilteredMessage>
 	* @access     <public>
 	*/
 	function getFlaggedAlertMessages($paramFolders) {
-		
+
 		$folders = explode(",", $paramFolders['folders']);
-	
+
 		$messages = array();
 		$result   = array();
 		$label    = '$FilteredMessage';
-		
+
 		foreach ($folders as $folder) {
 			$this->mbox = $this->open_mbox($folder);
 			/* Não deletadas, não lidas e com a flag */
@@ -5716,7 +5942,7 @@ class imap_functions
 
 		return $result_final;
 	}
-	
+
 	/**
 	* Esta função é chamada ao clicar sobre uma mensagem listada nos alertas de Filtro por Remetente
 	* remove a flag e chama a função que recupera os dados da mensagem, para serem utilizados na abertura da aba de leitura da msg
@@ -5733,11 +5959,11 @@ class imap_functions
 
 		return $r;
 	}
-	
+
 	/**
 	* Remove a flag que caracteriza uma mensagem como alertada por Filtro por Remetente.
 	* se houver o parametro msg_number, então remove a flag de uma msg especifica
-	* se não houver o parametro msg_number, mas sim o from, então remove a flag de todas as msgs da pasta (parametro from), 
+	* se não houver o parametro msg_number, mas sim o from, então remove a flag de todas as msgs da pasta (parametro from),
 	* e que o remetente for o from.
 	*/
 	function removeFlagMessagesFilter($params){
@@ -5748,7 +5974,7 @@ class imap_functions
 			if(isset($folder)){
 				$message_number = explode(',', $message_number);
 				$this->mbox = $this->open_mbox($folder);
-				foreach ($message_number as $k => $m) {			
+				foreach ($message_number as $k => $m) {
 						imap_clearflag_full($this->mbox, $m, '$FilteredMessage', ST_UID);
 					}
 			}
@@ -5768,8 +5994,8 @@ class imap_functions
 				}
 			}
 		}
-		
-		return array('status' => "success"); 
+
+		return array('status' => "success");
 	}
 
 	//MailArchiver -> get offsettogmt as a global javascript variable, invoked at "main.js", init()
@@ -5778,22 +6004,22 @@ class imap_functions
     }
 
     //MailArchiver -> get message flags only, invoked at archive operation
-    function get_msg_flags($args){  
+    function get_msg_flags($args){
         $msg_folder = $args['folder'];
         $msg_n = $args['msg_number'];
         $arr_msg = explode(",", $msg_n);
-       
+
         for($i=0; $i<count($arr_msg); ++$i){
-                        
+
             if(!$this->mbox || !is_resource($this->mbox))
                 $this->mbox = $this->open_mbox($msg_folder);
-        
+
             if(!is_resource($this->mbox))
                 return(false);
-                       
-            $msgno_imap = imap_msgno($this->mbox, $msg_n);          
+
+            $msgno_imap = imap_msgno($this->mbox, $msg_n);
         	$header = @imap_headerinfo($this->mbox, $msgno_imap, 80, 255);
-                
+
             if (!is_object($header))
                 return false;
 
@@ -5804,14 +6030,14 @@ class imap_functions
             $taglist[$i]["draft"] = $header->Draft;
             $taglist[$i]["answered"] = $header->Answered;
             $taglist[$i]["deleted"] = $header->Deleted;
-        
+
             if($header->Answered =='A' && $header->Draft == 'X')
                 $taglist[$i]['forwarded'] = 'F';
             else
                 $taglist[$i]['forwarded'] = ' ';
         }
 
-		return $taglist;        
-    }    
+		return $taglist;
+    }
 }
 ?>

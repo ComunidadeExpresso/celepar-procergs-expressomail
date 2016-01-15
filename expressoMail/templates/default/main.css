@@ -37,7 +37,7 @@ ul.expressomail-thumbs-list li {height:80px;  max-width:120px; max-height:80px; 
 ul.expressomail-thumbs-list li img {width:auto; height:100%; border: 2px solid #FDE7BC;}
 .expressomail-thumbs-link { font-size:11px;}
 .jcarousel-container { width: auto;}
- 
+
 
 
 /* todo o resto */
@@ -59,7 +59,7 @@ table.expressomail-message-body tr{vertical-align:top;}
 
 .table_message_options{
 	background-color: #000;
-	
+
 	/* Apenas para ie qualquer versao */
 	-moz-border-collapse: separate;
 	border-color: gray;
@@ -71,8 +71,8 @@ table.expressomail-message-body tr{vertical-align:top;}
     padding: 1px;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
-	
-	
+
+
 }
 
 .table_message_options_ie{
@@ -87,13 +87,13 @@ table.expressomail-message-body tr{vertical-align:top;}
     padding: 1px;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
-	
-	
+
+
 }
 
 .table_message{
 	background-color: #000;
-	
+
 	/* Apenas para ie qualquer versao */
 	-moz-border-collapse: separate;
 	border-color: gray;
@@ -105,8 +105,8 @@ table.expressomail-message-body tr{vertical-align:top;}
     padding: 1px;
 	-moz-border-radius: 3px;
 	-webkit-border-radius: 3px;
-	
-	
+
+
 }
 
 .div_message_scroll { background: none repeat scroll 0% 0% WHITE; overflow: auto; padding-right: 5px;}
@@ -130,10 +130,10 @@ a.message-attach-link { margin-left: 20px;}
 .context-menu-item.icon-quick-add { background-image: url(images/vcard_add.png); }
 .context-menu-item.icon-delete-box{ background-image: url(images/user_delete.png); }
 .context-menu-item.icon-quick-search-contact{ background-image: url(images/zoom.png); }
-/* Airton. Adicionando o ícone da opção de arquivar do menu de contexto do expressoMail */
+/* Airton. Adicionando o ï¿½cone da opï¿½ï¿½o de arquivar do menu de contexto do expressoMail */
 .context-menu-item.icon-archive{ background-image: url(images/archive.png); }
 
-
+.context-menu-item.icon-preferences-mail { background-image: url(images/menu/preferences.png); }
 .context-menu-item.icon-search-mail { background-image: url(images/menu/search.png); }
 .context-menu-item.icon-filter { background-image: url(images/menu/filters.png); }
 .context-menu-item.icon-edit-folder { background-image: url(images/menu/editfolders.png); }
@@ -182,11 +182,11 @@ div.fileupload-buttonbar{padding: 0.2em 0.5em }
 .message-attach-error{color:red;}
 
 
-/* Estilos da tela de busca rápida de contatos */
+/* Estilos da tela de busca rï¿½pida de contatos */
 
-.expressomail-qs-container { font-size:11px;} 
-.expressomail-qs-container legend { font-size:1.1em; font-weight: bold; } 
-.expressomail-qs-container #accordion { margin: 5px;} 
+.expressomail-qs-container { font-size:11px;}
+.expressomail-qs-container legend { font-size:1.1em; font-weight: bold; }
+.expressomail-qs-container #accordion { margin: 5px;}
 .expressomail-qs-container fieldset, .expressomail-qs-container div {margin:0;}
 .expressomail-qs-container .ui-autocomplete-input { height:22px; width:200px; margin-right:-1px; }
 .expressomail-qs-container #wrap-progressbar { height:22px; width:122px;  float:left; }
@@ -226,7 +226,7 @@ div.fileupload-buttonbar{padding: 0.2em 0.5em }
 .expressomail-qs-container .acc-list ul li strong {display:block;}
 .expressomail-qs-container .acc-list ul li em {display:block;}
 
-/*Específico do selectable*/
+/*Especï¿½fico do selectable*/
 .expressomail-qs-container #feedback { font-size: 1.4em; }
 .expressomail-qs-container #selectable .ui-selecting { background: #DDECF7; }
 /* #selectable .ui-selected { background: #F39814; color: white; }   Aqui eu troquei a cor de quando era selecionada a linha */
@@ -239,7 +239,7 @@ div.fileupload-buttonbar{padding: 0.2em 0.5em }
 .expressomail-qs-container ul#selectable li div { width: 6000px; }
 .expressomail-qs-container .ui-button-icon-only { width: 1.2em; }
 .expressomail-qs-container .ui-icon { margin-left: -8px; }
-.expressomail-qs-container .ui-widget button { border: 0 solid; } 
+.expressomail-qs-container .ui-widget button { border: 0 solid; }
 
 .expressomail-qs-container .menu-control { float:right; margin-left:400px; position: absolute; z-index: 100; padding-top:5px;}
 .expressomail-qs-container .acc-list { width:444px;height:250px;float:left;border:1px solid #DDD;background-color:#EEE;border-radius:3px;margin-left:1px; margin: 10px 5px 5px 1px;}
@@ -292,7 +292,7 @@ fieldset.search-catalog-options select { max-width: 120px; width: 120px; }
 	padding-top: 0;
 }
 
- 
+
 .button-mod { margin-top: -2.5em; }
 
 /*print.css */
@@ -312,12 +312,12 @@ pre{
 	white-space: -pre-wrap !important; /* Opera 4-6 */
 	white-space: -o-pre-wrap !important; /* Opera 7 */
 	word-wrap: break-word !important; /* Internet Explorer 5.5+ */
-	font-family: monospace !important;	
+	font-family: monospace !important;
 	/*font-size: 10pt !important;*/
 	font-size: 11px !important;
 }
 /** {
-	font-family: Verdana, Arial, Helvetica, sans-serif;	
+	font-family: Verdana, Arial, Helvetica, sans-serif;
 }*/
 
 .checkbox{
@@ -347,14 +347,14 @@ textarea{
 
 
 
-.em_div_write_msg{ 
-        height: 0px; 
-        background: transparent; 
- 	} 
+.em_div_write_msg{
+        height: 0px;
+        background: transparent;
+ 	}
 
 /* begin class msgs */
 .td_msg{
-	border-width: 0px;	
+	border-width: 0px;
 }
 
 .span-sender:hover{
@@ -380,12 +380,12 @@ textarea{
 	border-right-width: 0px !important;
 }
 
-.tr_msg_unread {	
+.tr_msg_unread {
 	font-weight:bold !important;
 }
 
-.table_box tr{ 
-	border:0;  
+.table_box tr{
+	border:0;
 	height: 20px;
 }
 
@@ -396,7 +396,7 @@ textarea{
 .td-info-quota{
 	white-space: nowrap;
 	overflow:	hidden;
-	text-overflow: ellipsis;	
+	text-overflow: ellipsis;
 }
 
 .tr_msg_read {
@@ -424,7 +424,7 @@ textarea{
         font-weight: bold;
 	background-color: #ffc;
 	border-bottom:1px solid #cfcfcf;
-	cursor: pointer;		 
+	cursor: pointer;
 	-moz-user-select: none;
 }
 /* end class msgs */
@@ -440,7 +440,7 @@ textarea{
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	font-size: 11px;
 	border-width: 0px 0px 0px 0px;
-	padding: 1px 10px 0px 10px;	
+	padding: 1px 10px 0px 10px;
 	border-style: inset inset inset inset;
 	border-color: gray gray gray gray;
 	background-color: rgb(250, 209, 99);
@@ -475,7 +475,7 @@ textarea{
 	border-collapse: collapse;
 	border-color: #bbbbbb;
 	font-family: Verdana,Arial,Helvetica,sans-serif;
-	font-size: 13px;	
+	font-size: 13px;
 	cursor: pointer;
 	table-layout: fixed;
 }
@@ -498,7 +498,28 @@ textarea{
     text-align: center;
 }
 
-.menu-sel{   
+.top-menu-sel
+{
+    text-decoration: none;
+    text-align: center;
+    color:#0000FF;
+    height: 20px;
+    width:100%;
+    margin-bottom: 10px;
+    margin-top: 4px;
+    border: 0px solid #4a79b1;
+    padding:3px 5px 0px 15px;
+    border-radius: 9px 9px 9px 9px;
+    -moz-border-radius: 9px 9px 9px 9px;
+    -webkit-border-top-left-radius: 9px;
+	-webkit-border-top-right-radius: 9px;
+	-webkit-border-bottom-left-radius: 9px;
+	-webkit-border-bottom-right-radius: 9px;
+    -moz-user-select: none;
+
+}
+
+.menu-sel{
     text-decoration: none;
     text-align: center;
     color:#0000FF;
@@ -515,11 +536,11 @@ textarea{
     border-radius: 9px 9px 0px 0px;
     cursor: pointer;
  }
- 
+
 .menu{
     text-decoration: none;
     text-align: center;
-    height: 20px;        
+    height: 20px;
     width:220px;
     background-color:#c8d7ea;
     margin-bottom: 0px;
@@ -546,7 +567,7 @@ textarea{
 	margin: 0px 0px 0px 0px;
 	border-width: 0px 1px 1px 1px;
 	border-style: outset outset outset outset;
-	border-color: black black black black;	
+	border-color: black black black black;
 }
 
 .tr_message_header{
@@ -578,7 +599,7 @@ background: white;
 border: 1px solid;
 padding: 4px;
 }
-        
+
 .suggestion_list ul{
 padding: 0;
 margin: 0;
@@ -594,15 +615,15 @@ color: navy;
 background: navy;
 color: white;
 }
-        
-        
+
+
 .suggestion_list .selected a{
 color: white;
 }
 
 #autosuggest{
 display: none;
-} 
+}
 
 div#tipDiv {
   position:absolute; visibility:hidden; left:0; top:0; z-index:10000;
@@ -638,7 +659,7 @@ div#tipDiv {
 .dtree a {
 	font-family: Verdana, Arial, Helvetica, sans-serif;
 	color: #000000;
-	white-space: nowrap;	
+	white-space: nowrap;
 }
 .dtree table{
 	margin-top: 0%;
@@ -674,7 +695,7 @@ div#tipDiv {
 
 	border-right: 1px solid #000000;
 	border-left: 1px solid #000000;
-	border-top: 1px solid #000000;	
+	border-top: 1px solid #000000;
 	cursor: default;
 	-moz-border-radius: 9px 9px 0px 0px;
 }
@@ -695,7 +716,7 @@ div#tipDiv {
 	padding: 0px 0px 0px 0px;
 	position: relative;
 	overflow: auto;
-	
+
 }
 
 
@@ -715,7 +736,19 @@ div#tipDiv {
 	white-space: nowrap;
 }
 .message_options_trash {
-	background-image: url(images/page_white_delete.png);
+	background-image: url(../../../phpgwapi/templates/default/images/foldertree_trash.png);
+	background-repeat: no-repeat;
+	background-position:left center;
+	padding:0pt 6pt 1pt 14pt;
+}
+.message_options_spam {
+	background-image: url(../../../phpgwapi/templates/default/images/spam.png);
+	background-repeat: no-repeat;
+	background-position:left center;
+	padding:0pt 6pt 1pt 14pt;
+}
+.message_options_not_spam {
+	background-image: url(../../../phpgwapi/templates/default/images/ham.png);
 	background-repeat: no-repeat;
 	background-position:left center;
 	padding:0pt 6pt 1pt 14pt;
@@ -877,12 +910,12 @@ input.em_button_like_span {
 }
 
 .divAppboxHeader{
-	font-style:italic;	
+	font-style:italic;
 	font-weight:normal;
-	font-variant: small-caps;	
+	font-variant: small-caps;
 	color: #000066 !important;
 	font-size: 16px !important;
-	text-align: center;	
+	text-align: center;
 	padding: 0px;
 }
 
@@ -909,9 +942,9 @@ input.em_button_like_span {
 
 
 /*
- * Este arquivo limpa o estilo para a nova agenda, .new-event-win.active sobrescrevendo o código CSS
+ * Este arquivo limpa o estilo para a nova agenda, .new-event-win.active sobrescrevendo o cï¿½digo CSS
  * do Expresso.
- * Deve ser removido quando o módulo Calendar não integrar mais a versão 2.x
+ * Deve ser removido quando o mï¿½dulo Calendar nï¿½o integrar mais a versï¿½o 2.x
  */
 
 /* Eric Meyer's Reset Reloaded based
@@ -966,7 +999,7 @@ input.em_button_like_span {
 	content: "";
 }
 .new-event-win.active blockquote, .new-event-win.active q ,
-.new-task-win.active blockquote, .new-task-win.active q 
+.new-task-win.active blockquote, .new-task-win.active q
 {
 	quotes: "" "";
 }
@@ -977,39 +1010,39 @@ input.em_button_like_span {
 }
 
 .new-event-win.active .add-attendee-search.search-field ,
-.new-task-win.active .add-attendee-search.search-field 
+.new-task-win.active .add-attendee-search.search-field
 {
   width: 249px;
  }
- 
+
  .new-event-win.active #calendar_addevent_details4, .new-task-win.active #calendar_addtask _details4 {
   margin: 10px 0 0 0;
- } 
- 
+ }
+
  .new-event-win.active input, .new-task-win.active input{
   color: #000;
- } 
- 
+ }
+
  .new-event-win.active #calendar_addevent_details5 , .new-task-win.active #calendar_addtask_details5 {
   margin: 10px 0 11px 0;
  }
 
  .new-event-win fieldset.tab-level2, .new-task-win fieldset.tab-level2 { padding: 0px 5px; min-height: 110px; max-height: 310px; overflow: hidden;}
- 
+
 .new-event-win.active select , .new-task-win.active select {
     border: 1px solid #CFCFCF;
     border-color: #CFCFCF;
     color: #555;
     background-color: #FFF;
 }
-.new-event-win.active a:link, .new-event-win.active a:visited 
+.new-event-win.active a:link, .new-event-win.active a:visited
 .new-task-win.active a:link, .new-task-win.active a:visited
 {
 
     color: #2E6E9E;
 }
 
-.new-event-win.active  dd, .new-event-win.active  dl, .new-event-win.active  dt, 
+.new-event-win.active  dd, .new-event-win.active  dl, .new-event-win.active  dt,
 .new-task-win.active  dd, .new-task-win.active  dl, .new-task-win.active  dt
 {
 	margin: 0;
@@ -1043,7 +1076,7 @@ a:active
 
 .new-event-win.active .fc-event-skin {
 	border-color: #36C !important;
-	background-color: #36C !important; 
+	background-color: #36C !important;
 	color: white !important;
 }
 
@@ -1074,7 +1107,7 @@ a:active
 
 div.new-event-win.active div.button-files-upload {margin: 15px 0 0 0;}
 
-fieldset.alarm{  
+fieldset.alarm{
     border: none !important;
     padding: 0px !important;
     margin: 0px !important;
@@ -1205,7 +1238,7 @@ table.inboxElements th,
 
 
 /*fixed bug on IE8*/
-#content_folders .foldertree-skin-prognus span.selected {font-weight:bold !important; } 
+#content_folders .foldertree-skin-prognus span.selected {font-weight:bold !important; }
 #content_folders .foldertree-skin-prognus span.inbox {}
 #content_folders .foldertree-skin-prognus span.trash {;background-image: url(../../../prototype/modules/mail/img/mail-sprites.png); background-position: 0 -67px;}
 #content_folders .foldertree-skin-prognus span.drafts {background-image: url(../../../prototype/modules/mail/img/mail-sprites.png); background-position: 0 -1121px;}
@@ -1224,15 +1257,15 @@ table.inboxElements th,
 	cursor : pointer;
 	background-color: #CDC5BF;
 	float: left;
-	width : auto; 
-	height: 16px; 
+	width : auto;
+	height: 16px;
 	border:1px solid #333;
 	text-align: right;
 	z-index: 2000;
 }
 
 .ui-draggin-default-image{
-    float: left; 
+    float: left;
     text-align: right;
 }
 
@@ -1246,7 +1279,7 @@ table.inboxElements th,
 	font-weight : bold;
 	padding-right : 5px;
 	padding-left : 20px;
-	padding-top : 2px;	
+	padding-top : 2px;
 	font-family : Lucida Grande, Lucida Sans, Arial, sans-serif;
 	font-size : 11px;
 }
@@ -1257,8 +1290,8 @@ table.inboxElements th,
 	background-position: 0 -923px;
 	background-repeat:no-repeat;
 	padding-right : 5px;
-	padding-left : 5px;	
-	padding-top : 2px;	
+	padding-left : 5px;
+	padding-top : 2px;
 	color : red;
 	text-align: right;
 	font-weight : bold;
@@ -1273,25 +1306,25 @@ table.inboxElements th,
 }
 .collapse_folders_td.collapse_folders_td_over{
 	border-left: 1px solid #1B75BB;
-} 
+}
 
 .folder-over{
 	border: 1px solid black;
 }
 
 .floating-default{
-    float: left; 
+    float: left;
     text-align: left;
 }
 
 .collapse_folders_td .ui-icon.ui-icon-triangle-1-e{
 	background-position: -37px -20px;
-	width: 8px; 
+	width: 8px;
 	height: 8px;
 }
 
 .collapse_folders_td .ui-icon.ui-icon-triangle-1-w{
-	width: 8px; 
+	width: 8px;
 	height: 8px;
 	background-position: -100px -20px;
 }
@@ -1306,33 +1339,33 @@ table.inboxElements th,
 }
 
  button.expressomail-button-icon-ative{color:#E17009 !important; border: 1px solid #E17009 !important;background: none repeat scroll 0 0 #FFE1CC !important;}
- 
-.outoffice 
-{ 
-    width: 295px;  
-    height: 50px;  
-    overflow: hidden; 
-} 
-        
-.title-outoffice 
-{ 
-        margin-left: 10px; 
-        font-family: verdana; 
-        font-size: 1.2em; 
-} 
-.outoffice span{ 
-        margin: 5px; 
-} 
+
+.outoffice
+{
+    width: 295px;
+    height: 50px;
+    overflow: hidden;
+}
+
+.title-outoffice
+{
+        margin-left: 10px;
+        font-family: verdana;
+        font-size: 1.2em;
+}
+.outoffice span{
+        margin: 5px;
+}
 
 #detalhes_contato img{ margin-bottom: -4px;}
 
  button.expressomail-button-icon-ative{color:#E17009 !important; border: 1px solid #E17009 !important;background: none repeat scroll 0 0 #FFE1CC !important;}
- 
+
 .box{
 	background-color: #DFEFFC;
 	border-radius: 5px;
 	-moz-border-radius: 5px;
-	border: 1px solid #ADD9ED; 
+	border: 1px solid #ADD9ED;
 	display: inline-block;
 	cursor : pointer;
 	margin-top : 1px;
@@ -1359,10 +1392,10 @@ table.inboxElements th,
 }
 
 .email-area{
-	border-radius: 5px; 
+	border-radius: 5px;
 	width: 98.5%;
 	padding: 5px;
-	border : 1px solid #BBBBBB; 
+	border : 1px solid #BBBBBB;
 	heigth : auto;
 	max-height : 115px;
 	overflow-y: auto;
@@ -1426,7 +1459,7 @@ div.conteudo div.new-msg-head-data div.att-box{
 	background-color: #DFEFFC;
 	border-radius: 5px;
 	-moz-border-radius: 5px;
-	border: 1px solid #ADD9ED; 
+	border: 1px solid #ADD9ED;
 	display: inline-block;
 	cursor : pointer;
 	margin-top : 3px;
@@ -1536,7 +1569,7 @@ div.gray li a.button.delete{float: right;}
 
 .new-event-win div.div-addevent, .new-task-win div.div-addtask{width: 775px;}
 
-.calendar-addevent-details-txt-timezone, .calendar-addtask-details-txt-timezone{width: 212px;} 
+.calendar-addevent-details-txt-timezone, .calendar-addtask-details-txt-timezone{width: 212px;}
 
 .div-addtask #calendar_addtask_details1 .time-previsao { width: 40px; }
 
@@ -1630,6 +1663,14 @@ div.gray li a.button.delete{float: right;}
 	background-repeat : no-repeat;
 }
 
+.expressomail-sprites-calendar
+{
+	background-image : url('images/calendar.png');
+	margin-left : 0;
+	margin-top : 3px;
+	background-repeat : no-repeat;
+}
+
 .upper, .lower {
 	background-color: gray;
 	opacity:0.1;
@@ -1641,7 +1682,7 @@ div.gray li a.button.delete{float: right;}
 
 .lower {
 	top: 585px;
-}		
+}
 
 @media screen and (max-width: 1100px){
 	#span_options, #span_D span

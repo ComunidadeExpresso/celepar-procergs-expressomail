@@ -104,7 +104,7 @@
     
 	function closeBorders(){
         folder64 = Base64.encode(get_current_folder());
-        folder64 = folder64.replace("=","");
+        folder64 = folder64.replace(/=/g,"");
 
         var msgs = get_selected_messages();
         msgs = msgs.split(",");
