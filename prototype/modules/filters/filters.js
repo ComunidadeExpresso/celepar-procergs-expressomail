@@ -321,6 +321,9 @@ DataLayer.codec( "filter", "detail", {
 			if (type == 'reject') {
 				the_parameter = form.messageReject;
 			}
+			if (type == 'markLabel') {
+				the_parameter = form.valueMarkTag;
+			}
 			if (type == 'fileintoInbox') {
 				if(!$('[value="fileintoInbox"]').parent().hasClass("hidden")){
 					type = 'fileinto';
@@ -641,7 +644,8 @@ function list_filters(html) {
 
 	list_container = create_filter_dialog(); // Cria a estrutura básica do diálogo
 
-	var list = DataLayer.render( BASE_PATH + 'modules/filters/filter-list.ejs', DataLayer.get("filter:detail", true));
+	var list = DataLayer.render( BASE_PATH + 'modules/filters/filter-list.ejs', {objrules: DataLayer.get("filter:detail", true), labels:  DataLayer.get("label", true)});
+	//var list = DataLayer.render( BASE_PATH + 'modules/filters/filter-list.ejs', DataLayer.get("filter:detail", true));
 	list_container.html(list).find(".button").button();
     list_container.find(".alldelete").button("disable");
     list_container.find(".alldisable").button("disable");
@@ -682,7 +686,7 @@ function list_filters(html) {
 				break;
 			}
 		}
-		DataLayer.render( BASE_PATH + 'modules/filters/edit-filter.ejs', {folders : DataLayer.get("folder", true), delimiter: cyrus_delimiter},function(html){
+		DataLayer.render( BASE_PATH + 'modules/filters/edit-filter.ejs', {folders : DataLayer.get("folder", true), labels: DataLayer.get("label", true), delimiter: cyrus_delimiter},function(html){
 			var details_container = $(".expresso-window-filters").html(html);
 			if(filters.name != "vacation"){
 				form = container.find("form");
@@ -882,11 +886,13 @@ function list_filters(html) {
 	list_container.parent().find(".button.add.vacation").click(function(){
 
 		list_container.parent().find(".dialog-head-buttonpane").addClass("hidden");
-		DataLayer.render( BASE_PATH + 'modules/filters/edit-filter.ejs', {folders : DataLayer.get("folder", true), delimiter: cyrus_delimiter},function(html){
+		//guanch
+		DataLayer.render( BASE_PATH + 'modules/filters/edit-filter.ejs', {folders : DataLayer.get("folder", true), delimiter: cyrus_delimiter, labels:  DataLayer.get("label", true)},function(html){
 			list_container.html(html);
 			list_container.find(".vacation-details-container").removeClass("hidden");
 			list_container.find(".rule-details-container").addClass("hidden");
 			list_container.find(".button").button().filter(".back").click(function(){
+                list_container.parent().find(".dialog-head-buttonpane").removeClass("hidden");
 				DataLayer.render( BASE_PATH + 'modules/filters/init.ejs', {},list_filters);
 			}).end().filter(".submit").click(function(){
 				if(list_container.find(".vacation-details-container .filter-textarea").val().length <= 0){
@@ -898,6 +904,7 @@ function list_filters(html) {
 				}else{
 					$(this).submit();
 					DataLayer.commit( 'filter',false,function(){
+                        list_container.parent().find(".dialog-head-buttonpane").removeClass("hidden");
 						DataLayer.render( BASE_PATH + 'modules/filters/init.ejs', {},list_filters);
 						getFromAlertRules();
 					});
@@ -930,6 +937,12 @@ function create_filter_dialog () {
 		width: 730,
 		modal: true,
 		resizable: false,
+        closeOnEscape: false,
+        close: function(event, ui)
+        {
+            event.stopPropagation();
+            $(this).dialog("destroy");
+        },
 		// closeOnEscape: false,
 		// close: function(event, ui)
 		// {
@@ -978,6 +991,7 @@ function render_new_rule (from, subject) {
 	list_container.parent().find(".dialog-head-buttonpane").addClass("hidden");
 	var data = {
 		folders: DataLayer.get("folder", true),
+		labels: DataLayer.get("label", true),
 		delimiter: cyrus_delimiter,
 		from: from,
 		subject: subject ? html_entities(subject) : subject
@@ -1004,6 +1018,7 @@ function render_new_rule (from, subject) {
 			accord.accordion({active: 1});
 		}).end().filter(".cancel").click(function()
 		{
+            list_container.parent().find(".dialog-head-buttonpane").removeClass("hidden");
 			DataLayer.render(BASE_PATH + 'modules/filters/init.ejs', {}, list_filters);
 		}).end().filter(".submit").click(function()
 		{
@@ -1018,6 +1033,7 @@ function render_new_rule (from, subject) {
 						set_message_flag(index, action, false);
 					}
 				}
+                list_container.parent().find(".dialog-head-buttonpane").removeClass("hidden");
 				DataLayer.render(BASE_PATH + 'modules/filters/init.ejs', {}, list_filters);
 				getFromAlertRules();
 			});

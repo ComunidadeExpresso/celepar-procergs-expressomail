@@ -143,6 +143,32 @@ function valida(pForm)
 		<span style="color: red;margin-left: 30px"> *{lang_Minimum number of labels allowed} {min_labels}</span>		
 		</td>
 	</tr>
+	
+	 <tr bgcolor="{th_bg}"> 
+	        <td colspan="2"> 
+	            &nbsp; 
+	        </td> 
+	    </tr> 
+	     <tr bgcolor="{row_off}"> 
+	        <td colspan="2"> 
+	            <label style="font-weight:bold;">Host SMTP de fila</label> 
+	        </td> 
+	    </tr> 
+	 <tr bgcolor="{row_on}">
+		<td>Quantidade de e-mails para distribuição secundária:</td>
+		<td>
+		<input type="text" name="newsettings[expressoMail_count_massive_server]" value="{value_expressoMail_count_massive_server}" size="3" />
+		<span style="color: red;margin-left: 30px"> *Limite para ser enviado por smtp principal. Além deste número envia para servidor secundário.</span>		
+		</td>
+	</tr>
+	 <tr bgcolor="{row_off}">
+		<td>Servidor: </td>
+		<td>
+		<input type="text" name="newsettings[expressoMail_massive_server]" value="{value_expressoMail_massive_server}" size="60" />
+		<span style="color: red;margin-left: 30px"> *host SMTP que entregará fila de e-mails.</span>		
+		</td>
+	</tr>
+	
     <tr bgcolor="{th_bg}"> 
 	        <td colspan="2"> 
 	            &nbsp; 

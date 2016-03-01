@@ -22,6 +22,7 @@ class attachment
     var $folder;
     var $structure;
     var $decodeConf;
+    var $messageId;
     //------------------------------------------//
 
     /**
@@ -74,9 +75,12 @@ class attachment
         else
             $this->imap_options = '/notls/novalidate-cert';
 
-	$this->mbox = @imap_open("{".$this->imap_server.":".$this->imap_port.$this->imap_options."}".$this->folder , $this->username, $this->password) or die('Error');
+		$this->mbox = @imap_open("{".$this->imap_server.":".$this->imap_port.$this->imap_options."}".$this->folder , $this->username, $this->password) or die('Error');
 
-        $rawMessageData = $this->_getRaw();
+		$header = @imap_headerinfo($this->mbox, imap_msgno($this->mbox, $this->msgNumber), 80, 255);
+		$this->messageId = $header->message_id;
+
+		$rawMessageData = $this->_getRaw();
         $decoder = new Mail_mimeDecode($rawMessageData);
         $this->structure = $decoder->decode($this->decodeConf);
 

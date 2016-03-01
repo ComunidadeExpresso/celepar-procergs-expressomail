@@ -1,7 +1,7 @@
 <ul class="rule-list">
 <%
 	
-	data.rules = (data.rules || []);
+	data.rules = (data.objrules.rules || []);
 	for (var i=0; i<data.rules.length; i++) {
 		if(data.rules[i].id != "vacation") continue;
 	%>
@@ -84,10 +84,26 @@
 								<li><strong> (<%= get_lang("The filter is active for alerts") %>) </strong></li>
 					<%		
 								continue;
-							}
+							}							
+							if(data.rules[i].actions[k].type == "markLabel") {
+								var label = '';
+								for(var lb=0; lb<data.labels.length; lb++){
+									if(data.labels[lb].id+""==data.rules[i].actions[k].parameter+""){
+										label = data.labels[lb].name; 										
+										continue;
+									}
+										
+								}
 					%>
-						<li><strong><%= get_lang(data.rules[i].actions[k].type) %>:</strong> <%= (data.rules[i].actions[k].type == 'setflag') ? get_lang(data.rules[i].actions[k].parameter) : data.rules[i].actions[k].parameter %></li>
+						<li><strong>Aplicar Marcador :</strong> <%=label%> </li>
 					<%
+						}else{
+							
+							%>
+							<li><strong><%= get_lang(data.rules[i].actions[k].type) %>:</strong> <%= (data.rules[i].actions[k].type == 'setflag') ? get_lang(data.rules[i].actions[k].parameter) : data.rules[i].actions[k].parameter %></li>
+						<%
+						}
+						
 						}
 					%>
 					</ul>

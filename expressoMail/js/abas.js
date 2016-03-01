@@ -57,7 +57,15 @@ function alternate_border(ID)
     var footer_menu = Element("footer_menu");
     var aba = Element('border_id_'+ID);
     if (footer_menu != null) {
-        footer_menu.style.display = (openTab.type[ID] != 4 ? '' : 'none');
+        if (openTab.type[ID] != 4) {
+            $('#footer_menu').fadeTo(50,1.0);
+            $('#footer_menu_disable').remove();
+        } else {
+            $('#footer_menu').fadeTo(50,0.3);
+            if (! $("#footer_menu_disable").length) {
+                $('#footer_menu').append('<div id="footer_menu_disable" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%"></div>');
+            }
+        }
         var alternate_menu = document.getElementById('localOption');
 
         if(alternate_menu != null && alternate_menu != 'undefined'){ //Quando Carregado o expresso mail
@@ -92,7 +100,10 @@ function alternate_border(ID)
 
         if((aba.id.indexOf("_r") < 0) && (aba.id.indexOf("_0") < 0) && (aba.id.indexOf("id_search_") < 0) && (aba.id.indexOf("_s") < 0)){
             spanD.style.display = 'none';
-            footer_menu.style.display = 'none';
+            $('#footer_menu').fadeTo(50,0.3);
+            if (! $("#footer_menu_disable").length) {
+                $('#footer_menu').append('<div id="footer_menu_disable" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%"></div>');
+            }
         }
     }
 
@@ -390,7 +401,7 @@ function create_border(borderTitle, id_value, search)
 
     div.style.overflow = "hidden";
 
-    Element("exmail_main_body").insertBefore(div,Element("footer_menu"));
+    Element("exmail_main_body").insertBefore(div,Element("content_blank"));
     if (!is_ie)
         resizeWindow();
     alternate_border(ID);
@@ -629,8 +640,10 @@ function close_delete(ID, msg_sent)
             new_BordersArray[j] = BordersArray[i];
             j++;
         }
-    if(j == 1)
-        Element("footer_menu").style.display = '';
+    if(j == 1) {
+        $('#footer_menu').fadeTo(50,1.0);
+        $('#footer_menu_disable').remove();
+    }
     BordersArray = new_BordersArray;
 
     // Remove Div Content

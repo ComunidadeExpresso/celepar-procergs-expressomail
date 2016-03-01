@@ -123,11 +123,18 @@
 						$charset      = ( isset( $parts->p->parameters[0]->value ) ) ? $parts->p->parameters[0]->value : NULL;
                     $skip_next    = ($ftype == 'message/rfc822')?        true : false;
 
-		    if ($ftype == 'multipart/report' || $skip_part == true && ( $ftype == 'multipart/alternative' && strpos( strtolower( $parts[$p]->parts[0]->subtype ), array( 'html', 'plain' ) ) === false ) || ( $ftype == 'multipart/related' && strtolower( $parts[$p]->parts[0]->subtype ) == 'alternative' ) ) 
-                    {
-                        $n--;
-                    }
-                    else
+		    if (
+                ($ftype == 'multipart/report' || $skip_part == true) &&
+                ($ftype == 'multipart/alternative' &&
+                    (strpos( strtolower( $parts[$p]->parts[0]->subtype ), 'html') === false) ||
+                    (strpos( strtolower( $parts[$p]->parts[0]->subtype ), 'plain') === false)
+                  ) ||
+                ($ftype == 'multipart/related' && strtolower( $parts[$p]->parts[0]->subtype ) == 'alternative' )
+               )
+            {
+                $n--;
+            }
+            else
 		    {
 			$this->pid[$mid][$n]       = ($is_sub_part == false || $skip_part && $ftype == 'multipart/related' )? $i : ($sub_pid == '' ? '1' : $sub_pid).'.'.$i; 
                         $this->file_type[$mid][$n] = $ftype;

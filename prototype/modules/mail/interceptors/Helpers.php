@@ -387,6 +387,12 @@ class Helpers {
 				return; 
 			} 
 
+			$max = Controller::service('PostgreSQL')->execSql("SELECT config_value as value FROM phpgw_config where config_app = 'expressoMail' and config_name = 'expressoMail_limit_labels' LIMIT 1");
+			$total = Controller::service('PostgreSQL')->execSql("SELECT count(id) as value FROM expressomail_label WHERE user_id = ".Config::me('uidNumber')); 
+
+			if($total>=$max){
+				throw new Exception('#LabelSlotError');
+			}
 			$slot = Controller::service('PostgreSQL')->execSql( 'SELECT label.slot + 1 as id FROM expressomail_label as label, phpgw_config as config WHERE label.user_id = '.Config::me('uidNumber').' AND config.config_name = \'expressoMail_limit_labels\' AND label.slot <= config.config_value::integer AND ( SELECT count(slot) FROM expressomail_label WHERE slot = label.slot + 1 AND user_id = '.Config::me('uidNumber').' ) = 0 limit 1', true ); 
 
 			if( empty( $slot ) ) 

@@ -242,14 +242,21 @@ class imap_functions
                         $return[$i++] = $this->get_info_head_msg( $msg_number , $sample );
                 }
 
-                if( isset($_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_followupflags_and_labels']) && $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_followupflags_and_labels'] == "1")
+                
+                
+                if( isset($_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_followupflags_and_labels']) && $_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_followupflags_and_labels'] != "0")
                 {
                     $filter = array('AND', array('=', 'folderName', $folder), array('IN','messageNumber', $sort_array_msg));
-                    $followupflagged = Controller::find(
-                        array('concept' => 'followupflagged'),
-                        false,
-                        array('filter' => $filter, 'criteria' => array('deepness' => '2'))
-                    );
+                    
+                    
+                    if($_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_followupflags_and_labels'] == "2"){
+	                    $followupflagged = Controller::find(
+	                        array('concept' => 'followupflagged'),
+	                        false,
+	                        array('filter' => $filter, 'criteria' => array('deepness' => '2'))
+	                    );
+                    }
+                    
                     $labeleds = Controller::find(
                         array('concept' => 'labeled'),
                         false,
@@ -263,16 +270,19 @@ class imap_functions
                         if(!isset($return[$i]['msg_number']))
                             continue;
 
-                        $numFlags = count($followupflagged);
-                        for($ii=0; $ii<$numFlags; ++$ii)
-                        {
-                            if($return[$i]['msg_number'] == $followupflagged[$ii]['messageNumber'])
-                            {
-                                $followupflag = Controller::read( array( 'concept' => 'followupflag', 'id' => $followupflagged[$ii]['followupflagId'] ));
-                                $return[$i]['followupflagged'] = $followupflagged[$ii];
-                                $return[$i]['followupflagged']['followupflag'] = $followupflag;
-                                break;
-                            }
+                        
+                        if($_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_followupflags_and_labels'] == "2"){
+	                        $numFlags = count($followupflagged);
+	                        for($ii=0; $ii<$numFlags; ++$ii)
+	                        {
+	                            if($return[$i]['msg_number'] == $followupflagged[$ii]['messageNumber'])
+	                            {
+	                                $followupflag = Controller::read( array( 'concept' => 'followupflag', 'id' => $followupflagged[$ii]['followupflagId'] ));
+	                                $return[$i]['followupflagged'] = $followupflagged[$ii];
+	                                $return[$i]['followupflagged']['followupflag'] = $followupflag;
+	                                break;
+	                            }
+                        	}
                         }
                         $numLabels = count($labeleds);
 
@@ -287,6 +297,10 @@ class imap_functions
                         }
                     }
                 }
+                
+                
+                
+                
             }
             $return['num_msgs'] =  $num_msgs;
 		}
@@ -513,7 +527,7 @@ class imap_functions
         $return['reply_toaddress'] = isset($header->reply_toaddress) ? self::decodeMimeString($header->reply_toaddress) : '';
         $return['flag'] = $header->Unseen.
             $header->Recent.
-            ($header->Flagged == 'F' || !( preg_match('/importance *: *(.*)\r/i', $mimeHeader , $importance) === 0 )? 'F' : '').
+            ($header->Flagged == 'F' || ( preg_match('/importance\s{0,}:\s{0,}(high).*/i', $mimeHeader , $importance) !== 0 )? 'F' : '').
             $header->Draft.
             $header->Answered.
             $header->Deleted.
@@ -2173,6 +2187,9 @@ class imap_functions
 		$body = preg_replace_callback($pattern,array( &$this, 'replace_links_callback'), $body);
 
 	}
+	
+	
+	
 
 	function get_signature($msg, $msg_number, $msg_folder)
 	{
@@ -4626,7 +4643,7 @@ class imap_functions
 
 
 
-		include '/prototype/api/controller.php';
+		require_once dirname(__FILE__) . '/../../prototype/api/controller.php';
 
 
 		if(strpos($params['condition'],"#")===false)
@@ -4766,7 +4783,7 @@ class imap_functions
                                             $elem['uid'] = $new_search;
                                             /* compare dates in ordering */
                                             $elem['udatecomp'] = substr ($elem['udate'], -4) ."-". substr ($elem['udate'], 3, 2) ."-". substr ($elem['udate'], 0, 2);
-                                            if($_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_followupflags_and_labels'] == "1")
+                                            if($_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_followupflags_and_labels'] == "2")
                                             {
                                                 $filter = array('AND', array('=', 'folderName', $name_box), array('=','messageNumber', $new_search));
                                                 $followupflagged = Controller::find(
@@ -5398,7 +5415,7 @@ class imap_functions
 
 	function quickSearchMail( $params )
 	{
-		include '/prototype/api/controller.php';
+		require_once dirname(__FILE__) . '/../../prototype/api/controller.php';
 		set_time_limit(270); //Aumenta o tempo limit da requisição, em algumas buscas o imap demora para retornar o resultado.
 		$return = array();
 		$return['folder'] = $params['folder'];
@@ -5450,7 +5467,7 @@ class imap_functions
 					$return['msgs'][$i]['subject'] .= mb_convert_encoding($tmp->text, 'UTF-8', 'UTF-8 , ISO-8859-1');
 
 
-                if($_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_followupflags_and_labels'] == "1")
+                if($_SESSION['phpgw_info']['user']['preferences']['expressoMail']['use_followupflags_and_labels'] == "2")
                 {
 
                     $filter = array('AND', array('=', 'folderName', $folder), array('=','messageNumber', $v));
@@ -5498,7 +5515,7 @@ class imap_functions
 				$importante = array();
 
 				if($msg->Flagged != 'F')
-					$return['msgs'][$i]['flag'] .= ( preg_match('/importance *: *(.*)\r/i', $header , $importante) === 0 ) ? '' : 'F';
+					$return['msgs'][$i]['flag'] .= ( preg_match('/importance\s{0,}:\s{0,}(high).*/i', $header , $importante) === 0 ) ? '' : 'F';
 				else
 					$return['msgs'][$i]['flag'] .= $msg->Flagged ? $msg->Flagged : '';
 

@@ -595,10 +595,12 @@ function draw_new_tree_folder(callback, force)
                 flag: shared,
                 acl: acls
             });
+            
             //FUNÇÃO DO eventNU FLUTUANTE EDITAR < BEGIN
             var esc = false;
             $(folder_).append(html).find(".float-menu-edit").click(function()
             {
+            	
                 var folder_id = $(this).parents(".closed:first").attr('id');
                 var name = $.trim($(this).parents(".closed:first").find("span:first").text().split("[")[0]);
                 if($(this).parents(".closed:first").find("span:first").hasClass("selected"))
@@ -613,7 +615,9 @@ function draw_new_tree_folder(callback, force)
                 {
                     return;
                 }
+
                 $(this).parents(".closed:first").find("span:first").empty().append("<input class='new_folder folder' type='text' maxlength='100'></input>");
+                
                 $(".new_folder").focus().keydown(function(event)
                 {
                     event.stopPropagation();
@@ -686,6 +690,7 @@ function draw_new_tree_folder(callback, force)
 
                 var folder_id = $(this).parents(".closed:first").attr('id');
                 var folder_name = "<strong>" + $.trim($(this).parents(".closed:first").find(".folder").text().split("[")[0]) + "</strong>";
+                
 
                 if(valid_tabs($(this).parents("li:first").find("li"), folder_id))
                 {
@@ -705,6 +710,12 @@ function draw_new_tree_folder(callback, force)
                 }
                 var folder_span = $(this);
                 var confirm_text = '_[[Do you wish to exclude the folder?]]' + ' ';
+                
+                
+                
+                
+                
+                
 
                 $.Zebra_Dialog(confirm_text + folder_name, {
                     'type': 'question',
@@ -713,41 +724,65 @@ function draw_new_tree_folder(callback, force)
                     'buttons': ['_[[Yes]]', '_[[No]]'],
                     'onClose': function(caption)
                     {
-
+                    	var canDelete = false;
                         if(caption == '_[[Yes]]')
                         {
-                            if(folder_span.parents("li").find("input").first().val() == "localFolder")
-                            {
-                                var idFolder = folder_span.parents("li").first().attr("id").split("_")[2];
-                                expresso_mail_archive.deleteFolder(idFolder, folder_name);
-                                cExecute("$this.imap_functions.get_folders_list&onload=true", update_menu);
-                            }
-                            else
-                            {
-                                $.ajax(
-                                {
-                                    url: "controller.php?action=$this.imap_functions.delete_mailbox",
-                                    type: "POST",
-                                    data: "del_past=" + folder_id,
-                                    success: function(data)
+                        	$.ajax(
                                     {
-                                        data = connector.unserialize(data);
-                                        if(data == "Mailbox does not exist")
+                                        url: "controller.php?action=$this.imap_functions.get_num_msgs",
+                                        type: "POST",
+                                        data: "folder=" + folder_id,
+                                        success: function(data)
                                         {
-                                            $(".folders-loading").removeClass("folders-loading");
-                                            return write_msg('_[[Mailbox does not exist]]');
+                                        	data = connector.unserialize(data);
+                                            if(data > 0)
+                                            {
+                                            	$(".folders-loading").removeClass("folders-loading");
+                                            	return write_msg('A pasta não pode ser removida porque não está vazia');
+                                            }
+                                            else if(folder_id==undefined)
+                                            {
+                                            	$(".folders-loading").removeClass("folders-loading");
+                                            	return write_msg('A pasta pai não pode ser removida');
+                                            }else
+                                            {
+                                            	
+                                            	if(folder_span.parents("li").find("input").first().val() == "localFolder")
+                                                {
+                                                    var idFolder = folder_span.parents("li").first().attr("id").split("_")[2];
+                                                    expresso_mail_archive.deleteFolder(idFolder, folder_name);
+                                                    cExecute("$this.imap_functions.get_folders_list&onload=true", update_menu);
+                                                }
+                                                
+                                                    $.ajax(
+                                                    {
+                                                        url: "controller.php?action=$this.imap_functions.delete_mailbox",
+                                                        type: "POST",
+                                                        data: "del_past=" + folder_id,
+                                                        success: function(data)
+                                                        {
+                                                            data = connector.unserialize(data);
+                                                            if(data == "Mailbox does not exist")
+                                                            {
+                                                                $(".folders-loading").removeClass("folders-loading");
+                                                                return write_msg('_[[Mailbox does not exist]]');
+                                                            }
+                                                            else if(data == "Permission denied")
+                                                            {
+                                                                $(".folders-loading").removeClass("folders-loading");
+                                                                cExecute("$this.imap_functions.get_folders_list&onload=true", update_menu);
+                                                                return write_msg("_[[Permission denied]]");
+                                                            }
+                                                            write_msg('_[[The folder $folder_name$ was successfully removed]]');
+                                                            cExecute("$this.imap_functions.get_folders_list&onload=true", force_update_menu);
+                                                        }
+                                                    });
+                                                
+                                                	$(".folders-loading").removeClass("folders-loading");
+                                                
+                                            }
                                         }
-                                        else if(data == "Permission denied")
-                                        {
-                                            $(".folders-loading").removeClass("folders-loading");
-                                            cExecute("$this.imap_functions.get_folders_list&onload=true", update_menu);
-                                            return write_msg("_[[Permission denied]]");
-                                        }
-                                        write_msg('_[[The folder $folder_name$ was successfully removed]]');
-                                        cExecute("$this.imap_functions.get_folders_list&onload=true", force_update_menu);
-                                    }
-                                });
-                            }
+                                    });
                         }
                         else
                         {
@@ -842,10 +877,16 @@ function draw_new_tree_folder(callback, force)
                     {
                         /* Verifica se existe caracteres especiais no nome da pasta ou se existe "local_"
                          * em parte do nome (palavra reservada para pastas locais) */
-                        if($(this).val().match(/[\`\~\^\<\>\|\\\"\!\@\#\$\%\&\*\+\(\)\[\]\{\}\?;:]/gi) || $(this).val().indexOf("local_") != -1)
+                        if($(this).val().match(/[\`\~\.\^\<\>\|\\\"\!\@\#\$\%\&\*\+\(\)\[\]\{\}\?;:]/gi) || $(this).val().indexOf("local_") != -1)
                         {
                             return write_msg('_[[cannot create folder. try other folder name]]');
                         }
+                        
+                        if($.trim($(this).val())=="")
+                        {
+                            return write_msg('A pasta não pode conter apenas espaços em branco');
+                        }
+                        
                         if($(this).parents("li").find("input[type=hidden]").val() == "localFolder")
                         {
 

@@ -489,8 +489,8 @@ Search in the Global Catalog	expressoMail	pt-br	Pesquisar no Catálogo Geral
 Search Results	expressoMail	pt-br	Resultado da pesquisa
 search results	expressoMail	pt-br	 Resultados encontrados
 Search the messages in these folders	expressoMail	pt-br	Pesquise mensagens nessas pastas
-Search user...	expressoMail	pt-br	Procurar usuário...
-Search user	expressoMail	pt-br	Procurar usuários
+Search user...	expressoMail	pt-br	Pesquisar usuários...
+Search user	expressoMail	pt-br	Pesquisar usuários
 Sector	expressoMail	pt-br	Setor
 Seen	expressoMail	pt-br	Lida
 Select a user!	expressoMail	pt-br	Selecione um usuário!
@@ -886,6 +886,7 @@ Apply filter	expressoMail	pt-br	Aplicar filtro
 vacation	expressoMail	pt-br	Férias
 redirect	expressoMail	pt-br	Redirecionar para
 setflag	expressoMail	pt-br	Marcar como
+marklabel	expressoMail	pt-br	Aplicar Marcador
 fileinto	expressoMail	pt-br	Mover para
 Contains	expressoMail	pt-br	Contém
 Criteria	expressoMail	pt-br	Critérios
@@ -1216,6 +1217,8 @@ Wed	expressoMail	pt-br	Qua
 Thu	expressoMail	pt-br	Qui
 Fri	expressoMail	pt-br	Sex
 Sat	expressoMail	pt-br	Sab
+Quarentena	expressoMail	pt-br	Spam
+New folder	expressoMail	pt-br	Nova Pasta
 Today	expressoMail	pt-br	Hoje
 Number of recipients greater than allowed	expressoMail	pt-br	Quantidade de destinatários não permitido
 you are blocked from sending mail to the following addresses	expressoMail	pt-br	Você está bloqueado de enviar e-mail para os seguintes endereços
