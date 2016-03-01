@@ -10,7 +10,7 @@ if(!isset($GLOBALS['phpgw_info']))
             'noheader'   => true
     );
 }
-
+include_once(dirname(__FILE__).'/../../prototype/library/utils/Logger.php');
 $GLOBALS['phpgw_info']['server']['download_temp_dir'] = '/tmp';
 //-----------------------//
 
@@ -31,6 +31,7 @@ else
 $indexPart = $_GET['indexPart'];
 $msgNumber = $_GET['msgNumber'];
 $msgFolder = $_GET['msgFolder'];
+$logInfo = $_GET['infoLog'];
 if(array_key_exists('fileType', $_GET ))
 	$ContentType = $_GET['fileType'];
 else
@@ -99,6 +100,7 @@ if($msgNumber != 'null' && $indexPart !== null && $msgFolder)
     $info = $attachment->getAttachmentInfo($indexPart);
     $filename = $newFilename ? $newFilename : $info['name'];       
     $filename = unhtmlentities($filename);
+    $messageId = $attachment->messageId;
 }
 else
 {
@@ -201,9 +203,13 @@ header("Pragma: public");
 header("Expires: 0"); // set expiration time
 header("Content-Disposition: $disposition");
 
+
+$size = 0;
+
 if( $fileContent )
 {
-    header("Content-Length: ". mb_strlen($fileContent));
+	$size = mb_strlen($fileContent);
+    header("Content-Length: ". $size);
     
     if( isset($info["encoding"]) )
     {
@@ -267,7 +273,8 @@ else
 
     $tempDir = $GLOBALS['phpgw_info']['server']['download_temp_dir'];
 
-    header("Content-Length: ". filesize($filename));
+    $size = filesize($filename);
+    header("Content-Length: ". $size);
     header("Content-encoding: text/plain" ); 
     
     if (preg_match("#^".$tempDir."/(".$GLOBALS['phpgw']->session->sessionid."/)*[A-z0-9_]+_".$GLOBALS['phpgw']->session->sessionid."[A-z0-9]*(\.[A-z]{3,4})?$#",$filename))
@@ -289,6 +296,13 @@ else
 	    }
     }
 }
+
+if(!$filename||$filename='false'){
+	Logger::info('expressomail', 'gotodownload','filename: '.$_GET['newFilename']);
+}else{
+	Logger::info('expressomail', 'gotodownload','id:'.$messageId.'|filename:'.$filename.'|size:'.$size);
+}
+
         
 //-----------------------//
 

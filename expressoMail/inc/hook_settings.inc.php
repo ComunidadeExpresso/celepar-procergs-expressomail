@@ -382,7 +382,13 @@ create_select_box('What is the maximum number of messages per page?','max_email_
 create_check_box('View the user name in the header of the messages printed?', 'show_name_print_messages', 'Displays the user name in the header print email');
 
 create_check_box('Habilitar funcionalidade de notificar ao receber mensagens filtradas por remetente ?', 'use_alert_filter_criteria', '');
-create_check_box('Habilitar sinalizadores e marcadores em mensagens', 'use_followupflags_and_labels', '');
+
+$labels = array (	'0'=> 'Não utilizar',
+					'1' => 'Utilizar apenas labels',
+					'2' => 'Utilizar sinalizadores e marcadores');
+
+//create_check_box('', '', '');
+create_select_box('Habilitar sinalizadores e marcadores em mensagens','use_followupflags_and_labels',$labels,'Marcadores e Sinalizadores auxiliam a busca por mensagens importantes');
 
 //$default = 0;
 create_check_box('Preview message text within subject column','preview_msg_subject','this exhibits a sample of message within the message subject column');
@@ -550,6 +556,7 @@ $default =  array(
 create_select_box('What is the maximum size of embedded images?','image_size',$default,'When user send an email with image in body message, it changes the size');
 create_check_box('Use plain text editor as standard ?','plain_text_editor','');
 
+create_check_box('View sender information card in the message list ?','view_contact_card','');
 
 $default = array( 
  		    'global'     => lang("Global catalog"), 
@@ -597,6 +604,9 @@ $default = array(
     'Tahoma'   => 'Tahoma',
 );
 create_select_box( 'Default font editor' , 'font_family_editor' , $default );
+
+$default = array('0' => 'IEC_80000-13 (Binary)', '1' => 'SI Metric (Decimal)');
+create_select_box("System of units used to calculate user's quota",'system_of_units',$default);
 
 $default = array(
     '8pt'     => '8',

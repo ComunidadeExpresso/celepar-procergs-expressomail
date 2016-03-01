@@ -1,11 +1,11 @@
 /**
  * Estrutura que guarda em cache as mensagens abertas, a exemplo da estrutura utilizada
  * na funcionalidade de anexar mensagens.
- * Isto reduz a necessidade de acessar estruturas da tela para obter informaï¿½ï¿½es sobre
+ * Isto reduz a necessidade de acessar estruturas da tela para obter informações sobre
  * as mensagens, como tem sido para encaminhar, responder, etc.
  * Manter os dados 'limpos' em uma estrutura 'somente-leitura' permite maior flexibilidade
  * para mudar a tela e menos processamento de limpeza de dados (por exemplo retirar tags de
- * formataï¿½ï¿½o, etc.)
+ * formatação, etc.)
  */
 
 focusIn = "";
@@ -45,7 +45,7 @@ var tabTypes = {
 	};
 
 var currentTab,numBox = 0; // Open Tab and num of mailboxes opened at context
-// Objeto Map, talvez o ideal fosse adicionar este objeto ï¿½ Api do egroupware, e carregï¿½-lo
+// Objeto Map, talvez o ideal fosse adicionar este objeto à Api do egroupware, e carregá-lo
 // aqui no expressoMail.
 
 function draw_tree_labels()
@@ -63,7 +63,7 @@ function draw_tree_labels()
 				"<a class='title-my-labels' style='margin-left: 15px;' tabindex='0' role='button' aria-expanded='false' title='"+get_lang("My Labels")+"'>"+get_lang("My Labels")+"</a>" +
 				"<span class='status-list-labels ui-icon ui-icon-triangle-1-s'></span></div>")
 	.append(DataLayer.render("../prototype/modules/mail/templates/label_list.ejs", {labels: labels} ))
-	.find("li.label-item").css({"background-color":"#ffffff", "border-color":"#CCCCCC", "color":"#444444"}).click(function(event,ui){
+	.find("li.label-item").css({"background-color":"#ffffff", "border-color":"#CCCCCC", "color":"#444444"}).attr('title','Pesquisar e-mails').click(function(event,ui){
 		if($(event.target).is('.square-color')){
 				$(this).each(function(){
 					configureLabels({selectedItem: $(this).attr('class').match(/label-item-([\d]+[()a-zA-Z]*)/)[1]});
@@ -74,7 +74,7 @@ function draw_tree_labels()
 				var labelId = $(this).attr('class').match(/label-item-([\d]+[()a-zA-Z]*)/)[1];
 				search_emails("UNDELETED KEYWORD \"$Label"+labelId+"\"");
 		}
-	}).find(".square-color").css("display","");
+	}).find(".square-color").css("display","").attr('title', 'Editar marcador');
 
 	$("#MyMarckersList a.title-my-labels").click(function() {
 		if($("#MyMarckersList ul.label-list").css("display") == "none"){
@@ -119,7 +119,7 @@ function update_menu(data, forceLoadFolders)
 
         draw_new_tree_folder( false, forceLoadFolders );
 
-        if( preferences['use_followupflags_and_labels'] == "1" ) draw_tree_labels();
+        if( preferences['use_followupflags_and_labels'] != "0" ) draw_tree_labels();
     }
 }
 
@@ -131,9 +131,17 @@ var handler_draw_box = function(data){
 
 // Action on change folders.
 function change_folder(folder, folder_name){
-	if (parseInt(preferences.use_dynamic_contacts) && $(".to").length && $(".to").data( "autocomplete" ).menu.active){
-        $(".to").data( "autocomplete" ).close();
-    }
+    // as linhas abaixo estão comentadas pois, com a aba de redigir mensagem aberta não era possível trocar de diretório
+	//if (parseInt(preferences.use_dynamic_contacts) && $(".to").length && $(".to").data( "autocomplete" ).menu.active){
+    //    $(".to").data( "autocomplete" ).close();
+    //}
+
+    if(folder.indexOf('user.') !== -1)
+		$("#MyMarckersList").hide();
+    else
+		$("#MyMarckersList").show();
+
+
     if (openTab.imapBox[0] != folder)
 	{
 		selectAllFolderMsgs(false);
@@ -203,6 +211,7 @@ function open_folder(folder, folder_name)
 var lastPage = 1;
 var numPages = 5;
 var last_folder = 'INBOX';
+this.timerCard = null;
 function draw_paging(num_msgs){
 	num_msgs = parseInt(num_msgs);
 	total_pages = 1;
@@ -691,7 +700,7 @@ function getColSizesCookie() {
 }
 
 
-/*Cria a div que permite a seleï¿½ï¿½o de todas as mensagens*/
+/*Cria a div que permite a seleção de todas as mensagens*/
 function drawSelectMsgsTable(){
 	var div = $('<div>');
 	div.html('<span class="none-selected">_[[No selected message.]]</span>');
@@ -714,7 +723,7 @@ function updateSelectedMsgs(selected,msg_number){
 	folder = folder.length > 70 ? '"'+folder.substr(0,70) + "..." +'"': '"'+folder+'"' ;
 	var div = $('.select-all-messages');
 	var filterFlag = search_box_type != "ALL" ? '"' + get_lang(search_box_type) + "s" + '"': "";
-	/*Seleciona as mensagens ao navegar pelas pï¿½ginas*/
+	/*Seleciona as mensagens ao navegar pelas páginas*/
 	if (allMsgsSelected && msg_number == undefined){
 		$('.checkbox').each(function(){
 			$(this).attr('checked', true);
@@ -746,7 +755,7 @@ function updateSelectedMsgs(selected,msg_number){
 		$('#chk_box_select_all_messages').attr('checked',true);
 		if (total_pages > 1){
 			var link = "<a class='select-link' href='#'>_[[Clear selection?]]</a>";
-			var info = "_[[All]] <b>"+totalFolderMsgs+"</b> _[[messages]] "+filterFlag+" _[[in]] "+folder+" _[[were selected.}} "+link;
+			var info = "_[[All]] <b>"+totalFolderMsgs+"</b> _[[messages]] "+filterFlag+" _[[in]] "+folder+" _[[were selected.]] "+link;
 			div.html("<span>"+info+"<span>");
 			div.show();
 			$('.select-link').bind('click',function(){selectAllFolderMsgs();$('.select-link').unbind('click');});
@@ -868,7 +877,7 @@ function draw_box(headers_msgs, msg_folder, alternate){
 	}
 	/**
 	 * Preenche a estrutura de cache de mensagens para posterior consulta de
-	 * informaï¿½ï¿½es sobre as mensagens no escopo global.
+	 * informações sobre as mensagens no escopo global.
 	 */
 	for (var i=0; i<headers_msgs.length; i++) {
 		if (!onceOpenedHeadersMessages[current_folder])
@@ -882,7 +891,7 @@ function draw_box(headers_msgs, msg_folder, alternate){
 	if(is_ie)
 		document.getElementById("border_table").width = "99.5%";
 
-	numBox = 0; //As pastas sempre estarï¿½o na aba 0
+	numBox = 0; //As pastas sempre estarão na aba 0
 
 	openTab.content_id[numBox] = document.getElementById("content_id_"+numBox);
 	openTab.content_id[numBox].innerHTML = "";
@@ -1264,7 +1273,7 @@ function html_entities(string) {
 		return String(string).replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// Passar o parï¿½metro offset para esta funï¿½ï¿½o
+// Passar o parâmetro offset para esta função
 function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
 		headers_msgs.subject = html_entities(headers_msgs.subject);
 		if (typeof offsetToGMT == 'undefined')
@@ -1479,10 +1488,18 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
 			else{
 				var spanSender = document.createElement("SPAN");
 				spanSender.setAttribute('class','span-sender');
-				spanSender.onmouseover = function(event)
+				if(preferences['view_contact_card'] == '1')
 				{
-					InfoContact.begin( this , headers_msgs.reply_toaddress );
-				};
+					spanSender.onmouseover = function(event)
+					{
+						this.timerCard = setTimeout(function(a,b){InfoContact.begin(a,b);},1500,this,headers_msgs.reply_toaddress);
+					};
+					spanSender.onmouseout = function(event)
+					{
+						clearTimeout( this.timerCard );
+					};
+				}
+
 				folder = special_folders['Sent'];
 				current = get_current_folder();
 				if ((preferences.from_to_sent == "1") && (current.substr(current.length - folder.length, folder.length) == folder)){
@@ -1556,20 +1573,44 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
 		td_element27 = createTDElement(0,7,"td_msg",null,"td_message_labels_"+headers_msgs.msg_number);
 		$(td_element27).addClass("td-label");
 
-		if (headers_msgs.labels) {
+        var tags = '';
+		if (headers_msgs.labels && msg_folder.indexOf("user.") === -1) {
+        // if (headers_msgs.labels && preferences['use_followupflags_and_labels'] != '0') {
+            // criar tags ao lado do titulo do email;
+            var sorted_tags = orderLabel(headers_msgs.labels);
+            sorted_tags.forEach(function(label){
+                tags += '<span style="border: 1px solid; border-color: '+label.borderColor+'; background-color: '+label.backgroundColor+'; color: '+label.fontColor+'; border-radius: 3px; padding: 0 3px 0 3px; margin: 0 0 0 3px; ">'+label.name+'</span>';
+            });
+
 			$(td_element27).css({'background-image':'url(../prototype/modules/mail/img/mail-sprites.png)','background-position': '0 -1706px',"margin-left":"0",'margin-top':'3px','background-repeat':'no-repeat'});
 			updateLabelsColumn(headers_msgs);
 		}
 
-		  td_element26 = createTDElement(0,6,"td_msg","center","td_message_followup_"+headers_msgs.msg_number);
+        // anexar os marcadores ao lado do titulo do email
+        if(msg_folder.indexOf("user.") === -1)
+			td_element4.innerHTML = "<span id='label_container_" + headers_msgs.msg_number + "'>"+tags+"</span>" + td_element4.innerHTML;
+
+		td_element26 = createTDElement(0,6,"td_msg","center","td_message_followup_"+headers_msgs.msg_number);
 		  $(td_element26).addClass("td-followup-flag");
 
-        if((get_current_folder().split("_")[0] != "local") && (preferences['use_followupflags_and_labels'] == '1')){
-		  td_element26.innerHTML = '<div class="flag-edited" style="width:8px;height:6px;"><img src="../prototype/modules/mail/img/flagEditor.png"></div>';
-	    } else {
-            td_element26.innerHTML = "";
-        }
-        if (preferences['use_followupflags_and_labels'] == '1'){
+		if((get_current_folder().split("_")[0] != "local") && (preferences['use_followupflags_and_labels'] == '2')){
+			  td_element26.innerHTML = '<div class="flag-edited" style="width:8px;height:6px;"><img src="../prototype/modules/mail/img/flagEditor.png"></div>';
+		    } else {
+	            td_element26.innerHTML = "";
+	        }
+
+
+		if (preferences['use_followupflags_and_labels'] == '2'){
+
+			td_element26 = createTDElement(0,6,"td_msg","center","td_message_followup_"+headers_msgs.msg_number);
+			$(td_element26).addClass("td-followup-flag");
+
+	        if((get_current_folder().split("_")[0] != "local") && (preferences['use_followupflags_and_labels'] != '0')){
+			  td_element26.innerHTML = '<div class="flag-edited" style="width:8px;height:6px;"><img src="../prototype/modules/mail/img/flagEditor.png"></div>';
+		    } else {
+	            td_element26.innerHTML = "";
+	        }
+
     		if (headers_msgs.followupflagged) {
     			if(headers_msgs.followupflagged.followupflag.id < 7){
     				var nameFollowupflag = get_lang(headers_msgs.followupflagged.followupflag.name);
@@ -1586,139 +1627,144 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
     		} else {
     			$(td_element26).find(".flag-edited").css("background","#cccccc");
     		}
+
+    		/**
+    		 * Clique para aplicar sinalizador
+    		 */
+    		$(td_element26).click(function() {
+    			var messageClickedId = $(this).attr('id').match(/td_message_followup_([\d]+)/)[1];
+
+                var loading = $('#td_message_followup_' + messageClickedId + ', ' +
+                'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited")
+                .find('img[alt=Carregando]');
+
+
+                //Verificar se está carregando a bandeira.
+                //Caso esteja ele sai da função até que seja carregado.
+                if( loading.length ) {
+                    return false;
+                }
+
+    			var followupColor = $('#td_message_followup_' + messageClickedId).find(".flag-edited").css('backgroundColor');
+
+    			$('#td_message_followup_' + messageClickedId + ', ' +
+    			'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited")
+    			.html('<img alt="Carregando" title="Carregando" style="margin-left:-3px; margin-top:-4px; width:13px; height:13px;" src="../prototype/modules/mail/img/ajax-loader.gif" />');
+
+    			$('#td_message_followup_' + messageClickedId + ', ' +
+    			'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited").css("background", "transparent");
+
+
+    			/**
+    				* Hack:
+    				* headers_msgs.followupflagged.id não vai funcionar porque já foi feito DataLayer.commit()
+    				* por isso o id deve ser obtido do banco
+    				* também para verificar se há ou não sinalizador nesta mensagem
+    			*/
+
+    			DataLayer.remove('followupflagged', false);
+    			var flagged = DataLayer.get('followupflagged', {filter: [
+    				'AND',
+    				['=', 'messageNumber', messageClickedId],
+    				['=', 'folderName', msg_folder]
+    			]});
+
+    			if (!flagged) {
+    				/**
+    				 * Aplica followupflag de Acompanhamento
+    				 */
+    				headers_msgs.followupflagged = {
+    					uid : User.me.id,
+    					folderName : msg_folder,
+    					messageNumber : messageClickedId,
+    					alarmTime : false,
+    					backgroundColor : '#FF2016',
+    					followupflagId: '1'
+    				};
+    				headers_msgs.followupflagged.id = DataLayer.put('followupflagged', headers_msgs.followupflagged);
+    				DataLayer.commit(false, false, function(data){
+    					var fail = 'success';
+    					$.each(data, function(index, value) {
+    						if(typeof value === 'string'){
+    							fail = value;
+    						}
+    					});
+
+    					$('#td_message_followup_' + messageClickedId + ', ' +
+    					'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited")
+    					.css({"background-image":"url(../prototype/modules/mail/img/flagEditor.png)"})
+    					.find('img').remove();
+
+
+    					if(fail != 'success'){
+    					    var msgFlag =  $('#td_message_followup_' + messageClickedId + ', ' +
+                            'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited").css("background", "#CCCCCC");
+
+                            msgFlag.find('img').remove();
+
+                            //Insere a imagem da flag quando ocorre erro ao marcar a msg
+                            msgFlag.append("<img src='../prototype/modules/mail/img/flagEditor.png'/>");
+
+                            MsgsCallbackFollowupflag[fail]();
+    					}else{
+    					    $('#td_message_followup_' + messageClickedId + ', ' +
+    					    'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).attr('title', get_lang('Follow up')).find(".flag-edited").css("background", headers_msgs.followupflagged.backgroundColor)
+    						.append("<img src='../prototype/modules/mail/img/flagEditor.png'/>");
+    					    updateCacheFollowupflag(messageClickedId, msg_folder, true);
+    					}
+    				});
+
+
+    			} else if (onceOpenedHeadersMessages[msg_folder][messageClickedId]['followupflagged'].followupflag.name == 'Follow up') {
+    				/**
+    				 * Remove followupflag de Acompanhamento
+    				 */
+    				 $(this).find(".flag-edited").css("background", "#cccccc");
+    				DataLayer.remove('followupflagged', flagged[0].id );
+    				DataLayer.commit(false, false, function(){
+    					updateCacheFollowupflag(messageClickedId, msg_folder, false);
+    					$('#td_message_followup_' + messageClickedId + ', ' +
+    					'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited")
+    					.find('img').remove();
+
+    					$('#td_message_followup_' + messageClickedId + ', ' +
+    					  'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).attr('title', '').find(".flag-edited").css("background", '#CCC');
+
+    					$('#td_message_followup_' + messageClickedId + ', ' +
+    						'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited").html('<img src="../prototype/modules/mail/img/flagEditor.png">')
+                            .css({"width":"8px","height":"6px"/*"background-image":"url(../prototype/modules/mail/img/flagEditor.png)"*/});
+    				});
+
+    			} else {
+    				$('#td_message_followup_' + messageClickedId + ', ' +
+    				'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited")
+    				.css("backgroundColor", followupColor)
+                    .find('img').remove(); //remove imagem carregando da bandeira
+
+                    $('#td_message_followup_' + messageClickedId).find('.flag-edited').append("<img src='../prototype/modules/mail/img/flagEditor.png'/>");
+
+
+    			   //Pega id do checkbox
+                   var id = $(tr_element).addClass('selected_msg').find(':checkbox').attr('id');
+
+                    //Verifica se o checkbox está selecionado
+                    if($('#' + id).attr('checked') != 'checked')
+                        $(tr_element).addClass('selected_msg').find(':checkbox').trigger('click');
+
+    				/**
+    				 * Hack - Força a atualização da seleção da mensagem, devido a problema na
+    				 * function de seleção atribuida ao evento onclick do checkbox
+    				 */
+    				updateSelectedMsgs(true,messageClickedId);
+
+    				configureFollowupflag();
+    			}
+    		});
+
+
+
 		}
-		/**
-		 * Clique para aplicar sinalizador
-		 */
-		$(td_element26).click(function() {
-			var messageClickedId = $(this).attr('id').match(/td_message_followup_([\d]+)/)[1];
 
-            var loading = $('#td_message_followup_' + messageClickedId + ', ' +
-            'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited")
-            .find('img[alt=Carregando]');
-
-
-            //Verificar se estï¿½ carregando a bandeira.
-            //Caso esteja ele sai da funï¿½ï¿½o atï¿½ que seja carregado.
-            if( loading.length ) {
-                return false;
-            }
-
-			var followupColor = $('#td_message_followup_' + messageClickedId).find(".flag-edited").css('backgroundColor');
-
-			$('#td_message_followup_' + messageClickedId + ', ' +
-			'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited")
-			.html('<img alt="Carregando" title="Carregando" style="margin-left:-3px; margin-top:-4px; width:13px; height:13px;" src="../prototype/modules/mail/img/ajax-loader.gif" />');
-
-			$('#td_message_followup_' + messageClickedId + ', ' +
-			'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited").css("background", "transparent");
-
-
-			/**
-				* Hack:
-				* headers_msgs.followupflagged.id nï¿½o vai funcionar porque jï¿½ foi feito DataLayer.commit()
-				* por isso o id deve ser obtido do banco
-				* tambï¿½m para verificar se hï¿½ ou nï¿½o sinalizador nesta mensagem
-			*/
-
-			DataLayer.remove('followupflagged', false);
-			var flagged = DataLayer.get('followupflagged', {filter: [
-				'AND',
-				['=', 'messageNumber', messageClickedId],
-				['=', 'folderName', msg_folder]
-			]});
-
-			if (!flagged) {
-				/**
-				 * Aplica followupflag de Acompanhamento
-				 */
-				headers_msgs.followupflagged = {
-					uid : User.me.id,
-					folderName : msg_folder,
-					messageNumber : messageClickedId,
-					alarmTime : false,
-					backgroundColor : '#FF2016',
-					followupflagId: '1'
-				};
-				headers_msgs.followupflagged.id = DataLayer.put('followupflagged', headers_msgs.followupflagged);
-				DataLayer.commit(false, false, function(data){
-					var fail = 'success';
-					$.each(data, function(index, value) {
-						if(typeof value === 'string'){
-							fail = value;
-						}
-					});
-
-					$('#td_message_followup_' + messageClickedId + ', ' +
-					'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited")
-					.css({"background-image":"url(../prototype/modules/mail/img/flagEditor.png)"})
-					.find('img').remove();
-
-
-					if(fail != 'success'){
-					    var msgFlag =  $('#td_message_followup_' + messageClickedId + ', ' +
-                        'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited").css("background", "#CCCCCC");
-
-                        msgFlag.find('img').remove();
-
-                        //Insere a imagem da flag quando ocorre erro ao marcar a msg
-                        msgFlag.append("<img src='../prototype/modules/mail/img/flagEditor.png'/>");
-
-                        MsgsCallbackFollowupflag[fail]();
-					}else{
-					    $('#td_message_followup_' + messageClickedId + ', ' +
-					    'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).attr('title', get_lang('Follow up')).find(".flag-edited").css("background", headers_msgs.followupflagged.backgroundColor)
-						.append("<img src='../prototype/modules/mail/img/flagEditor.png'/>");
-					    updateCacheFollowupflag(messageClickedId, msg_folder, true);
-					}
-				});
-
-
-			} else if (onceOpenedHeadersMessages[msg_folder][messageClickedId]['followupflagged'].followupflag.name == 'Follow up') {
-				/**
-				 * Remove followupflag de Acompanhamento
-				 */
-				 $(this).find(".flag-edited").css("background", "#cccccc");
-				DataLayer.remove('followupflagged', flagged[0].id );
-				DataLayer.commit(false, false, function(){
-					updateCacheFollowupflag(messageClickedId, msg_folder, false);
-					$('#td_message_followup_' + messageClickedId + ', ' +
-					'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited")
-					.find('img').remove();
-
-					$('#td_message_followup_' + messageClickedId + ', ' +
-					  'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).attr('title', '').find(".flag-edited").css("background", '#CCC');
-
-					$('#td_message_followup_' + messageClickedId + ', ' +
-						'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited").html('<img src="../prototype/modules/mail/img/flagEditor.png">')
-                        .css({"width":"8px","height":"6px"/*"background-image":"url(../prototype/modules/mail/img/flagEditor.png)"*/});
-				});
-
-			} else {
-				$('#td_message_followup_' + messageClickedId + ', ' +
-				'tr[role="'+messageClickedId+'_'+msg_folder+'"] #td_message_followup_search_' + messageClickedId).find(".flag-edited")
-				.css("backgroundColor", followupColor)
-                .find('img').remove(); //remove imagem carregando da bandeira
-
-                $('#td_message_followup_' + messageClickedId).find('.flag-edited').append("<img src='../prototype/modules/mail/img/flagEditor.png'/>");
-
-
-			   //Pega id do checkbox
-               var id = $(tr_element).addClass('selected_msg').find(':checkbox').attr('id');
-
-                //Verifica se o checkbox estï¿½ selecionado
-                if($('#' + id).attr('checked') != 'checked')
-                    $(tr_element).addClass('selected_msg').find(':checkbox').trigger('click');
-
-				/**
-				 * Hack - Forï¿½a a atualizaï¿½ï¿½o da seleï¿½ï¿½o da mensagem, devido a problema na
-				 * function de seleï¿½ï¿½o atribuida ao evento onclick do checkbox
-				 */
-				updateSelectedMsgs(true,messageClickedId);
-
-				configureFollowupflag();
-			}
-		});
 
 		var norm = function (arg) {return (arg < 10 ? '0'+arg : arg);};
 		var weekDays = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
@@ -1777,6 +1823,7 @@ function make_tr_message(headers_msgs, msg_folder, offsetToGMT){
 		tr_element.appendChild(td_element22);
 		tr_element.appendChild(td_element23);
 		tr_element.appendChild(td_element24);
+
 		tr_element.appendChild(td_element26);
 		tr_element.appendChild(td_element27);
 		tr_element.appendChild(td_element25);
@@ -1919,7 +1966,7 @@ function draw_message(info_msg, ID){
         var folder_id = ID.match(/\d+/)[0];
         var folder;
 
-        //Correï¿½ï¿½o para fazer funcionar e-mails assinados no formato encapsulado.
+        //Correção para fazer funcionar e-mails assinados no formato encapsulado.
        // folder_id = info_msg.original_ID ? info_msg.original_ID: info_msg.msg_number;
         //if ((folder = document.getElementById(info_msg.msg_number)) == null)
 	if ((folder = Element(info_msg.original_ID)) == null)
@@ -1951,7 +1998,7 @@ function draw_message(info_msg, ID){
 				}
 			};
 		}
-		/*Ultima mensagem de cada pï¿½gina, exceto a ultima*/
+		/*Ultima mensagem de cada página, exceto a ultima*/
         else if( (current_page < total_pages) && !info_msg.msg_number.match("s[0-9]+") ){
 
 		   img_next_msg.onclick = function()
@@ -2032,7 +2079,7 @@ function draw_message(info_msg, ID){
 				}
 			};
 		}
-		//primeira mensagem de cada pï¿½gina, exceto a primeira
+		//primeira mensagem de cada página, exceto a primeira
 		else if(current_page > 1){
 
 		      img_previous_msg.onclick = function()
@@ -2154,11 +2201,13 @@ function draw_message(info_msg, ID){
 		if (this.value == 'more_options'){
 			this.innerHTML = "<b><u>"+get_lang('Hide details')+"</u></b>";
 			this.value = 'hide_options';
+			this.title = get_lang('Hide details');
 			Element('table_message_others_options_'+ID).style.display = '';
 		}
 		else{
 			this.innerHTML = get_lang('Show details');
 			this.value = 'more_options';
+			this.title = get_lang('Show details');
 			Element('table_message_others_options_'+ID).style.display = 'none';
 		}
 		resizeWindow();
@@ -2468,12 +2517,13 @@ function draw_message(info_msg, ID){
 		var option_print = '<span onclick="print_all()" onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options">'+get_lang("Print")+'</span> | ';
 		var option_export = '<span onclick="proxy_mensagens.export_all_messages()" onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options">'+get_lang("Export")+'</span> | ';
 		var report_error = '<span onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options" onclick=reports_window("'+currentTab+'");>'+get_lang("Truncated message?")+'</span> | ';
-		// Opï¿½ï¿½o do menu 'Mais Aï¿½ï¿½es' para criar filtro a partir da mensagem aberta:
-		var option_create_filter = '<span onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options" onclick=filter_from_msg(onceOpenedHeadersMessages[\'' + html_entities(info_msg.msg_folder) + '\'][' + info_msg.msg_number + ']);>' + get_lang("Create filter from message") + '</span> | ';
+		// Opção do menu 'Mais Ações' para criar filtro a partir da mensagem aberta:
+		//var option_create_filter = '<span onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options" onclick=filter_from_msg(onceOpenedHeadersMessages[\'' + html_entities(info_msg.msg_folder) + '\'][' + info_msg.msg_number + ']);>' + get_lang("Create filter from message") + '</span> | ';
+		var option_create_filter = '';
 		div_other_more_options.innerHTML += option_create_filter + option_move + option_print + option_export + block_user +  report_error;
 
 
-		// CRIAï¿½ï¿½O DE OPï¿½ï¿½ES DE RESPONDER MENSAGEM
+		// CRIAÇÃO DE OPÇÕES DE RESPONDER MENSAGEM
 		var space_replay1 = document.createElement('SPAN');
 		space_replay1.innerHTML = '&nbsp;|&nbsp;';
 
@@ -2517,7 +2567,7 @@ function draw_message(info_msg, ID){
 		};
 		option_reply_to_all_without_history.innerHTML = get_lang("Reply to all without history");
 
-		// RESPONDER COM HISTï¿½RICO
+		// RESPONDER COM HISTORICO
 		var option_reply_with_history = document.createElement('SPAN');
 		option_reply_with_history.onmouseover = function () {this.className = "reply_options_active";};
 		option_reply_with_history.onmouseout = function () {this.className= "reply_options";};
@@ -2528,7 +2578,7 @@ function draw_message(info_msg, ID){
 		};
 		option_reply_with_history.innerHTML = get_lang("Reply with history");
 
-		// APENDAR OPï¿½ï¿½ES DE RESPONDER
+		// APENDAR OPÇÕES DE RESPONDER
 		div_other_options.appendChild(option_reply_to_all);
 		div_other_options.appendChild(space_replay1);
 		div_other_options.appendChild(option_reply_to_all_without_history);
@@ -2964,7 +3014,7 @@ function draw_message(info_msg, ID){
 	var tr5 = document.createElement("TR");
 	tr5.className = "tr_message_header";
 	var td5 = document.createElement("TD");
-	td5.innerHTML = get_lang("Subject");
+	td5.innerHTML = get_lang("Subject")+":";
 	var subject = document.createElement("TD");
 	subject.id = "subject_"+ID;
 	subject.innerHTML = html_entities(info_msg.subject);
@@ -3011,7 +3061,7 @@ function draw_message(info_msg, ID){
 
 
 	var update_labeleds_msg = function(){
-		//TODO Mudar quando API abstrair atualizaï¿½ï¿½es no cache
+		//TODO Mudar quando API abstrair atualizações no cache
 		DataLayer.remove('labeled', false);
 		//DataLayer.get('labeled');
 		var labels = DataLayer.get("labeled", {filter: [
@@ -3019,8 +3069,7 @@ function draw_message(info_msg, ID){
 					['=', 'folderName', current_folder],
 					['=','messageNumber',folder_id]],
 				criteria : {deepness: 2}} );
-
-		if(labels.length != 0){
+		if(labels.length != 0 && current_folder.indexOf('user.') === -1){
 			var tr8 = document.createElement("TR");
 			tr8.className = "tr_message_header";
 			var td8 = document.createElement("TD");
@@ -3034,12 +3083,12 @@ function draw_message(info_msg, ID){
 				backgroundColor = labels[i].label.backgroundColor;
 				nameLabel = labels[i].label.name;
 				id = labels[i].id;
-				markers.innerHTML+= "<div  style='height: 15px; background:"+backgroundColor+"; float: left; -webkit-border-radius: 3px; -moz-border-radius: 3px; margin:0 0 1px 1px; border: 1px solid "+borderColor+"'><span style='color: "+fontColor+"; margin: 5px;'>"+nameLabel+"</span><span class='removeLabeledMsg' id='"+id+"' title='"+get_lang("Remove Label")+"'>x</span></div>";
+				markers.innerHTML+= "<div  style='height: 15px; background:"+backgroundColor+"; float: left; border-radius: 3px; margin:0 0 1px 1px; border: 1px solid "+borderColor+"'><span style='color: "+fontColor+"; margin: 5px;'>"+nameLabel+"</span><span class='removeLabeledMsg' id='"+id+"' title='"+get_lang("Remove Label")+"'>x</span></div>";
 
 			}
 			$(markers).find('span.removeLabeledMsg').click(function(event){
 				var id_labeled = $(event.target).attr("id");
-				//TODO Mudar quando API abstrair atualizaï¿½ï¿½es no cache
+				//TODO Mudar quando API abstrair atualizações no cache
 				//DataLayer.remove('labeled', false);
 				//DataLayer.get('labeled');
 				DataLayer.remove('labeled', id_labeled);
@@ -3063,7 +3112,7 @@ function draw_message(info_msg, ID){
 
 	if ( info_msg.attachments && info_msg.attachments.length > 0 )
 	{
-		//Cï¿½digo no padrï¿½o expresso 2.2
+		//Código no padrão expresso 2.2
 	var tr6 = document.createElement("TR");
 		tr6.className = "tr_message_header";
 		var td6 = document.createElement("TD");
@@ -3108,7 +3157,7 @@ function draw_message(info_msg, ID){
 			//k trocar por match???
 			if((url_decode(info_msg.attachments[i].name).indexOf(".ics")!=-1) || (url_decode(info_msg.attachments[i].name).indexOf(".vcard")!=-1))
 			{
-				//Link para importar calendï¿½rio
+				//Link para importar calendário
 				var link_import_attachment = new Image();
 				link_import_attachment.src = "templates/"+template+"/images/new.png";
 				link_import_attachment.setAttribute("onclick","javascript:import_calendar('"+info_msg.msg_folder+"&msg_number="+info_msg.msg_number+"&msg_part="+info_msg.attachments[i].pid+"&idx_file="+i+"&encoding="+info_msg.attachments[i].encoding+"'); return false;");
@@ -3123,7 +3172,7 @@ function draw_message(info_msg, ID){
 
             if((url_decode(info_msg.attachments[i].name).indexOf(".eml") != -1))
 			{
-				//Link para importar calendï¿½rio
+				//Link para importar calendário
 				var link_open_msg = new Image();
 				link_open_msg.src = "templates/"+template+"/images/email.png";
 				//link_open_msg.setAttribute("onclick","javascript:import_calendar('"+info_msg.msg_folder+"&msg_number="+info_msg.msg_number+"&msg_part="+info_msg.attachments[i].pid+"&idx_file="+i+"&encoding="+info_msg.attachments[i].encoding+"'); return false;");
@@ -3173,7 +3222,7 @@ function draw_message(info_msg, ID){
 					return;
 					break;
 				case 12:
-					write_msg('Este evento nï¿½o existe mais.');
+					write_msg('Este evento não existe mais.');
 					return;
 					break;
 				}
@@ -3290,7 +3339,7 @@ function draw_message(info_msg, ID){
 				var anchor_pattern = "http://"+location.host+location.pathname+"#";
 
 				if ( ( links.item( i ).href.indexOf( 'javascript:' ) !== 0 ) &&
-					(links.item( i ).href.indexOf(anchor_pattern) !== 0) ) //se nï¿½o for ï¿½ncora
+					(links.item( i ).href.indexOf(anchor_pattern) !== 0) ) //se não for âncora
 						links.item( i ).setAttribute( 'target', '_blank' );
 			}
 		}catch(e){
@@ -3346,7 +3395,7 @@ function draw_message(info_msg, ID){
 	                var msg = info_msg.msg_number;
 	                var fdr = info_msg.msg_folder;
 					var i = 0;
-				//verifica se estï¿½ no novo padrï¿½o de montagem das mensagens ou no antigo, necessï¿½rio
+				//verifica se está no novo padrão de montagem das mensagens ou no antigo, necessário
 				//para exibir as imagens no arquivamento local arquivamento local.
 				if(thumbs){
 	                jQuery.each(thumbs, function(i, thumb) {
@@ -3408,7 +3457,7 @@ function draw_message(info_msg, ID){
 	}
 
 	/*
-	 * TODO: implementar o controle como preferï¿½ncia do usuï¿½rio
+	 * TODO: implementar o controle como preferência do usuário
 	 *
 	 */
 	var jcarousel = false;
@@ -3441,7 +3490,7 @@ function draw_message(info_msg, ID){
 													'<img src="./templates/'+template+'/images/package_down.png" width="26" height="26" />' +
 											'</a>'+
 											'<span style="margin-left:5px; margin-top:7px; position:absolute;">'+name+'</span>'+
-											'<a title="Prï¿½xima" onclick="javascript:$.fancybox.next();" style="float:right;">' +
+											'<a title="Próxima" onclick="javascript:$.fancybox.next();" style="float:right;">' +
 												'<img src="./templates/'+template+'/images/right_arrow_white.png" width="30" height="30" />' +
 											'</a>' +
 										'</div>' +
@@ -3542,7 +3591,7 @@ function valid_emails(email){
 	var reComplexEmail = /<([^<]*)>[\s]*$/;
 	var validation = email.split('"');
 
-	//FUNï¿½ï¿½O QUE VALIDA OS DADOS QUANDO O EMAIL ï¿½ DIGITADO COM ("NOME SOBRENOME" <Email@dominio.com>)
+	//FUNÇÃO QUE VALIDA OS DADOS QUANDO O EMAIL É DIGITADO COM ("NOME SOBRENOME" <Email@dominio.com>)
 	var complexValidation = function(complexMail){
 		var Objct = {};
 		if($.trim(complexMail[1]).match(reComplexEmail)){
@@ -3562,11 +3611,11 @@ function valid_emails(email){
 			validation.unshift("");
 			ContactBox = complexValidation(validation);
 			break;
-		//CORRIGI ERRO DE DIGITAï¿½ï¿½O COMO ( huahua"<huhau@hauhau.com>) ou (hahahaha"huahua@email.com) ou ainda (hahahaha"huahua@ema  il.com)
+		//CORRIGI ERRO DE DIGITAÇÃO COMO ( huahua"<huhau@hauhau.com>) ou (hahahaha"huahua@email.com) ou ainda (hahahaha"huahua@ema  il.com)
 		case 2:
 			ContactBox = complexValidation(validation);
 			break;
-		//RECEBE O EMAIL CORRETAMENTE Sï¿½ VALIDA POSSIVEIS ERROS COMO O DE CIMA E OS CORRIGI CASO ACONTEï¿½AM
+		//RECEBE O EMAIL CORRETAMENTE SÓ VALIDA POSSIVEIS ERROS COMO O DE CIMA E OS CORRIGI CASO ACONTEÇAM
 		case 3:
 			//RETIRA O PRIMEIRO INDICE QUE FICOU "INUTIL"
 			validation.shift();
@@ -3601,7 +3650,7 @@ function input_keydowns(input, ID){
 				return false;
 			}
 
-			//FECHA OS CONTATOS DINï¿½MICOS
+			//FECHA OS CONTATOS DINÂMICOS
 			if( (e.keyCode == 27) && $( this ).data( "ui-autocomplete" ).menu.active ){
 				   e.stopPropagation();
 				   e.preventDefault();
@@ -3671,7 +3720,7 @@ function input_keydowns(input, ID){
 			}
 		}
 		setTimeout(function(){
-            // CASO FOR PRESSIONADO "," OU ";", ï¿½ CRIADA UMA CAIXINHA.
+            // CASO FOR PRESSIONADO "," OU ";", É CRIADA UMA CAIXINHA.
 			if(input.val()[input.val().length-1] == ";"){
 				draw_email_box(input.val().substring(0, input.val().length-1), input);
 				input.val("");
@@ -3685,12 +3734,12 @@ function input_keydowns(input, ID){
 			input_search = $(input).val();
 			var vchar = input.val().charAt(input.val().length-1);
 			var maiusculas = RegExp("[A-Z]");
-			/*Se o ultimo caracter for ">" ï¿½ porque o campo estï¿½ sendo editado (a partir de duplo clique)*/
+			/*Se o ultimo caracter for ">" é porque o campo está sendo editado (a partir de duplo clique)*/
 			var tamanho = 0;
 			if(vchar == ">"){
-				/*Faz um calculo prï¿½vio do tamanho do campo de acordo com o tamanho de cada caracter da string*/
+				/*Faz um calculo prévio do tamanho do campo de acordo com o tamanho de cada caracter da string*/
 				for(i=0; i<input.val().length; i++){
-					/*Se o caracter for maiï¿½sculo, o valor de pixel ï¿½ maior*/
+					/*Se o caracter for maiúsculo, o valor de pixel é maior*/
 					if(maiusculas.test(input.val().substr(i, 1)) == true){
 						tamanho += 9;
 					}
@@ -3700,7 +3749,7 @@ function input_keydowns(input, ID){
 				}
 				input.css("width", tamanho);
 			}
-			/*Ao inserir novo contato, nï¿½o existe a necessidade de calcular tamanho do campo*/
+			/*Ao inserir novo contato, não existe a necessidade de calcular tamanho do campo*/
 			else{
 				input.css("width", 15+(input.val().length * 9));
 			}
@@ -3710,7 +3759,7 @@ function input_keydowns(input, ID){
 	//AO SAIR DO FOCO MONTAGEM DA CAIXA DE EMAIL
 	.focusout(function(e){
 		var these = $(this);
-		// Funï¿½ï¿½o para montar a caixinha de e-mail.
+		// Função para montar a caixinha de e-mail.
 		function makeBoxMail(){
 			if(canMakeBox && !fastSearch){
 				if(!(	f9	||	click	||	$(this).parents("tr:first").find("button").hasClass("ui-state-active")	)){
@@ -3755,7 +3804,7 @@ function input_keydowns(input, ID){
 			$(pthis).val("");
 		}, 50);
 	});
-	//SE FOR EDIï¿½ï¿½O DE EMAILS RECALCULA O INPUT E SETA O FOCO
+	//SE FOR EDIÇÃO DE EMAILS RECALCULA O INPUT E SETA O FOCO
 	if(input.hasClass("box-input")){
 		input.css("max-width",parseInt(input.parents(".email-area:first").css("width"))-15);
 		input.trigger("keydown");
@@ -3982,7 +4031,7 @@ function normalizeContacts(data){
 dynamicData = false;
 currentTypeContact = '';
 
-//FUNï¿½ï¿½O QUE "SETA" OS BINDS DOS CAMPOS PARA - CC - CCO
+//FUNÇÃO QUE "SETA" OS BINDS DOS CAMPOS PARA - CC - CCO
 function input_binds(div, ID){
 
 	//AO CLICAR NA DIV SETA O FOCO NO INPUT
@@ -4007,7 +4056,7 @@ function input_binds(div, ID){
 			if(box.find(".box-info").length){
 				box.unbind("dblclick").bind("dblclick", function(e){
 					new $.Zebra_Dialog('<strong>Impossivel editar</strong> um contato do ldap\n' +
-						'<strong>Porï¿½m</strong>ï¿½ possivel remove-lo', {
+						'<strong>Porém</strong>é possivel remove-lo', {
 						'buttons':  false,
 						'modal': false,
 						'position': ['right - 20', 'top + 20'],
@@ -4025,12 +4074,12 @@ function input_binds(div, ID){
 	input_keydowns(div.find("textarea:first"), ID);
 
 
-	//VERIFICA PREFERENCIA DE CONTATOS DINï¿½MICOS ESTA ATIVA
+	//VERIFICA PREFERENCIA DE CONTATOS DINÂMICOS ESTA ATIVA
 	if(parseInt(preferences.use_dynamic_contacts)){
 
         //REST.get("/usercontacts", false, updateDynamicContact);
 
-		//PREPARAï¿½ï¿½O DA ARRAY DOS CONTATOS DINï¿½MICOS
+		//PREPARAÇÃO DA ARRAY DOS CONTATOS DINÂMICOS
 
         var decodeType = {
             '/dynamiccontacts': {
@@ -4083,7 +4132,7 @@ function input_binds(div, ID){
                 return false;
             },
 
-            //EVENTO AO SELECIONAR UM CONTATO DINï¿½MICO
+            //EVENTO AO SELECIONAR UM CONTATO DINÂMICO
             select: function( event, ui ) {
                 canMakeBox = true;
 
@@ -4134,15 +4183,15 @@ function input_binds(div, ID){
 
             var li = '';
             if(item.asDiv){
-                li = '<li class="dynamic-separator"><div class="line-separator">&nbsp;</div></li>';
+                li = '';//'<li class="dynamic-separator"><div class="line-separator">&nbsp;</div></li>';
             }
             li += '<li class="dynamic-'+ decodeType[item.type].css +'">';
-            li += '<a style="width:'+(item.type == '/dynamiccontacts' ? '91%' : '95%')+';  display: inline-block; background: none;">';
+            li += '<a style="width:'+(item.type == '/dynamiccontacts' ? '91%' : '95%')+';  display: inline-block;">';
             li += '<img style="position:relative; top:2px; "src="../prototype/modules/mail/img/'+ decodeType[item.type].img +'.png" title="'+ decodeType[item.type].text +'"/>';
             li += ($.trim(item.name) != "" ? ((item.name.length > 20 ? item.name.substring(0,17)+"..." : item.name) + " - " ) : '')  + item.mail;
-            li += item.type == '/dynamiccontacts' ? '<div class="dynamic-stars" style="display: inline-block;float: right;" id="'+item.raty+'_'+item.id+'"/>' : ''
+            li += item.type == '/dynamiccontacts' ? '<div class="dynamic-stars" style="display: inline-block;float: right;" id="'+item.raty+'_'+item.id+'"/>' : '';
             li += '</a>';
-            li += '<span style="width:16px; height:16px; top:1px; left:7px; '+ (item.type == '/dynamiccontacts' ? '': 'display:none') +'">Excluir contato recente</span>';
+            li += '<span style="width:16px; height:16px; top:-2px; left:5px; '+ (item.type == '/dynamiccontacts' ? '': 'display:none') +'">Excluir contato recente</span>';
             li += '</li>';
 
 
@@ -4164,7 +4213,7 @@ function input_binds(div, ID){
                     $.Zebra_Dialog('Deseja remover <b>'+(item.name ? (item.name.length <= 30 ? item.name: item.name.substr(0,27)+"...")+" - " : "")+ item.mail+'</b>?', {
                         'type':     'question',
                         'custom_class': (is_ie ? 'configure-zebra-dialog custom-zebra-filter' : 'custom-zebra-filter'),
-                        'buttons': ['Sim','Nï¿½o'],
+                        'buttons': ['Sim','Não'],
                         'overlay_opacity': '0.5',
                         'onClose':  function(caption) {
                             if(caption == 'Sim'){
@@ -4172,7 +4221,7 @@ function input_binds(div, ID){
                                 REST['delete']("/dynamiccontact/"+item.id);
                                 updateDynamicContact();
                                 cache = new Array();
-                            }else if(caption == 'Nï¿½o'){
+                            }else if(caption == 'Não'){
                                 $(focusIn).focus();
                             }
                         }
@@ -4202,7 +4251,7 @@ function input_binds(div, ID){
 	}
 
 
-	//FUNï¿½ï¿½O DOS BOTï¿½ES PARA - CC - CCO
+	//FUNÇÃO DOS BOTÕES PARA - CC - CCO
 	div.parents("tr:first").find("button").button().click(function(){
 		click = true;
 		fastSearch = true;
@@ -4214,7 +4263,7 @@ function input_binds(div, ID){
 
 /*
 	Anexa uma mensagem a mensagem sendo enviada.
-	Parï¿½metros:
+	Parâmetros:
 		folder_name: nome da pasta na qual a mensagem sendo anexada se encontra.
 		message_number: id da mensagem sendo anexada.
 */
@@ -4249,7 +4298,8 @@ function attach_message (folder_name, message_number) {
     {
         $("#content_id_" + currentTab + " .save").button("enable");
         var idAttach = $(this).parent().find('input[name="fileId[]"]').val();
-        fileUploadMSG.find(' .attachments-list').find('input[value="' + idAttach + '"]').remove();
+        var attrs = $.parseJSON(idAttach);
+        fileUploadMSG.find(' .attachments-list').find('input[value*="' + attrs.uid + '"][value*="' + attrs.name + '"]').remove();
         delAttachment(ID, idAttach);
         $(this).parent().qtip("destroy");
         $(this).parent().remove();
@@ -4385,8 +4435,12 @@ function draw_new_message(border_ID){
 	hold_session = true;
 
 	if ($("#footer_menu").length){
-		$("#footer_menu").css('display','none');
+        $('#footer_menu').fadeTo(50,0.3);
+        if (! $("#footer_menu_disable").length) {
+            $('#footer_menu').append('<div id="footer_menu_disable" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%"></div>');
+        }
 	}
+
 	var content = $("#content_id_"+ID).html(DataLayer.render("../prototype/modules/mail/templates/new_message.ejs", {id: ID}));
 	RichTextEditor.loadEditor2(ID);
 
@@ -4412,13 +4466,13 @@ function draw_new_message(border_ID){
 		return (!check ? true : false);
 	}
 
-	//Aï¿½ï¿½O GENERICA PARA ADICIONAR/REMOVER
+	//AÇÃO GENERICA PARA ADICIONAR/REMOVER
 	var change_text = function(field, text, to_text){
 		var text = (field.html() == text ? to_text : text);
 		field.html(text);
 	}
 
-	//Aï¿½ï¿½O GENERICA PARA ADICIONAR/REMOVER CC & CCO
+	//AÇÃO GENERICA PARA ADICIONAR/REMOVER CC & CCO
 	var show_hide = function(field, button){
 		button.toggleClass("expressomail-button-icon-ative");
 		field.toggle();
@@ -4432,9 +4486,9 @@ function draw_new_message(border_ID){
 
 	input_binds(content.find('[name="input_aux_to"]').css("max-width" , parseInt(content.find(".email-area").css("width"))-28).focus().parent().css({"max-height" : "115px", "overflow-y" : "auto"}), ID);
 
-	//Botï¿½o TextoRico/TextoSimples
+	//Botão TextoRico/TextoSimples
 	content.find(".new-msg-head-right-buttons").find(".button").button().filter(".rich-button").click(function(){
-		/*Se o texto do botï¿½o for "Texto simples" exibirï¿½ a mensagem antes de alterar para texto simples*/
+		/*Se o texto do botão for "Texto simples" exibirá a mensagem antes de alterar para texto simples*/
 		if($(".rich-button").find("span").text() == get_lang("Simple Text")){
 			$.Zebra_Dialog(get_lang("Convert this message into plain text can make parts of it are removed. Continue?"), {
 	            'type':     'warning',
@@ -4450,24 +4504,24 @@ function draw_new_message(border_ID){
 	            }
 			})
 		}
-		/*Se o texto do botï¿½o for "Texto rico" simplesmente altera para texto rico*/
+		/*Se o texto do botão for "Texto rico" simplesmente altera para texto rico*/
 		else{
 			RichTextEditor.setPlain(check_input(content.find('[name="textplain_rt_checkbox"]')), ID);
 			$(".rich-button").find("span").text(get_lang("Simple Text"));
 		}
 	})
 
-	//Botï¿½o Adicionar/Remover CCO
+	//Botão Adicionar/Remover CCO
 	.end().filter(".cco-button").click(function(){
 		show_hide(content.find(".cco-tr"), $(this));
 		change_text($(this).find(".ui-button-text"), get_lang("Add BCC"), get_lang('Remove CCo'));
 	})
-	//Botï¿½o Adicionar/Remover CC
+	//Botão Adicionar/Remover CC
 	.end().filter(".cc-button").click(function(){
 		show_hide(content.find(".cc-tr"), $(this));
 		change_text($(this).find(".ui-button-text"), get_lang("Add CC"), get_lang('Remove CC'));
 	})
-    //Botï¿½o Responder a
+    //Botão Responder a
     .end().filter(".reply-to-button").click(function(){
         show_hide(content.find(".reply-to-tr"), $(this));
     });
@@ -4747,52 +4801,55 @@ function draw_new_message(border_ID){
         "-webkit-transform" : "rotate(-360deg) translate(0px, 0px)"
 	});/*.end().end().end().*/
 
-    fileUploadMSG.find(".message-attach-link").click(function(){
-		jQuery('#message-attach-dialog').html(DataLayer.render("../prototype/modules/attach_message/attach_message.ejs", {}));
-		var lastFolderSelected = $('#content_folders .folder.selected');
-		$( "#mailpreview_container span.ui-icon-close" ).click();
-		jQuery('#message-attach-dialog').dialog({
-			width:945,
-			height:550,
-			resizable:false,
-			modal: true,
-			closeOnEscape:true,
-			close:function(event, ui)
-            {
-                event.stopPropagation();
-                 if(typeof(shortcut) != 'undefined') shortcut.disabled = false;
-                 lastFolderSelected.toggleClass('selected');
-            },
-            open: function(event, ui)
-            {
-                if(typeof(shortcut) != 'undefined') shortcut.disabled = true;
-            },
-			autoOpen:false
-	});
-	jQuery.getScript("../prototype/modules/attach_message/attach_message.js", function(){
-		jQuery('#message-attach-dialog').dialog('open');
-		jQuery('#message-attach-attach-btn').unbind('click');
-		jQuery('#message-attach-attach-btn').click(function(event){
-			jQuery.each(selectedMessages, function(folder_name, messages) {
-				jQuery.each(selectedMessages[folder_name], function(message_number, message) {
-					if (message) {
-						/* Anexa a mensagem especificada (por folder e id_msg)
-						   na mensagem sendo criada.*/
-						attach_message(folder_name, message_number);
-					}
+		fileUploadMSG.find(".message-attach-link").click(function(){
+			jQuery('#message-attach-dialog').html(DataLayer.render("../prototype/modules/attach_message/attach_message.ejs", {}));
+			var lastFolderSelected = $('#content_folders .folder.selected');
+			$( "#mailpreview_container span.ui-icon-close" ).click();
+			jQuery('#message-attach-dialog').dialog({
+				width:945,
+				height:550,
+				resizable:false,
+				modal: true,
+				closeOnEscape:true,
+				close:function(event, ui)
+	            {
+	                event.stopPropagation();
+	                 if(typeof(shortcut) != 'undefined') shortcut.disabled = false;
+	                 lastFolderSelected.toggleClass('selected');
+	            },
+	            open: function(event, ui)
+	            {
+	                if(typeof(shortcut) != 'undefined') shortcut.disabled = true;
+	            },
+			});
+
+			jQuery.getScript("../prototype/modules/attach_message/attach_message.js", function(){
+				jQuery('#message-attach-dialog').dialog('open');
+				jQuery('#message-attach-attach-btn').unbind('click');
+				jQuery('#message-attach-attach-btn').click(function(){
+					jQuery.each(selectedMessages, function(folder_name, messages) {
+						jQuery.each(selectedMessages[folder_name], function(message_number, message) {
+							if (message) {
+								/* Anexa a mensagem especificada (por folder e id_msg)
+								   na mensagem sendo criada.*/
+								attach_message(folder_name, message_number);
+							}
+						});
+					});
+					jQuery('#message-attach-dialog').dialog('destroy');
+				});
+				jQuery('#message-attach-cancel-btn').click(function(event){
+					jQuery('#message-attach-dialog').dialog('destroy');
 				});
 			});
-			jQuery('#message-attach-dialog').dialog('close');
 		});
-		jQuery('#message-attach-cancel-btn').click(function(event){
-			jQuery('#message-attach-dialog').dialog('close');
-		});
-	});
-	});
+
+
+
 	$(document).bind('drop dragover', function (e) {
 	    e.preventDefault();
 	});
-	//DRAG and DROP DE ARQUIVOS Nï¿½O FUNCIONA NO IE
+	//DRAG and DROP DE ARQUIVOS NÃO FUNCIONA NO IE
 	if(!is_ie){
 		$("body").bind('dragenter', function (e) {
 		    var dropZone = $("#fileupload_msg"+ID+"_droopzone");
@@ -4836,6 +4893,7 @@ function draw_new_message(border_ID){
         	dropZone.prev().show();
 		});
 	}
+	updateDynamicContact();
 	return ID;
 }
 
@@ -4847,7 +4905,7 @@ function draw_from_field(from_field, container)
 
 	// criamos variaveis locais para trabalhar pra nao mexer nas "globais"
 	// sem querer
-	var folder = window.folder;
+	var folder =  jQuery.type(window.folder) === "string" ? window.folder : window.folder.id;
 	var preferences = window.preferences;
 
 	// funcao que popula e seleciona o email padrao
@@ -5155,7 +5213,12 @@ function build_quota( data )
 
         var spanInfoQuota = $("<span>");
         spanInfoQuota.attr("class","boxHeaderText");
-        spanInfoQuota.html( value + "% ( "+borkb(quota_used*1024)+" / "+borkb(quota_limit*1024)+" )" );
+        // Sistema de unidades: '0' => 'IEC_80000-13 (Binary)', '1' => 'SI Metric (Decimal)'
+        if((preferences.system_of_units == 1)) {
+            spanInfoQuota.html( value + "% ( "+size_SI(quota_used*1000)+" / "+size_SI(quota_limit*1000)+" )" );
+        } else {
+            spanInfoQuota.html( value + "% ( "+borkb(quota_used*1024)+" / "+borkb(quota_limit*1024)+" )" );
+        }
 
         content_quota.append(divDrawQuota);
         content_quota.append(spanInfoQuota);
@@ -5175,7 +5238,7 @@ function draw_search(headers_msgs){
 
 	var tbody = Element('tbody_box');
 	for (var i=0; i<(headers_msgs.length); i++){
-            // passa parï¿½metro offset
+            // passa parâmetro offset
 		var tr = this.make_tr_message(headers_msgs[i], headers_msgs[i].msg_folder);
 		if (tr)
 			tbody.appendChild(tr);
@@ -5406,8 +5469,8 @@ function show_div_address_full(id, type) {
 		var isOverLimit = (_address.length > 100);
 
 		if(isOverLimit) {
-			alert("Esse campo possui muitos endereï¿½os ("+_address.length+" destinatï¿½rios).\r\n"+
-			"Para evitar o travamento do navegador, o botï¿½o 'Adicionar Contato' foi desabilitado!");
+			alert("Esse campo possui muitos endereços ("+_address.length+" destinatários).\r\n"+
+			"Para evitar o travamento do navegador, o botão 'Adicionar Contato' foi desabilitado!");
 		}
 
 		for(var idx = 1 ; idx  < _address.length;idx++) {
@@ -5455,7 +5518,7 @@ function draw_footer_box(num_msgs){
 		((expresso_offline)?" ":'<span class="message_options_import"><span ' + change_font_color + ' title="'+get_lang("Import")+'" class="message_options" onclick="import_window()">'+get_lang("Import")+'</span></span>');
 
 
-    //Link arquivar e desarquivar com aï¿½ï¿½o
+    //Link arquivar e desarquivar com ação
     //MAILARCHIVER
     if(preferences.use_local_messages==1){
         if(expresso_mail_archive.enabled){
@@ -5470,13 +5533,12 @@ function draw_footer_box(num_msgs){
 		var btnSpam = '';
 		var re = new RegExp("(user"+cyrus_delimiter+"(.*)|INBOX)"+cyrus_delimiter+spamfolder,"g");
 		if (re.test(current_folder)) {
-			btnSpam = '<span class="message_options_not_spam"><span ' + change_font_color + ' title="Nï¿½o Spam" class="message_options" onclick="nospam(\'selected\',\'null\',\'null\')">Nï¿½o Spam</span></span>';
+            btnSpam = '<span class="message_options_not_spam"><span ' + change_font_color + ' title="'+get_lang("Not Spam")+'" class="message_options" onclick="nospam(\'selected\',\'null\',\'null\')">'+get_lang("Not Spam")+'</span></span>';
 		}
 		else {
 			btnSpam = '<span class="message_options_spam"><span ' + change_font_color + ' title="Spam" class="message_options" onclick="spam(\'null\', \'selected\',\'null\')">Spam</span></span>';
 		}
 		span_options.innerHTML += btnSpam;
-		document.getElementById("btn-spam-top").innerHTML = btnSpam;
 	}
 	var span_D = Element("span_D");
 	if(!span_D){
@@ -5485,11 +5547,6 @@ function draw_footer_box(num_msgs){
 		span_D.style.fontSize = "12";
 		span_D.id = "span_D";
 		span_R.appendChild(span_D);
-	}
-
-	if(!span_DTop){
-		span_DTop = span_D;
-		span_R.appendChild(span_DTop);
 	}
 
     var answer = '<span ' + change_font_color + ' id="span_flag_ANSWERED" class="'+(search_box_type == 'ANSWERED' ? 'message_options_over' : 'message_options')+'" title="'+get_lang("title_answered")+'" onclick="if(\'ANSWERED\' == \''+search_box_type+'\') return false;sort_box(\'ANSWERED\',\''+sort_box_type+'\')">'+get_lang("l_answered")+'</span>, ';
@@ -5501,7 +5558,6 @@ function draw_footer_box(num_msgs){
   	'<span ' + change_font_color + ' id="span_flag_SEEN" class="'+(search_box_type == 'SEEN' ? 'message_options_over' : 'message_options')+'" title="'+get_lang("l_seen")+'" onclick="if(\'SEEN\' == \''+search_box_type+'\') return false;sort_box(\'SEEN\',\''+sort_box_type+'\')">'+get_lang("l_seen")+'</span>, '+
    	answer+
    	'<span ' + change_font_color + ' id="span_flag_FLAGGED" class="'+(search_box_type == 'FLAGGED' ? 'message_options_over' : 'message_options')+'" title="'+get_lang("l_important")+'" onclick="if(\'FLAGGED\' == \''+search_box_type+'\') return false;sort_box(\'FLAGGED\',\''+sort_box_type+'\')">'+get_lang("l_important")+'</span>&nbsp;&nbsp;';
-	span_DTop.innerHTML = span_D.innerHTML;
     if(!proxy_mensagens.is_local_folder(current_folder)){
         draw_paging(num_msgs);
         Element("tot_m").innerHTML = num_msgs;

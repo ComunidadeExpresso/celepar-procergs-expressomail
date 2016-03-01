@@ -1,5 +1,4 @@
 <?php
-
 include_once (dirname(__FILE__) . '/../../api/controller.php');
 
 use prototype\api\Config as Config;
@@ -16,7 +15,7 @@ use prototype\api\Config as Config;
  *    -	info: informações gerais
  *    - warning: mensagens de alerta, algo que não interrompe o funcionamento mas prejudica de alguma forma.
  *    -	error: mensagens de fatal error.
- * - application: Classe ou modulo que gerou o log. 
+ * - application: Classe ou modulo que gerou o log.
  * - action: Metodo ou rotina que  gerou o log.
  * - mensage: informações detalhadas do erro.
  * - servername: Nome do servidor que está rodando a instância do php.
@@ -35,7 +34,7 @@ class Logger
 
 	private static $_instance = NULL;
 	private static $_dbinfo = NULL;
-	
+
 
 	public static function trace($application, $action, $message, $writeMethod=Logger::IN_DB)
 	{
@@ -114,29 +113,29 @@ class Logger
 			return false;
 		}
 
-	}	
+	}
 
 	private function writeFile($level, $application, $action, $message)
 	{
-		
+
 		$arqName = '';
-		
+
 		if($level===Logger::ERROR)
 			$arqName = 'errorLog.txt';
 		else
 			$arqName = 'accessesLog.txt';
-		
+
 		$cxt = $this->getContext();
 
 		$arquivo = $GLOBALS['phpgw_info']['server']['PHPGW_LOG_ACTION_DIR']."/".$cxt['dt'].$arqName;
-		
-		$texto = "[{$cxt['dt']} {$cxt['hr']}][{$cxt['sn']}][{$cxt['ip']}][{$cxt['li']}][$level][$application][$action]> $message \n";	
-			 
+
+		$texto = "[{$cxt['dt']} {$cxt['hr']}][{$cxt['sn']}][{$cxt['ip']}][{$cxt['li']}][$level][$application][$action]> $message \n";
+
 		$manipular = fopen($arquivo, "a+");
-		
+
 		fwrite($manipular, $texto);
-		
+
 		fclose($manipular);
-		
+
 	}
 }

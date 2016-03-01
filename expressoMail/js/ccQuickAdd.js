@@ -6,7 +6,6 @@ var	ccQuickAddOne = {
 		{
 
 			var data = connector.jsonDecode(responseText);
-			console.log(data);
 			if (!data || typeof(data) != 'object'){
 				write_msg("Problema ao contactar servidor");
 				return;
@@ -35,10 +34,8 @@ var	ccQuickAddOne = {
 		var data2 = new Array();
 		for( var i in data )
 			data2[ data2.length ] = data[i];
-		console.log("data: "+data2);
-		console.log("connector.jsonEncode(data2)" + connector.jsonEncode(data2));
 		
-		var dataPost = {apelido:data2[0], nome:data2[1],sobrenome:data2[2],email:data2[4],telefone:''};
+		var dataPost = {apelido:data2[0], nome:data2[1],sobrenome:data2[2],telefone:data2[3],email:data2[4]};
 				
 		var sdata	= 'add='+(connector.jsonEncode(dataPost));
 		var CC_url	= '../index.php?menuaction=contactcenter.ui_data.data_manager&method=';
@@ -49,7 +46,7 @@ var	ccQuickAddOne = {
 	},
 	showList: function(data){
 		var	cc_data = ((typeof data) == 'object' ) ? data : data.split(',');
-		quickContact = $("#quickAddContact").html( DataLayer.render( BASE_PATH + "modules/mail/templates/quickAddContact.ejs",{ nick : cc_data[0], fname : cc_data[1], lname : cc_data[2], email : cc_data[3] }));
+		quickContact = $("#quickAddContact").html( DataLayer.render( BASE_PATH + "modules/mail/templates/quickAddContact.ejs",{ nick : cc_data[0], fname : cc_data[1], lname : cc_data[2], email : cc_data[3], telefone : cc_data[4] }));
 		quickContact.dialog({
 			resizable	: false,
 			title		: get_lang("Quick Add"),
@@ -70,7 +67,7 @@ var	ccQuickAddOne = {
 							nick: $(this).find('#quickAddOne_nickName').val(),
 							name:  $(this).find('#quickAddOne_firstName').val(),
 							last: $(this).find('#quickAddOne_lastName').val(),
-							telefone: "",
+							telefone: $(this).find('#quickAddOne_telefone').val(),
 							email: $(this).find('#quickAddOne_email').val()
 						};
 						$(this).find('input').removeClass("required-fail");

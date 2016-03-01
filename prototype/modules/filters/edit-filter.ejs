@@ -134,6 +134,21 @@
                     <label><%= get_lang("Alert message filter by sender")%></label>
                 <%}%>
 			</fieldset>
+			
+			<fieldset class="select-folderlist">
+					<input type="radio" name="actionType[]" value="markLabel" onchange="$('.ui-widget-content .fileintoInbox').parent().removeClass(' hidden');"/>
+					<label>Definir Marcador:</label>
+					<select name="valueMarkTag" style="width:150px">
+					<%for(var i=0; i < data.labels.length; i++){
+					%>
+						<option value="<%= data.labels[i].id%>"><%= data.labels[i].name%></option>
+					<% 
+					}
+					%>
+					</select>
+			</fieldset>
+			
+			
 			<%
 			if (window.expresso.ldap_entry_config != true)
 			{
@@ -146,6 +161,7 @@
 				<%
 			}
 			%>
+			
 			<fieldset>
 				<input type="radio" name="actionType[]" value="setflag" onchange="$('.ui-widget-content .fileintoInbox').parent().removeClass(' hidden');"/>
 				<label><%= get_lang("Mark as")%></label>
@@ -157,11 +173,13 @@
 					<option value="seen"><%= get_lang("Seen")%></option>
 				</select>
 			</fieldset>
+			
 			<fieldset>
 				<input type="radio" name="actionType[]" value="fileintoTrash" onchange="$('.ui-widget-content .fileintoInbox').parent().removeClass(' hidden');"/>
 				<label><%= get_lang("Trash")%></label>
 				<input type="hidden" name="actionParameter[]" value="Trash"/>
 			</fieldset>
+			
 			<fieldset class="fields-replyto">
 				<input type="radio" name="actionType[]" value="reject" onchange="$('.ui-widget-content .fileintoInbox').attr('checked', false).parent().addClass(' hidden');"/>
 				<label><%= get_lang("Reject and automatically respond with the message")%></label>

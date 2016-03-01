@@ -102,36 +102,13 @@
 		<span class="collapse_folders"/>
 	</td>
 	<td width="100%" valign="top" align="left">
-
-		<div id="footer_menu0" class="top-menu-sel";>
-			<table id="footer_box0" cellpadding=0 cellspacing=0 border=0 width="98%" height="10px">
+		<div id="footer_menu">
+			<table style="border-top:0px solid black" id="footer_box" cellpadding=0 cellspacing=0 border=0 width="100%" height="14px">
 				<tbody>
-					<tr id="table_message0">
-						<TD  align="left" >
-							<span class="message_options_trash">
-								<span class="message_options" onclick="proxy_mensagens.delete_msgs('null','selected','null')" title="Excluir" onMouseOver="javascript:this.className='message_options_active';" onMouseOut="javascript:this.className='message_options';">Excluir</span>
-							</span>
-							<span class="message_options_move">
-								<span class="message_options" onclick='wfolders.makeWindow("","move_to")' title="Mover" onMouseOver="javascript:this.className='message_options_active';" onMouseOut="javascript:this.className='message_options';">Mover</span>
-							</span>
-							<span class="message_options_print">
-								<span class="message_options" onclick="print_all()" title="Imprimir" onMouseOver="javascript:this.className='message_options_active';" onMouseOut="javascript:this.className='message_options';">Imprimir</span>
-							</span>
-							<span class="message_options_export">
-								<span class="message_options" onclick="proxy_mensagens.export_all_messages()" title="Exportar" onMouseOver="javascript:this.className='message_options_active';" onMouseOut="javascript:this.className='message_options';">Exportar</span>
-							</span>
-							<span class="message_options_import">
-								<span class="message_options" onclick="import_window()" title="Importar" onMouseOver="javascript:this.className='message_options_active';" onMouseOut="javascript:this.className='message_options';">Importar</span>
-							</span>
-							<span id="btn-spam-top"></span>
-						</TD>
-						<td align="right" id="span_DTop" style="font-size: 12px;">
-						</td>
-					</tr>
+					<tr id="table_message"></tr>
 				</tbody>
 			</table>
 		</div>
-
 		<div id="exmail_main_body" class="messagescol">
 			<table id="border_table" width="auto" height="26" cellspacing="0" cellpadding="0" border="0">
 				<tbody id="border_tbody">
@@ -147,13 +124,7 @@
 				</tbody>
 			</table>
 			<div id="content_id_0" class="conteudo"></div>
-			<div id="footer_menu">
-				<table style="border-top:0px solid black" id="footer_box" cellpadding=10 cellspacing=0 border=0 width="100%" height="14px">
-					<tbody>
-						<tr id="table_message"></tr>
-					</tbody>
-				</table>
-			</div>
+			<div id="content_blank" style="display: none"></div>
 		</div>
 	</td>
 </tr>

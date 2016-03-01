@@ -140,7 +140,7 @@ class MailService
     {
         require_once (dirname(__FILE__).'/../prototype/library/Mail/Mail.php');
         $hdrs = $this->mail->headers($this->arrayFields);
-        $mail_object =& Mail::factory("smtp", self::$configuration);
+        $mail_object =& Mail::factory("smtp", self::$configuration);        
 	
 	$recipients = '';
 		
@@ -153,6 +153,15 @@ class MailService
 	
 	if($hdrs["Bcc"])
 	    $arrayBcc = explode(',',$hdrs["Bcc"]);
+	
+	//Entrega de emails para host secundários (evitar fila de SPAM)
+	if($_SESSION['phpgw_info']['expresso']['expressoMail']['expressoMail_count_massive_server']){
+		$varCount = $hdrs["Bcc"]?sizeof($arrayBcc)+sizeof(explode(',',$recipients)):sizeof(explode(',',$recipients));
+		if($varCount>$_SESSION['phpgw_info']['expresso']['expressoMail']['expressoMail_count_massive_server']&&$_SESSION['phpgw_info']['expresso']['expressoMail']['expressoMail_massive_server']){
+			$mail_object->host = $_SESSION['phpgw_info']['expresso']['expressoMail']['expressoMail_massive_server'];
+		}
+	}
+	
 	
 	if($recipients)
 		$sent = $mail_object->send($recipients, $hdrs , $this->mail->getMessageBody()); 

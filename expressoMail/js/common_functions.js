@@ -18,7 +18,7 @@ hideBar = __hideBar;
 
 window.onresize = resizeWindow;
 
-var message = "Nï¿½o Informado";
+var message = "Não Informado";
 
 //MAILARCHIVER-01
 try{
@@ -70,10 +70,7 @@ function closeMessenger()
 
 function resizeWindow()
 {
-	var clientWidth 		= $(window).innerWidth() - 120;
-	if($("#folderscol").attr("class")=="hidden"){
-		clientWidth 		= $(window).innerWidth()+120;
-	}
+	var clientWidth 		= $(window).innerWidth();
 	var clientHeight 		= $(window).innerHeight() - 8;
 	var divScrollMain 		= $("#divScrollMain_"+numBox);
 	var table_message 		= Element("table_message");
@@ -160,10 +157,10 @@ window.onbeforeunload = unloadMess;
 function unloadMess(){
     if (typeof BordersArray == 'undefined') return; // We're not on expressoMail
 	var ret = null;
-	$(".conteudo .new-msg-head-buttons .save").each(function(index) { //Pega todos os botï¿½es "Save" de todas as abas
-		if($(this).is(':disabled')) { //se a mensagem estiver salva (botï¿½o Salvar desabilitado)
+	$(".conteudo .new-msg-head-buttons .save").each(function(index) { //Pega todos os botões "Save" de todas as abas
+		if($(this).is(':disabled')) { //se a mensagem estiver salva (botão Salvar desabilitado)
 			ret = null;
-		} else { //se estiver em modo ediï¿½ï¿½o (botï¿½o Salvar habilitado)
+		} else { //se estiver em modo edição (botão Salvar habilitado)
 			ret = get_lang('There are still editing posts, really want to leave the page')+'?';
 		}
 	});
@@ -597,7 +594,7 @@ function make_forward_body(body, from, date, subject, to, cc){
 	var forward_body = '<div>---------- ' + get_lang('Forwarded message') + ' ----------<br type="_moz"></div><div>';
 	forward_body += get_lang('From') + ': ' + from + '<br type="_moz"></div><div>';
 
-    if(date.indexOf('(') !== -1) //Retira a string com calculo da diferenï¿½a de horas exemplo: (20 minutus atras);
+    if(date.indexOf('(') !== -1) //Retira a string com calculo da diferença de horas exemplo: (20 minutus atras);
         date = date.substr(0,date.indexOf('('));
 
     forward_body += get_lang('Date') + ': ' + date + '<br type="_moz"></div><div>';
@@ -735,8 +732,8 @@ function filterbox()
 }
 
 /*
-	Abre o diï¿½logo de ediï¿½ï¿½o de filtro na tela de criaï¿½ï¿½o de filtro,
-	com os dados da mensagem (remetente e assunto) prï¿½-carregados.
+	Abre o diálogo de edição de filtro na tela de criação de filtro,
+	com os dados da mensagem (remetente e assunto) pré-carregados.
 */
  function filter_from_msg (msg) {
 	var html = DataLayer.render( BASE_PATH + 'modules/filters/init.ejs', {});
@@ -778,7 +775,7 @@ function configureLabels(data){
 	dialogElement.dialog({
 		width:825,
 		height:420,
-		title:' Configuraï¿½ï¿½o do Marcador',
+		title:' Configuração do Marcador',
 		resizable:false,
 		modal: true,
 		closeOnEscape:true,
@@ -801,7 +798,7 @@ function configureLabels(data){
 function configureFollowupflag(){
 
     if(get_current_folder().split("_")[0] == "local"){
-        alert("Pastas locais nï¿½o fornece suporte para acompanhamento.");
+        alert("Pastas locais não fornece suporte para acompanhamento.");
         return true;
     }
 
@@ -995,7 +992,7 @@ function url_decode(str) {
 	}
 	return strDecode;
 }
-//Mï¿½todo que remove os hexadecimais criados no enconde
+//Método que remove os hexadecimais criados no enconde
 //e retorna string corretamente
 function url_decode_s(str) {
 	    var result = "";
@@ -1200,7 +1197,7 @@ function LTrim(value){
 //changes MENU background color.
 function set_menu_bg(menu)
 {
-	// TODO - remover esta funï¿½ï¿½o, por hora, apenas um retrun true para preservar menor impacto
+	// TODO - remover esta função, por hora, apenas um retrun true para preservar menor impacto
 	return true;
 	menu.style.backgroundColor = 'white';
 	menu.style.border = '1px solid black';
@@ -1209,7 +1206,7 @@ function set_menu_bg(menu)
 //changes MENU background color.
 function unset_menu_bg(menu)
 {
-	// TODO - remover esta funï¿½ï¿½o, por hora, apenas um retrun true para preservar menor impacto
+	// TODO - remover esta função, por hora, apenas um retrun true para preservar menor impacto
 	return true;
 	menu.style.backgroundColor = '';
 	menu.style.border = '0px';
@@ -1249,7 +1246,7 @@ function exist_className(obj, className){
 	return ( obj && obj.className.indexOf(className) != -1 )
 }
 
-//Verifica se ainda existem mensagens marcadas, se nï¿½o desmarca
+//Verifica se ainda existem mensagens marcadas, se não desmarca
 //o selecionar todas.
 function remove_chk_box_select_all_messages(){
 	var main = Element("tbody_box");
@@ -1362,7 +1359,27 @@ function borkb(size){
 		return (size/gbyte).toFixed(1) + ' GB';
 }
 
-//valida se a primeira data ï¿½ menor que a segunda data
+// realiza calculo de B, KB, MB, GB considerando o sistema SI (base decimal)
+function size_SI(size) {
+	kbyte = 1000;
+	mbyte = kbyte*1000;
+	gbyte = mbyte*1000;
+	if (!size)
+		size = 0;
+	if (size < kbyte)
+		return size + ' B';
+	else if (size < mbyte)
+		return parseInt(size/kbyte) + ' KB';
+	else if (size < gbyte)
+		if (size/mbyte > 100)
+			return (size/mbyte).toFixed(0) + ' MB';
+		else
+			return (size/mbyte).toFixed(1) + ' MB';
+	else
+		return (size/gbyte).toFixed(1) + ' GB';
+}
+
+//valida se a primeira data é menor que a segunda data
 function validate_date_order(dateStart, dateEnd){
 	if ( parseInt( dateEnd.split( "/" )[2].toString() + dateEnd.split( "/" )[1].toString() + dateEnd.split( "/" )[0].toString() ) >= parseInt( dateStart.split( "/" )[2].toString() + dateStart.split( "/" )[1].toString() + dateStart.split( "/" )[0].toString() ) ){
 		return true;

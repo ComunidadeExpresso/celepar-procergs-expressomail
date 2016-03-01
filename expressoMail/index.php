@@ -214,7 +214,7 @@
 	$template->set_var('users_search_function', $users_search_function);
 	$template->set_var("upload_max_filesize",ini_get('upload_max_filesize'));
 	$template->set_var("msg_folder",(isset($_GET['msgball']['folder'])?$_GET['msgball']['folder']:""));
-	$template->set_var("msg_number",(isset($_GET['msgball']['msgnum']) ? $_GET['msgball']['msgnum'] : (isset($_GET['to'])?$_GET['to']:"")));
+	$template->set_var("msg_number",isset($_GET['msgball']['msgnum']) ? $_GET['msgball']['msgnum'] : (isset($_GET['to']) ? $_GET['to'] : (isset($_POST['to']) ? urldecode($_POST['to']) : '')));
 	$template->set_var("user_email",$_SESSION['phpgw_info']['expressomail']['user']['email']);
 
 	$template->set_var("user_organization", $acc->get_organization($GLOBALS['phpgw_info']['user']['account_dn']));

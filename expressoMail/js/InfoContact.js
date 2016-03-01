@@ -6,7 +6,7 @@ function CardContact()
 		'backgroundImage' : 'url(./templates/default/images/card.gif)'
 	});
 
-	this.delayCard 	= null;
+	this.delayCard 	= 1000;
 	this.contact	= null;
 }
 
@@ -20,13 +20,19 @@ CardContact.prototype.begin = function()
 
 		var handlerShowCardContact = function( data )
 		{
+			if(data==null)
+			{
+				data = email.match(/("?(.+)"?)?\s?<((.*)@(.*))>/);
+				data = {'cn':data[2] ? data[2] : data[4],'email':data[3]};
+			}
+
 			InfoContact.contact = data;
 			InfoContact.showCard( data, element );
 		}
 
 		if( email.match(/<([^<]+)>+$/) )
 		{
-			email = email.match(/<([^<]+)>+$/)[1];
+			emailParsed = email.match(/<([^<]+)>+$/)[1];
 
 			// If "preferences.notification_domains" was setted, then verify if "mail" has a trusted domain.
 			if( preferences.notification_domains && $.trim(preferences.notification_domains) != "" )
@@ -34,32 +40,33 @@ CardContact.prototype.begin = function()
 				var domains = preferences.notification_domains.split(',');
 
 				for( var i in domains )
-					if( email.toString().match($.trim(domains[i])) && !trustedDomain )
+					if( emailParsed.toString().match($.trim(domains[i])) && !trustedDomain )
 						trustedDomain = true;
-			}	
-			
+			}
+
 			if( trustedDomain )
 			{
 				var searchContact = true;
 
 				for( var i in InfoContact.contact )
 				{
-					if( $.trim(i) === $.trim('email') && $.trim(InfoContact.contact[i]) === $.trim(email) )
+					if( $.trim(i) === $.trim('email') && $.trim(InfoContact.contact[i]) === $.trim(emailParsed) )
 						searchContact = false;
 				}	
 
 				if( searchContact )
-					cExecute("$this.ldap_functions.getUserByEmail&email="+email, handlerShowCardContact);
+
+					cExecute("$this.ldap_functions.getUserByEmail&email="+emailParsed, handlerShowCardContact);
 				else
 					handlerShowCardContact( InfoContact.contact );
 			}
+			else
+				handlerShowCardContact(null);
 		}
-		else
-		{
-			handlerShowCardContact( email );
-		}
+		
 	}
-}
+};
+
 
 CardContact.prototype.connectVoip = function (phoneUser, typePhone)
 {

@@ -33,7 +33,7 @@
 		if (expresso.ldap_entry_config != undefined && expresso.ldap_entry_config)
 		{
 			%>
-			<button class="search-user button small msg-option" name="input_search_user" title="<%= '_[[Search User]]' %>">&nbsp;</button>
+			<button class="search-user button small msg-option" name="input_search_user" title="<%= '_[[Search user]]' %>">&nbsp;</button>
 			<%
 		}
 		%>
@@ -148,7 +148,14 @@
 					<input style="display:none;" name="attDisposition<%= data.id %>" id="attDisposition<%= data.id%>" value="attachment"/>
 				</td>
 				<td class="value">
-					<div id="message-attach-dialog" title="<%='_[[Select messages to attach...]]'%>" style="clear: both; display:none;")>&nbsp;</div>
+					<%
+					if (!$('#message-attach-dialog').length)
+					{
+						%>
+							<div id="message-attach-dialog" title="<%='_[[Select messages to attach...]]'%>" style="clear: both; display:none;">&nbsp;</div>
+						<%
+					}
+					%>
 				</td>
 			</tr>
 		</table>

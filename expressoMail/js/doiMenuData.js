@@ -6,7 +6,7 @@
     			if (isLabel) {
     				var label = {
     					id: isLabel
-    				}	
+    				}
     				var lableleds = new Array();
     				var msg_folder = current_folder;
     				var messages = new Array();
@@ -25,18 +25,18 @@
     					// var id_border = currentTab.replace(/[a-zA-Z_]+/, "");
     					// for (i = 0; i < id.length; i++){
     						// var tr = Element(id[i]+'_s'+id_border);
-    						// msg_folder = tr.getAttribute('name'); 
+    						// msg_folder = tr.getAttribute('name');
     						// messages.push({
     							// "msg_number": id[i],
     							// "msg_folder": msg_folder,
     						// });
-    					// }	
-    					
+    					// }
+
     					var roles = get_selected_messages_search_role().split(',');
     					for (i = 0; i < roles.length; i++){
     						var tr = $('[role="'+roles[i]+'"]');
-    						msg_folder = $(tr).attr('name'); 
-    						var id = $(tr).attr('id'); 
+    						msg_folder = $(tr).attr('name');
+    						var id = $(tr).attr('id');
     						messages.push({
     							"msg_number": id.replace(/_[a-zA-Z0-9]+/,""),
     							"msg_folder": msg_folder
@@ -49,7 +49,7 @@
                                 ['=', 'labelId', label.id],
                                 ['=', 'folderName', msg_folder],
                                 ['IN', 'messageNumber', messagesCache]
-                                ], criteria: {deepness: '2'}});                  
+                                ], criteria: {deepness: '2'}});
 
                     /*VERIFICA SE A MENSAGEM msg POSSUI MARCADORES*/
                     var hasLabel = function (msg){
@@ -66,12 +66,12 @@
     					if (!hasLabel(messages[i])) {
                             lableleds.push(
     							DataLayer.put('labeled', {
-    								labelId:label.id, 
-    								folderName:messages[i].msg_folder, 
+    								labelId:label.id,
+    								folderName:messages[i].msg_folder,
     								messageNumber:messages[i].msg_number
     							})
     						);
-    						
+
     					}
     				}
     				DataLayer.commit(false, false, function(data){
@@ -147,13 +147,13 @@
         }
 
         var revertSortBox = function(){
-            if (search_box_type == "UNSEEN") sort_box_reverse = sort_box_reverse ? 0 : 1; 
+            if (search_box_type == "UNSEEN") sort_box_reverse = sort_box_reverse ? 0 : 1;
         }
 
     	$.contextMenu({
     		selector: ".table_box tbody tr",
             build: function($trigger, e) {
-                if(typeof (currentTab) == "string" && currentTab.indexOf("local") != -1){  
+                if(typeof (currentTab) == "string" && currentTab.indexOf("local") != -1){
                     alert("Impossível manipular mensagens locais a partir de uma busca. Isso é permitido apenas para mensagens não locais.");
                     return true;
                 }
@@ -180,31 +180,33 @@
                     "flagUnflagged": {"name": get_lang("Mark as") + " " + get_lang('normal'), callback: function(key, opt){ revertSortBox(); proxy_mensagens.proxy_set_messages_flag('unflagged','get_selected_messages'); }},
                     "sep1": "---------"
                 }
-				
-				// Desabilita a opção de criar filtro a partir da mensagem, caso mais de uma mensagem esteja selecionada: 
-				var is_filterFromMsg_disabled = function () { 
-					var base_selector = ".table_box tbody tr.selected_msg"; 
-					return ($(base_selector).length > 1) || ($(base_selector + " td span").text().indexOf(get_lang("Draft")) > -1); 
-				} 
-				
+
+				// Desabilita a opção de criar filtro a partir da mensagem, caso mais de uma mensagem esteja selecionada:
+				var is_filterFromMsg_disabled = function () {
+					var base_selector = ".table_box tbody tr.selected_msg";
+					return ($(base_selector).length > 1) || ($(base_selector + " td span").text().indexOf(get_lang("Draft")) > -1);
+				}
+
                 var lastItens = {
                     "move": {"name": get_lang("Move to")+"...", "icon": "move", callback: function(key, opt){ wfolders.makeWindow('', 'move_to'); }},
                     "remove": {"name": get_lang("Delete"),      "icon": "delete", callback: function(key, opt){ proxy_mensagens.delete_msgs('null','selected','null'); }},
                     "export": {"name": get_lang("Export"),      "icon": "export", callback: function(key, opt){ proxy_mensagens.export_all_messages(); }},
-					/*Abre o diálogo de criação de filtro a partir da mensagem:*/ 
-					"filterFromMsg": { 
-						"name": get_lang("Create filter from message"),  
-						"icon": "filter",  
-						callback: function (key, opt) { 
-							var msg_number = get_selected_messages(); 
-							var msg = onceOpenedHeadersMessages[current_folder][msg_number]; 
-							if (msg !== undefined) 
-							{ 
-								filter_from_msg(msg); 
-							} 
-						}, 
-						disabled: is_filterFromMsg_disabled() 
-					}, 
+					/*Abre o diálogo de criação de filtro a partir da mensagem:*/
+					/*
+					"filterFromMsg": {
+						"name": get_lang("Create filter from message"),
+						"icon": "filter",
+						callback: function (key, opt) {
+							var msg_number = get_selected_messages();
+							var msg = onceOpenedHeadersMessages[current_folder][msg_number];
+							if (msg !== undefined)
+							{
+								filter_from_msg(msg);
+							}
+						},
+						disabled: is_filterFromMsg_disabled()
+					},
+					*/
                     "archive": archive
                 }
 
@@ -224,11 +226,11 @@
                     realItens = $.extend(realItens, lastItens);
                 }
 
-        		return { 
+        		return {
                     callback: function(key, options) {
         			//TODO - default actions
-        			
-        			/** 
+
+        			/**
         			 * Apply labels to selected messages
         			 */
             			var isLabel = key.match(/label(.*)/);
@@ -250,17 +252,17 @@
     	var menuToolsItems = {
     		"i01": {"name": get_lang("Preferences"), "icon": "preferences-mail", callback: preferences_mail },
     		"i02": {"name": get_lang("Search"), "icon": "search-mail", callback: function(key, opt){ search_emails(""); }},
-    		"103": {"name": get_lang("Edit filters"), "icon": "filter", callback: filterbox },
-    		"i05": {"name": get_lang("Share mailbox"), "icon": "share-mailbox", callback: sharebox } 
+            "i03": {"name": get_lang("Edit filters"), "icon": "filter", callback: filterbox },
+    		"i05": {"name": get_lang("Share mailbox"), "icon": "share-mailbox", callback: sharebox }
     	};
-        
+
         if ( preferences['use_followupflags_and_labels'] == "1" )
         {
             menuToolsItems["i06"] = {"name": get_lang("Labels"), "icon": "tag", callback: configureLabels };
         }
-        
-        menuToolsItems["i08"] = {"name": get_lang("Empty trash"), "icon": "empty-trash", callback: function(key, opt){ empty_trash_imap(); }};   		
-    	
+
+        menuToolsItems["i08"] = {"name": get_lang("Empty trash"), "icon": "empty-trash", callback: function(key, opt){ empty_trash_imap(); }};
+
         if( use_local_messages == 1 )
         {
             menuToolsItems["i09"] = {"name": "MailArchive Admin", "icon": "config", callback: function(key, opt){ window.open(mail_archive_url); }}
@@ -272,7 +274,7 @@
     		"i01": {"name": get_lang("Search"), "icon": "search-mail", callback: function(key, opt){ search_emails(""); }}
     	}
     }
-    
+
     $.contextMenu({
     	selector: "#link_tools",
     	trigger: 'hover',
@@ -293,7 +295,7 @@
     			.find(".context-menu-item").css({'background-color': '#ffffff'}).hover(
     				function(){
     					$(this).css({'background-color': '#CCCCCC'});
-    				}, 
+    				},
     				function(){
     					$(this).css({'background-color': '#ffffff'});
     				}
@@ -320,7 +322,7 @@
     		"remove" : {name:get_lang("Remove recipient"), icon:"delete-box",callback: function(key, opt){ $(opt.$trigger).remove(); }},
     		"sep1": "---------",
     		"quick_search" : {name:get_lang("Quick search of messages"), icon: "quick-search-contact",callback: function(key, opt){ search_emails($.trim($(opt.$trigger).find("input").val()).match(reComplexEmail)[1]); }},
-    		"full_search" : {name:get_lang("Search messages of ..."), icon: "quick-search-contact",callback: function(key, opt){ search_emails("", $.trim($(opt.$trigger).find("input").val()).match(reComplexEmail)[1]);}}		
+    		"full_search" : {name:get_lang("Search messages of ..."), icon: "quick-search-contact",callback: function(key, opt){ search_emails("", $.trim($(opt.$trigger).find("input").val()).match(reComplexEmail)[1]);}}
     	}
     });
 
@@ -334,28 +336,33 @@
     	if(messageInfo.boxname != '' && messageInfo.boxname != 'undefined' && messageInfo.boxname != null){
     		msg_folder = messageInfo.boxname;
     	}
-    	
+
     	var menuItems = {};
     	if (messageInfo.labels && !messageInfo.forceIcon ) {
     		if($.isArray(messageInfo.labels)){
     			var labels = messageInfo.labels;
     			messageInfo.labels = {};
-    			for(var i in labels)
-    				messageInfo.labels[labels[i].id] = {backgroundColor: labels[i]['backgroundColor'],
-    					borderColor: labels[i]['borderColor'],
-    					fontColor: labels[i]['fontColor'], id: labels[i]['id'], name: labels[i]['name'], 
-    					uid: labels[i]['uid'] }
-    		}	
+                for(var i in labels) {
+                    messageInfo.labels[labels[i].id] = {
+                        backgroundColor: labels[i]['backgroundColor'],
+                        borderColor: labels[i]['borderColor'],
+                        fontColor: labels[i]['fontColor'],
+                        id: labels[i]['id'],
+                        name: labels[i]['name'],
+                        uid: labels[i]['uid']
+                    }
+                }
+    		}
     		menuItems = messageInfo.labels;
     	} else {
             var labeleds =  (messageInfo.forceIcon ? messageInfo.labels : DataLayer.get('labeled', {
     			criteria: {deepness: 2},
                 filter: [
     				'AND',
-    				['=', 'folderName', msg_folder], 
+    				['=', 'folderName', msg_folder],
     				['=', 'messageNumber', msg_number]
     			]
-    			
+
     		}) );
 
     		if (labeleds) {
@@ -375,14 +382,26 @@
     			.html('').css("background", "");
     			//$.contextMenu( 'destroy', '#td_message_labels_' + msg_number +', #td_message_labels_search_' + msg_number+':first');
     			$.contextMenu( 'destroy', '#td_message_labels_' + msg_number +', tr[role="'+msg_number+'_'+msg_folder+'"] #td_message_labels_search_' + msg_number);
+                // retirar todas as tags ao lado do titulo do email
+                $('#label_container_' + msg_number).html('');
     			return false;
     		}
     	}
     	var menuItensLabel = {};
     	for(index in menuItems){
-    		menuItensLabel[index] = {type: "label", customName: menuItems[index].name, id: msg_folder+"/"+msg_number+"#"+index};		
+    		menuItensLabel[index] = {type: "label", customName: menuItems[index].name, id: msg_folder+"/"+msg_number+"#"+index};
     	}
 
+        // criar <span> com as tags ao lado do titulo do email
+        var label_container = $('#label_container_' + msg_number);
+        if (label_container.length > 0) {
+            var sorted_tags = orderLabel(menuItems);
+            var tags = '';
+            sorted_tags.forEach(function(label){
+                tags += '<span style="border: 1px solid; border-color: '+label.borderColor+'; background-color: '+label.backgroundColor+'; color: '+label.fontColor+'; border-radius: 3px; padding: 0 3px 0 3px; margin: 0 0 0 3px; ">'+label.name+'</span>';
+            });
+            label_container.html(tags);
+        }
 
     	$.contextMenu.types.label = function(item, opt, root) {
             $('<span>'+item.customName+'</span><span class="removeLabeled" title="'+get_lang("Remove Label")+'">x</span>')
@@ -420,8 +439,8 @@
     			callback: function(key, options) {
     				//TODO - default actions
     			},
-    			items: menuItensLabel 
-    		});	
+    			items: menuItensLabel
+    		});
     	}
     }
 
@@ -456,7 +475,7 @@
             delay:100,
             autoHide:true,
             items: menuItensLabel
-        }); 
+        });
     }
 
     function loadGroupBox(data, element){
@@ -487,7 +506,7 @@
     		delay:100,
     		autoHide:true,
     		items: menuItensLabel
-    	});	
+    	});
     }
 
 

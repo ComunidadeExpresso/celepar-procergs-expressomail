@@ -739,6 +739,7 @@ function export_all($params){
 		require_once dirname(__FILE__).'/class.attachment.inc.php';
 		$atObj = new attachment();
 		$atObj->setStructureFromMail($params['folder'],$params['num_msg']);
+		
 		$attachments = $atObj->getAttachmentsInfo();
 		$id_number = $params['num_msg'];		
 		$tempDir = $this->tempDir;
@@ -804,6 +805,10 @@ function export_all($params){
 		}
 		else 
 			$file = false;	
+		
+		include_once(dirname(__FILE__).'/../../prototype/library/utils/Logger.php');
+		Logger::info('expressomail', 'downloadAllAttachment',$atObj->messageId);
+		
 		return $file;
 	}
 

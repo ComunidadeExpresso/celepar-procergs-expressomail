@@ -52,7 +52,7 @@ searchE.prototype.showForms = function()
 							text: get_lang("Search"),
 							click: function()
 							{
-								_this.searchMails();
+								_this.searchMails()
 							}
 						}
 		],
@@ -368,6 +368,7 @@ searchE.prototype.make_tr_message = function(aux,border_id,i) {
  * Preenche a estrutura de cache de mensagens para posterior consulta de 
  * informações sobre as mensagens no escopo global.
  */
+
 	if (!onceOpenedHeadersMessages[aux.boxname])
 		onceOpenedHeadersMessages[aux.boxname] = {};
 	onceOpenedHeadersMessages[aux.boxname][aux.uid] = aux;	
@@ -422,7 +423,7 @@ searchE.prototype.make_tr_message = function(aux,border_id,i) {
 		if (j == 1)
 		{
 			td.setAttribute("width", colSizes[1][1]);
-			if (aux.flag.match('T'))
+			if (aux.flag.match("T"))
 			{
 				attachNum = parseInt(aux.flag.substr(aux.flag.indexOf('T')+1));
 				td1 = '';
@@ -457,7 +458,7 @@ searchE.prototype.make_tr_message = function(aux,border_id,i) {
 		}
 		if (j == 4)
 		{
-			if (preferences['use_followupflags_and_labels'] == '1'){
+			if (preferences['use_followupflags_and_labels'] == '2'){
 				if(border_id.split("local").length == 1){
 					td.setAttribute("width", colSizes[1][4]);
 					td.id = "td_message_followup_search_"+uid_msg;
@@ -1250,7 +1251,7 @@ searchE.prototype.searchMails = function()
 
 	$("#searchEmails").find("input[id^=txt]").each(function(){
 		if( $.trim($(this).val())!== "" )
-			fields += $(this).attr('id').substring(4).toUpperCase() + " <=>" + $(this).val() + "##";
+			fields += $(this).attr('id').substring(4).toUpperCase() + " <=>" + url_encode($(this).val()) + "##";
 	});
 
 	$("#searchEmails").find("input[id*=_date]").each(function(){
@@ -1332,11 +1333,10 @@ searchE.prototype.searchMails = function()
 			}
 			else
 			{
-				
-				$(_this.dialog).dialog("destroy");
-
+				//$(_this.dialog).dialog("destroy");
 				write_msg( count + " " + get_lang("results found") );
-				
+				if(count>0)
+					$("#searchEmails").dialog("close");
 				_this.mount_result( allMsg, 'SORTDATE' );
 			}
 	    };

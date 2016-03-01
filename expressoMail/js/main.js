@@ -24,7 +24,7 @@ var dynamicPersonalContacts = new Array();
 var dynamicPersonalGroups = new Array();
 var dynamicContacts = new Array();
 var topContact = 0;
-
+var contactsBuffer = new Array();
 //Os IE's < 9 não possuem suporte a trim() introduzida no JavaScript 1.8.1
 if(!String.prototype.trim){
 	String.prototype.trim = function(){
@@ -37,12 +37,15 @@ function mount_url_folder(folders){
 }
 
 function updateDynamicContact(userContacts){
+	if(userContacts != null && userContacts !== undefined)
+		contactsBuffer = userContacts;
 
-    if(!userContacts){
+    if(contactsBuffer.length === 0){
         userContacts = REST.get("/usercontacts", false, updateDynamicContact);
         return true;
     }
 
+    userContacts = contactsBuffer;
 
     if(userContacts.collection && !userContacts.collection.error){
         dynamicData = normalizeContacts(userContacts.collection.itens);
@@ -54,7 +57,17 @@ function updateDynamicContact(userContacts){
         var dynamicContactsList = [];
         $.each(dynamicData, function(index, dynamic){
 
-            var dataType = userContacts.collection.itens[index].dataType;
+			itensContacts = userContacts.collection.itens;
+
+            var dataType = itensContacts[index].dataType;
+
+            if(dataType==='/sharedcontact' || dataType==='/dynamiccontacts') {
+				for (x=0; x < dynamicData.length; x++)
+				{
+					if(dynamic.mail == dynamicData[x].mail && itensContacts[x].dataType == '/personalContact')
+						return true;
+				}
+            }
 
             dynamic['value'] = (dynamic.name ? dynamic.name +' - ': '') + dynamic.mail;
             dynamic['type'] = dataType
@@ -219,7 +232,8 @@ function init()
         }
     );
 
-    if(parseInt(preferences.use_dynamic_contacts)){ updateDynamicContact(); }
+    //Carga do autocomplete será após criar primeiro email
+	//if(parseInt(preferences.use_dynamic_contacts)){ updateDynamicContact(); }
 
 
 	// Versão
@@ -229,12 +243,15 @@ function init()
 	'<td width=33% id="div_menu_c3" align=right></td>'+
 	'</tr></table>');
 
+	
+	$("#divAppbox").css("padding-left", "0px");
+	
 	cExecute ("$this.imap_functions.get_range_msgs2&folder=INBOX&msg_range_begin=1&msg_range_end="+preferences.max_email_per_page+"&sort_box_type=SORTARRIVAL&search_box_type=ALL&sort_box_reverse=1", handler_draw_box);
 	
 
-	setTimeout('auto_refresh()', time_refresh);
+	
 
-	$("#divAppbox").css("padding-left", "0px");
+	setTimeout('auto_refresh()', time_refresh);
 
 	// Inicia Messenger
 	setTimeout( function(){ init_messenger(); }, 1000 );
@@ -652,44 +669,52 @@ function show_msg(msg_info){
 		}
 
 		var domains = "";
-		if ((msg_info.DispositionNotificationTo) && (!msg_is_read(ID) || (msg_info.Recent == 'N')))
+		if (((msg_info.DispositionNotificationTo) && (!msg_is_read(ID) || (msg_info.Recent == 'N'))))
 		{
-			if (preferences.notification_domains != undefined && preferences.notification_domains != "")
-			{
-				domains = preferences.notification_domains.split(',');
-			}
-			else
-			{
-				var confNotification = true;
-			 }
-			for (var i = 0; i < domains.length; i++)
-				if (Base64.decode(msg_info.DispositionNotificationTo).match("@"+domains[i]))
+		
+			//Força confirmação
+			if(preferences.confirm_read_message=="0"){
+				cExecute ("$this.imap_functions.send_notification&notificationto="+msg_info.DispositionNotificationTo+"&date="+msg_info.udate+"&subject="+url_encode(msg_info.subject), handler_sendNotification);
+			}else{
+				if (preferences.notification_domains != undefined && preferences.notification_domains != "")
 				{
-					var confNotification = true;
-					break;
-				}
-				if (confNotification == undefined)
-					var confNotification = confirm(get_lang("The sender:\n%1\nwaits your notification of reading. Do you want to confirm this?",Base64.decode(msg_info.DispositionNotificationTo)), "");
-
-			if (confNotification) {
-			/* Adequação a nova funcionalidade. Agora, a confirmação de leitura é uma preferência do usuário. */
-				if(preferences.confirm_read_message) {
-					$.Zebra_Dialog(get_lang("Would you like to send the read receipt?"), {
-						'type':     'question',
-						'title':    get_lang('Read receipt'),
-						'buttons':  [get_lang("No"), get_lang("Yes")],
-						'overlay_opacity' : 0.5,
-						'custom_class': 'custom-zebra-filter',
-						'onClose':  function(caption) {
-							if(caption == get_lang("Yes"))
-								cExecute ("$this.imap_functions.send_notification&notificationto="+msg_info.DispositionNotificationTo+"&date="+msg_info.udate+"&subject="+url_encode(msg_info.subject), handler_sendNotification);
-							else
-								write_msg(get_lang("Confirmation message is not sent"));
-						}
-					});
+					domains = preferences.notification_domains.split(',');
 				}
 				else
-					cExecute ("$this.imap_functions.send_notification&notificationto="+msg_info.DispositionNotificationTo+"&date="+msg_info.udate+"&subject="+url_encode(msg_info.subject), handler_sendNotification);
+				{
+					var confNotification = true;
+				}
+				
+				for (var i = 0; i < domains.length; i++)
+					if (Base64.decode(msg_info.DispositionNotificationTo).match("@"+domains[i]))
+					{
+						var confNotification = true;
+						break;
+					}
+					if (confNotification == undefined)
+						var confNotification = confirm(get_lang("The sender:\n%1\nwaits your notification of reading. Do you want to confirm this?",Base64.decode(msg_info.DispositionNotificationTo)), "");
+
+				if (confNotification) {
+				/* Adequação a nova funcionalidade. Agora, a confirmação de leitura é uma preferência do usuário. */
+					if(preferences.confirm_read_message) {
+						$.Zebra_Dialog(get_lang("Would you like to send the read receipt?"), {
+							'type':     'question',
+							'title':    get_lang('Read receipt'),
+							'buttons':  [get_lang("No"), get_lang("Yes")],
+							'overlay_opacity' : 0.5,
+							'custom_class': 'custom-zebra-filter',
+							'onClose':  function(caption) {
+								if(caption == get_lang("Yes"))
+									cExecute ("$this.imap_functions.send_notification&notificationto="+msg_info.DispositionNotificationTo+"&date="+msg_info.udate+"&subject="+url_encode(msg_info.subject), handler_sendNotification);
+								else
+									write_msg(get_lang("Confirmation message is not sent"));
+							}
+						});
+					}
+					else
+						cExecute ("$this.imap_functions.send_notification&notificationto="+msg_info.DispositionNotificationTo+"&date="+msg_info.udate+"&subject="+url_encode(msg_info.subject), handler_sendNotification);
+					    
+				}
 			}
 
 		}
@@ -899,14 +924,20 @@ function refresh(alert_new_msg, notifyPermission){
 						cursorAt: {top: 5, left: 56},
 						refreshPositions: true,
 						containment: "#divAppbox"
-					}).bind("contextmenu", function(){
-						if (!(($(event.target).find('img').length > 0) && ($(event.target).hasClass('td-label')))){
-							if($(this).find("input:checkbox").attr("checked") != "checked"){
-								$(this).find("input:checkbox").trigger('click');
-								$(this).addClass("selected_msg");
-							}
-							updateSelectedMsgs($(this).find("input:checkbox").is(':checked'),$(this).attr("id"));
-						}
+					}).bind('contextmenu', function(event){
+                        if (!($(event.target).hasClass('td-label'))) {
+                            if($(this).find("input:checkbox").attr("checked") != "checked") {
+                                $(this).find("input:checkbox").trigger('click');
+                                $(this).addClass("selected_msg");
+                            }
+                            updateSelectedMsgs($(this).find("input:checkbox").is(':checked'),$(this).attr("id"));
+                        } else if ( typeof $(event.target).attr("style") == "undefined" || $(event.target).attr("style").match(/background/g) == null ) {
+                            if($(this).find("input:checkbox").attr("checked") != "checked") {
+                                $(this).find("input:checkbox").trigger('click');
+                                $(this).addClass("selected_msg");
+                            }
+                            updateSelectedMsgs($(this).find("input:checkbox").is(':checked'),$(this).attr("id"));
+                        }
 					});
 					//_dragArea.makeDragged(new_msg, data[i].msg_number, data[i].subject, true);
 
@@ -924,6 +955,11 @@ function refresh(alert_new_msg, notifyPermission){
 					else {
 						box.appendChild(new_msg);
 					}
+                    // atualiza tags da nova mensagem
+                    var msgReference = [{folderName:data[i]['msg_folder'],messageNumber:data[i]['msg_number']}];
+                    updateMessageLabels(msgReference);
+                    // atualiza title
+                    setPageTitle();
 				}
 			}
             var box = Element("tbody_box");
@@ -2024,7 +2060,7 @@ function complete_archiving( success, fails, has_local_messages_before )
 
 function action_msg_selected_from_search(aba, evento){
 	if(evento == "delete")
-		move_search_msgs(aba,'INBOX/Trash', 'Trash', 'delete');
+		move_search_msgs(aba,'INBOX' + cyrus_delimiter + trashfolder, trashfolder, 'delete');
 }
 
 function get_all_messages_search(){
@@ -3332,7 +3368,7 @@ function save_dynamic_contacts(array){
                 }
             });
             if(exist){
-                REST.put("/dynamiccontact/"+exist, {name: $(value).find("input").val().split('"')[1], mail:$(value).find("input").val().match(reComplexEmail)[1]});
+                REST.put("/dynamiccontacts/"+exist, {name: $(value).find("input").val().split('"')[1], mail:$(value).find("input").val().match(reComplexEmail)[1]});
             }else{
                 REST.post("/dynamiccontacts", {name: $(value).find("input").val().split('"')[1], mail:$(value).find("input").val().match(reComplexEmail)[1]});
             }
@@ -4502,7 +4538,7 @@ function empty_trash_imap(shared, button, type){
 		//tree_folders.getNodeById(mount_url_folder(["INBOX",special_folders["Trash"]]))._refresh();
 		update_quota(get_current_folder());
 		draw_new_tree_folder();
-        if( preferences['use_followupflags_and_labels'] == "1" )
+        if( preferences['use_followupflags_and_labels'] != "0" )
 		    draw_tree_labels();
 		if (data){
 			if(typeof(data) == "object"){
@@ -4562,7 +4598,7 @@ function empty_spam_imap(shared, button, type){
 		//tree_folders.getNodeById(mount_url_folder(["INBOX",special_folders["Spam"]])).alter({caption: get_lang("Spam")});
 		//tree_folders.getNodeById(mount_url_folder(["INBOX",special_folders["Spam"]]))._refresh();
 		draw_new_tree_folder();
-        if( preferences['use_followupflags_and_labels'] == "1" )
+        if( preferences['use_followupflags_and_labels'] != "0" )
 		    draw_tree_labels();
 		update_quota(get_current_folder());
 		if (data){

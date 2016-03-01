@@ -1,6 +1,6 @@
 <div style="margin:10px;font-style:inherit;font-weight:normal;">
 	<% if( typeof(data) == 'string' ){ %>
-		<p style="font-weight:bold;"><%=get_lang("Sender's Information")%></p>	
+		<p style="font-weight:bold;margin-bottom: 5px;"><%=get_lang("Sender's Information")%></p>	
 		<div style="margin:10px;">
 			<label style="font-weight:normal;">
 				<a href="javascript:void(0);" onclick="InfoContact.sendMail('','<%=data%>'); InfoContact.hide();"><%=data%></a>
@@ -11,7 +11,7 @@
 			<img style='float:left' src='./inc/show_img.php?email=<%=data.email%>'>
 		</div>
 		<div style="position:relative;margin-left:75px;">
-			<p style="font-weight:bold;"><%=get_lang("Sender's Information")%></p>
+			<p style="font-weight:bold;margin-bottom: 5px;"><%=get_lang("Sender's Information")%></p>
 			<div style="padding-top:5px;">
 				<label><%=((data.cn) ? data.cn : '')%></label>
 			</div>
@@ -36,7 +36,7 @@
 		</div>	
 		<div style="margin-top:20px;">
 			<label>
-				<a href="javascript:void(0);" onclick="InfoContact.sendMail('<%=data.cn%>','<%=data.email%>'); InfoContact.hide();"><%=data.email%></a>
+				<a href="javascript:void(0);" onclick="InfoContact.sendMail('<%=data.cn%>','<%=data.email%>'); InfoContact.hide();" style="font-size: 10px;"><%=data.email%></a>
 			</label>
 		</div>
 	<% } %>

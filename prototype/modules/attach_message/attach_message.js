@@ -1,5 +1,5 @@
 // $.storage = new $.store();
- 
+
 isOffline = /[A-z0-9-_\/\.]*:offline\?(.*)/;
 breakParams = /[&=]/;
 dots = /\./gi;
@@ -13,11 +13,11 @@ $.ajaxPrefilter(function( options, originalOptions, jqXHR ){
       if( offlineAction )
       {
 	  offlineAction = offlineAction[1] || "";
-	
+
 	  jqXHR.abort();
 
 	  var params = {};
-	  
+
 	  if( offlineAction )
 	      offlineAction +=  options.data ? "&" +  options.data : "";
 
@@ -66,9 +66,9 @@ $.ajaxPrefilter(function( options, originalOptions, jqXHR ){
 		      msgs[i].flags = msgs[i].flags.join(',');
 		}
 
-		( options.success || options.complete )( {"rows": msgs, 
+		( options.success || options.complete )( {"rows": msgs,
 							   "records": msgs.length,
-							   "page": params["page"], 
+							   "page": params["page"],
 							   "total": Math.ceil( msgs.num_msgs / params["rows"] )} );
 	    }
 	  }
@@ -82,7 +82,7 @@ unorphanize = function(root, element) {
 	var ok = false;
 	for (var i=0; i<root.length; i++) {
 		if (root[i].id == element.parentFolder) {
-			element.children = new Array(); 
+			element.children = new Array();
 			root[i].children.push(element);
 			return true;
 		} else if (ok = unorphanize(root[i].children, element)) {
@@ -91,7 +91,7 @@ unorphanize = function(root, element) {
 	}
 
 	return ok;
-}
+};
 
 /* --- helpers --- */
 bytes2Size = function(bytes) {
@@ -103,19 +103,19 @@ bytes2Size = function(bytes) {
 }
 
 flags2Class = function(cellvalue, options, rowObject) {
-	var classes = '';	
+	var classes = '';
 	cellvalue = cellvalue.split(',');
 	cell = {
-			Unseen: parseInt(cellvalue[0])  ? 'Unseen' : 'Seen', 
-			Answered: parseInt(cellvalue[1]) ? 'Answered' : (parseInt(cellvalue[2]) ? 'Forwarded' : ''), 
+			Unseen: parseInt(cellvalue[0])  ? 'Unseen' : 'Seen',
+			Answered: parseInt(cellvalue[1]) ? 'Answered' : (parseInt(cellvalue[2]) ? 'Forwarded' : ''),
 			Flagged: parseInt(cellvalue[3]) ? 'Flagged' : '',
-			Recent: parseInt(cellvalue[4])  ? 'Recent' : '', 			
-			Draft: parseInt(cellvalue[5]) ? 'Draft' : ''		
+			Recent: parseInt(cellvalue[4])  ? 'Recent' : '',
+			Draft: parseInt(cellvalue[5]) ? 'Draft' : ''
 		};
 	for(var flag in cell){
-		classes += '<span class="flags '+ (cell[flag]).toLowerCase() + '"' + (cell[flag] != "" ? 'title="'+ get_lang(cell[flag])+'"' : '')+'> </span>';	
+		classes += '<span class="flags '+ (cell[flag]).toLowerCase() + '"' + (cell[flag] != "" ? 'title="'+ get_lang(cell[flag])+'"' : '')+'> </span>';
 	}
-	if(rowObject.labels){	
+	if(rowObject.labels){
 		var titles = [];
 		var count = 0;
 		 for(i in rowObject.labels){
@@ -127,8 +127,8 @@ flags2Class = function(cellvalue, options, rowObject) {
 	}else{
 		classes += '<span class="flags"> </span>';
 	}
-	
-	if(rowObject.followupflagged){		
+
+	if(rowObject.followupflagged){
 		if(rowObject.followupflagged.followupflag.id < 7){
 			var nameFollowupflag = get_lang(rowObject.followupflagged.followupflag.name);
 		}else{
@@ -136,14 +136,14 @@ flags2Class = function(cellvalue, options, rowObject) {
 		}
 		if(rowObject.followupflagged.isDone == 1){
 			classes += '<span class="flags followupflagged" title="'+nameFollowupflag+'" style="background:'+rowObject.followupflagged.backgroundColor+';"><img style=" margin-left:-3px;" src="../prototype/modules/mail/img/flagChecked.png"></span>';
-		}else{			
+		}else{
 			classes += '<span class="flags followupflagged" title="'+nameFollowupflag+'" style="background:'+rowObject.followupflagged.backgroundColor+';background-image:url(../prototype/modules/mail/img/mail-sprites.png);background-position: 0 -864px;"</span>';
 		}
-		
+
 	}
 
 	return classes;
-}
+};
 
 function numberMonths (months){
 	switch(months){
@@ -171,7 +171,7 @@ function numberMonths (months){
 			return 11;
 		case 'Dec':
 			return 12;
-	}	
+	}
 }
 
 NormaliseFrom = function(cellvalue, options, rowObject) {
@@ -179,12 +179,12 @@ NormaliseFrom = function(cellvalue, options, rowObject) {
 	if(rowObject['flags'][rowObject['flags'].length-1] ==  1){
 		return get_lang(special_folders["Drafts"]);
 	}
-	return cellvalue;	
-}
+	return cellvalue;
+};
 
 NormaliseSubject = function(cellvalue, options, rowObject) {
 	return html_entities(cellvalue);
-}
+};
 
 date2Time = function (timestamp) {
 	date = new Date();
@@ -203,11 +203,11 @@ date2Time = function (timestamp) {
 			return '<span class="datable">' + c + '</span>';
 		}
 	}
-}
+};
 
 changeTabIndex = function (elements) {
 //	jQuery('#foldertree').attr('tabIndex', '1').focus();
-}
+};
 
 
 selectedMessagesCount = function() {
@@ -222,25 +222,25 @@ selectedMessagesCount = function() {
 	}
 	$("#selected_messages_number").html(total_messages).next().html(bytes2Size(byte_size));
 	return total_messages;
-}
+};
 
 var msgAttacherGrid = $("#message_attacher_grid"), msgsTotal = $("#selected_messages_number");
 var lastLoadedMessages = [];
 var selectedMessages   = {};
 var selectedFolder     = {};
 
-function mount_children_localfolders_list(folder){ 
+function mount_children_localfolders_list(folder){
     folder.children = new Array();
     folder.id_search = folder.id;
-    folder.id = 'local_messages_'+folder.id,
-    folder.commonName =  folder.name,
-    folder.parentId = folder.parentid,
-    folder.type = 'localFolder',
-    folder.name = folder.id,
+    folder.id = 'local_messages_'+folder.id;
+    folder.commonName =  folder.name;
+    folder.parentId = folder.parentid;
+    folder.type = 'localFolder';
+    folder.name = folder.id;
     folder.messageCount = {
                              total: folder.messages,
                              unseen: folder.unseen
-                          }
+                         };
 
     if(folder.haschild){
         expresso_mail_archive.getFoldersList(folder.id_search);
@@ -257,23 +257,23 @@ function adaptOffline( data )
     if( preferences.use_local_messages == 1 || expresso_offline)
     {
 	var folders = expresso_local_messages.list_local_folders();
-	
+
 	var stripParents = /^(.*)\/([^\/]*)/;
 
 	$.each( folders, function( i, folder ){
-		
+
 		  if(typeof(folder) == 'undefined')  return;
-		  
+
 	      var id = 'local_messages/' + folder[0];
 
 	      var parts = stripParents.exec( id );
-	  
+
 	      data[data.length] = {'id' : id,
 				    'commonName' : parts[2],
 				    'parentFolder' : parts[1]};
 	});
     }
-	
+
     return( data );
 }
 
@@ -291,7 +291,7 @@ function archive_flag( flagObj ){
 	returns += (flags['forwarded'] ? '1,' : '0,') ;
 	returns += (flags['flagged'] || flags['importance_high'] ? '1,' : '0,') ;
 	returns += '0,0';
-            
+
     return returns;
 }
 
@@ -309,7 +309,7 @@ function archive_flag_search( flagObj ){
     returns += (flags['X'] ? '1,' : '0,') ;
     returns += (flags['F'] ? '1,' : '0,') ;
     returns += '0,0';
-            
+
     return returns;
 }
 
@@ -338,7 +338,7 @@ jQuery.ajax({
                     for(var i=0; i<treeFolders.length; i++ ){
                         mount_children_localfolders_list(treeFolders[i]);
                     }
-                    
+
                     for(var i = 0; i < treeFolders.length; i++){
                         data.push(treeFolders[i]);
                     }
@@ -362,7 +362,7 @@ jQuery.ajax({
 			else if (/^local_messages/.test(data[i].id)) {
 					tree3.push(data[i]);
 			}
-			
+
 		}
 
 		var firstFolder = jQuery("#foldertree-container")
@@ -381,34 +381,34 @@ jQuery.ajax({
 			    target = target.parent();
 
             if (target.attr('id') == "foldertree") return;
-			
+
 			var targetId = target.attr('id');
 			var child = target.find('.folder');
-              
+
 			$('.filetree span.folder.selected').removeClass('selected');
 			if(!target.is('#foldertree > .expandable, #foldertree > .collapsable'))
 				$(target).children('.folder').addClass('selected');
-			
+
 			selectedFolder = {
-			    id: targetId, 
+			    id: targetId,
 			    name: child.attr('title'),
 			    'class': child.attr('class')
 			};
 
 			var grid = $("#message_attacher_grid"), offlineCase = "";
-			
+
             if(targetId.indexOf( 'local_messages' ) == 0){
                  //Entrar caso: Clicar em uma pasta que seja do arquivamento local
                 targetId = targetId.split("_")[2];
 
                 expresso_mail_archive.getMessagesByFolder(targetId,"ALL");
 
-                msgAll = expresso_mail_archive.msgAll;                
+                msgAll = expresso_mail_archive.msgAll;
 
                 var msgs = new Array();
                 var from = '';
                 var flag = '';
-                
+
                 $.each(msgAll, function(i, msg){
                     from = $.parseJSON(msg['_from']);
 
@@ -420,8 +420,8 @@ jQuery.ajax({
                     id = msg['_id'];
 
                     var message = {};
-                    
-                    
+
+
                     message['msg_number'] = id;
                     message['flags'] = archive_flag( flag );
                     message['from.name'] = from['mailbox']['@name'];
@@ -450,7 +450,7 @@ jQuery.ajax({
 		.find('span:first-child');
 		$('span.folder.inbox').parents(".ui-dialog").find("li#INBOX span").addClass('selected');
 		selectedFolder = {
-			id: firstFolder.parent().attr('id'), 
+			id: firstFolder.parent().attr('id'),
 			name: firstFolder.attr('title'),
 			'class': firstFolder.attr('class')
 		};
@@ -484,24 +484,24 @@ jQuery.ajax({
 								flag = msg['flags'];
 		                        id = msg['msg_number'];
 		                        var message = {};
-		                     
+
 		                        message['msg_number'] = id;
 		                        message['flags'] = flag;
 		                        message['to'] = {
 		                                name: msg['toaddress2'],
 		                                email: msg['toaddress2']
 		                        };
-		
+
 		                        if(msg['from'] != undefined &&  msg['header']['from'] != undefined){
 		                                message['from'] = {
 		                                        'email' : msg['from']['email'],
 		                                        'name' : msg['header']['from']['name']
-		                                }
+		                                };
 		                            }else{
 		                                message['from'] = {
 		                                        'email' : '',
 		                                        'name' : 'Rascunho'
-		                                }
+		                                };
 		                            }
 		                        //message['from']['name'] = msg['from']['name'];
 		                        message['subject'] = msg['subject'] ? msg['subject'] : "(sem assunto)";
@@ -538,17 +538,17 @@ jQuery.ajax({
 				// aplica o contador
 				jQuery('.timable').each(function (i) {
 					jQuery(this).countdown({
-						since: new Date(parseInt(this.title)), 
+						since: new Date(parseInt(this.title)),
 						significant: 1,
-						layout: 'h&aacute; {d<}{dn} {dl} {d>}{h<}{hn} {hl} {h>}{m<}{mn} {ml} {m>}{s<}{sn} {sl}{s>}', 
+						layout: 'h&aacute; {d<}{dn} {dl} {d>}{h<}{hn} {hl} {h>}{m<}{mn} {ml} {m>}{s<}{sn} {sl}{s>}',
 						description: ' atr&aacute;s'
-					});					
+					});
 				});
-				
+
 				// reconstrói a seleção das mensagens mesmo depois da mudança de pasta
 				if (selectedMessages[selectedFolder.id]) {
 					for (var message in selectedMessages[selectedFolder.id]){
-						for (var j=0; j<data.rows.length; j++){	
+						for (var j=0; j<data.rows.length; j++){
 							if (selectedMessages[selectedFolder.id][message] && message == data.rows[j].msg_number) {
 								jQuery("#message_attacher_grid").setSelection(jQuery("#message_attacher_grid").getDataIDs()[j], false);
 							}
@@ -556,7 +556,7 @@ jQuery.ajax({
 					}
 				}
 				$('#cb_message_attacher_grid').css('display', 'none');
-				
+
 			},
             onSelectRow: function(id, selected)
             {
@@ -574,7 +574,7 @@ jQuery.ajax({
                         selectedMessages[folder] = {};
                     }
                     selectedMessages[folder][msg_number] = true;
-                }
+                };
 
                 /*
                     Adiciona uma mensagem ao cache de mensagens.
@@ -587,7 +587,7 @@ jQuery.ajax({
                         cache[selectedFolder.id] = {};
                     }
                     cache[selectedFolder.id][msg.msg_number] = msg;
-                }
+                };
 
                 /*
                     Adiciona uma aba de preview para cada mensagem selecionada.
@@ -606,26 +606,31 @@ jQuery.ajax({
                     if(!$('#' + tabPanelTemplateId).length)
                     {
                         // adiciona-a:
-                        $mailpreview_tabs
-                        .tabs("add", '#' + tabPanelTemplateId, tabPanelTemplateLabel)
-                        .find('.message.empty-container')
-                        .hide()
-                        .end()
-                        .find('#' + tabPanelTemplateId)
-                        .html(body)
-                        .prepend('<div class="mailpreview-message-info">' + get_lang('Subject') + ': ' + html_entities(subject) + '</div>')
-                        .find('[class^="ExpressoCssWrapper"]')
-                        .addClass("mailpreview-message-body");
+						$('<li><a href="#' + tabPanelTemplateId + '">' + tabPanelTemplateLabel + '</a></li>').appendTo($('.ui-tabs-nav', $mailpreview_tabs));
+						// adiciona o container
+						$mailpreview_tabs.append('<div id="' + tabPanelTemplateId + '"></div>');
+						// coloca o assunto do amil
+						$('#' + tabPanelTemplateId, $mailpreview_tabs).append('<div class="mailpreview-message-info">' + get_lang('Subject') + ': ' + html_entities(subject) + '</div>');
+						// o corpo
+						$('#' + tabPanelTemplateId, $mailpreview_tabs).append('<div class="mailpreview-message-body">' + body + '</div>');
+						// atualiza as abas
+						$mailpreview_tabs.tabs('refresh');
+						// pega o indice e torna a aba ativa
+						var index = $('a[href="#' + tabPanelTemplateId + '"]', $mailpreview_tabs).parent().index();
+						$mailpreview_tabs.tabs('option', 'active', index);
                     }
                     else
                     {
-                        // Senão, só a seleciona:
-                        $mailpreview_tabs
-                        .tabs('select', '#' + tabPanelTemplateId)
-                        .find('#' + tabPanelTemplateId + ', [href="#' + tabPanelTemplateId + '"]')
-                        .removeClass('preview-message-unselected');
-                    }
-                }
+						// Senão, só a seleciona:
+						var index = $('a[href="#' + tabPanelTemplateId + '"]', $mailpreview_tabs).removeClass('preview-message-unselected').parent().index();
+						$mailpreview_tabs.tabs('option', 'active', index);
+					}
+					// caso tenha o botao de remoçao de aba, remove o botao pois a o email foi re-selecionado
+					if ($('span.ui-icon-close', $('a[href="#' + tabPanelTemplateId + '"]', $mailpreview_tabs).closest('li')).length)
+					{
+						$('span.ui-icon-close', $('a[href="#' + tabPanelTemplateId + '"]', $mailpreview_tabs).closest('li')).remove();
+					}
+                };
 
                 var message = false;
                 for(var i = 0; i < lastLoadedMessages.length; i++)
@@ -700,7 +705,7 @@ jQuery.ajax({
                                 add_msg_to_cache(onceOpenedHeadersMessages, message);
 
 
-                            })
+                            });
                         }
                     }
                 }
@@ -715,11 +720,21 @@ jQuery.ajax({
                     $mailpreview_tabs
                     .find('#' + tabPanelTemplateId + ', [href="#' + tabPanelTemplateId + '"]')
                     .addClass('preview-message-unselected');
+					// adiciona o botao de remoçao de aba
+					$('a[href="#' + tabPanelTemplateId + '"]', $mailpreview_tabs).parent().append('<span class="ui-icon ui-icon-close"></span>');
                 }
+
+				// bind para remover a aba ao clicar no botao de remoçao
+				$mailpreview_tabs.tabs().delegate('span.ui-icon-close', 'click', function ()
+				{
+					var id = $(this).closest('li').remove().attr('aria-controls');
+					$('#' + id).remove();
+					$mailpreview_tabs.tabs('refresh');
+				});
 
                 selectedMessagesCount();
             },
-            
+
 			caption: '<span class="'+selectedFolder['class']+'">'+selectedFolder.name+'</span>'
 		});
 
@@ -730,9 +745,9 @@ jQuery.ajax({
 
                 var local_folders   = [];
                 expresso_mail_archive.search_queryresult = null;
-                
+
                 local_folders.push(folder);
-                
+
                 tmp = [];
 
                 groupResult = [];
@@ -744,13 +759,13 @@ jQuery.ajax({
                         groupResult.push( expresso_mail_archive.search_queryresult );
                     expresso_mail_archive.search(local_folders, "CC " + "<=>" + url_encode(param) + "##");
                         groupResult.push( expresso_mail_archive.search_queryresult );
-                    
+
                 if($("#gbox_message_attacher_grid .attach-message-search-checkbox").is(":checked")){
                     expresso_mail_archive.search(local_folders, "BODY " + "<=>" + url_encode(param) + "##");
                         groupResult.push( expresso_mail_archive.search_queryresult );
                 }
 
-                
+
                  $.each(groupResult, function(i, result){
                         if(result != null){
 
@@ -806,7 +821,7 @@ jQuery.ajax({
                 });
                 return msgs;
             }
-        }
+        };
         var search_imap_messages = function(param, folder){
         	var grid = $("#message_attacher_grid");
 
@@ -817,7 +832,7 @@ jQuery.ajax({
 	        		 	'from',
 	        			'*',
 	        			param
-	        		],       	
+	        		],
 	        		[
 	            		'OR',
 	            		'to',
@@ -849,7 +864,7 @@ jQuery.ajax({
 	        		 	'from',
 	        			'*',
 	        			param
-	        		],       	
+	        		],
 	        		[
 	            		'OR',
 	            		'to',
@@ -870,11 +885,11 @@ jQuery.ajax({
 	            	]
 	            ];
 	        }
-			
+
             var data = DataLayer.get( 'message', { filter: filters, criteria: { properties: { context: { folder: folder } } } }, true );
 
             if(DataLayer.criterias['message:jqGridSearch']){
-				delete DataLayer.criterias['message:jqGridSearch'];	
+				delete DataLayer.criterias['message:jqGridSearch'];
 			}
 
         	DataLayer.register( 'criterias', 'message:jqGridSearch', function( crit ){
@@ -890,12 +905,12 @@ jQuery.ajax({
             	$("#mailgrid-container").find(".loading").hide();
             	grid.jqGrid("clearGridData", true);
             }
-        }
+        };
 
 		var search_messages = function(param){
             var grid = $("#message_attacher_grid");
             var folder = $("#foldertree li span.selected").parent().attr("id");
-            
+
             if(param == ""){
                 $('#foldertree [id="'+folder+'"]').trigger("click");
                 return;
@@ -914,7 +929,7 @@ jQuery.ajax({
             grid.jqGrid('setGridParam',{datatype: "local",data: msgs})
             .trigger("reloadGrid");
             //.jqGrid('setCaption', '<span class="'+child.attr('class')+'">'+child.attr('title')+'</span>');
-		}
+		};
 
 		var title = [get_lang("First page"), get_lang("Prev page"), get_lang("Next page"), get_lang("Last page")];
 		$("#first_message_attacher_grid_pager").attr("title",title[0]);
@@ -930,7 +945,7 @@ jQuery.ajax({
 					search_messages(param);
 				});
 			}
-			
+
 		}).end().find(".attach-message-search-checkbox").click(function(){
             var msg;
             if($(this).is(":checked")){
@@ -958,19 +973,18 @@ jQuery.ajax({
 			var param = $(this).parents(".attach-message-search-div:first").find(".attach-message-search-input").val();
 			$("#mailgrid-container").find(".loading").show("fast", function(){
 				search_messages(param);
-			});	
+			});
 		});
 	}
 });
-
 
 var $mailpreview_tabs = $( "#mailpreview_container").tabs({
 	tabTemplate: "<li><a href='#{href}'>#{label}</a> <span class='ui-icon ui-icon-close'> Fechar </span></li>",
 	panelTemplate: '<div class="message mailpreview-message"></div>',
 	add: function( event, ui ) {
 		$mailpreview_tabs.tabs('select', '#' + ui.panel.id);
-	
-		if ($('#mailpreview_tabs_default_empty').length && $mailpreview_tabs.tabs("length") > 1) {	
+
+		if ($('#mailpreview_tabs_default_empty').length && $mailpreview_tabs.tabs("length") > 1) {
 			$mailpreview_tabs.tabs('remove', '#mailpreview_tabs_default_empty');
 		}
 	},
@@ -993,13 +1007,3 @@ $( "#mailpreview_container span.ui-icon-close" ).on( "click", function(e) {
 	$mailpreview_tabs.tabs("remove", index);
 	e.stopImmediatePropagation();
 });
-
-if (!$mailpreview_tabs.tabs("length") && !$('#mailpreview_tabs_default_empty').length) {
-			/**
-			 * TODO: internacionalizar a string 'Nenhuma aba'
-			 */
-			$mailpreview_tabs.tabs('add', '#mailpreview_tabs_default_empty', 'Nenhuma aba')
-			.find('#mailpreview_tabs_default_empty').removeClass('mailpreview-message').addClass('empty-container')
-			.html('<span class="message">' + get_lang('select a message to preview') + '</span>').end()
-			.find('.ui-tabs-nav li:first .ui-icon-close').remove();
-}
