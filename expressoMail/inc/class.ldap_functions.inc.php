@@ -1230,13 +1230,13 @@ class ldap_functions
             $justthese = array($corporatesignature);
             $sr = @ldap_search($this->ds, $this->ldap_context, $filter, $justthese);
             if(!$sr) {
-                return false;
+                return '';
             }
             $info = ldap_get_entries($this->ds, $sr);
             $info[0][$corporatesignature][0] = utf8_decode($info[0][$corporatesignature][0]);
             return $info[0][$corporatesignature][0];
         }
-        return "";
+        return '';
     }
 
     function get_alternative_emails_ldap(){

@@ -92,11 +92,13 @@ function resizeWindow()
 			if( div.length )
 			{
 				div.css('height',(clientHeight - (div.position().top + (table_message.clientHeight ? table_message.clientHeight : table_message.offsetHeight)+2)) + "px");
+				div.css('width',(clientWidth - (div.position().left+10)) + "px");
 			}
 
 			if( div_scroll.length )
 			{
 				div_scroll.css('height', (clientHeight - (div_scroll.position().top + (table_message.clientHeight ? table_message.clientHeight : table_message.offsetHeight)+5)) + "px");
+				div_scroll.css('width',(clientWidth - (div_scroll.position().left+15)) + "px");
 			}
 		}
 	}

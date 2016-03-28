@@ -1272,6 +1272,11 @@ class imap_functions
 		}
 
 		$header_ = imap_fetchheader($this->mbox, $msg_number, FT_UID);
+
+        $calendar = false;
+        $calendar = preg_match("/AgendaExpresso: (\d+)/", $header_);
+        $calendar = $calendar || preg_match("/DiretoAgenda:/", $header_);
+
 		$return_get_body = $this->get_body_msg($msg_number, mb_convert_encoding( $msg_folder, "ISO-8859-1", "UTF-8" ));
 		$body = $return_get_body['body'];
 		if($return_get_body['body']=='isCripted'){
@@ -1284,7 +1289,7 @@ class imap_functions
 			//return $return;
 		}else{
 	    $return['body'] 		= $body;
-	    $return['attachments'] 	= $return_get_body['attachments'];
+	    $return['attachments'] 	= $calendar ? '' : $return_get_body['attachments'];
 	    $return['thumbs'] 		= $return_get_body['thumbs'];
 	    //$return['signature']	= $return_get_body['signature'];
 		}
@@ -3472,6 +3477,9 @@ class imap_functions
             }
             else
                 $mailService->setBodyText(mb_convert_encoding($body, 'ISO-8859-1' , 'UTF-8,ISO-8859-1' ));
+
+			$mailService->addHeaderField('Message-ID', "<". md5(uniqid(time())) . "@" .
+										 $_SERVER['SERVER_NAME'] . ">\n");
 
             if ($is_important)
                 $mailService->addHeaderField('Importance', 'High');

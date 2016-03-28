@@ -1376,7 +1376,7 @@ searchE.prototype.quickSearchMail = function(value, page, sort, border_id)
 				//Não deve fazer filtro de mensagens por TAG em pastas compartilhadas
 				if( i === "folder_id" ){ 
 					if(folders[key][i].indexOf("user.")>-1){
-						if(value.indexOf("$Label")<0){
+						if(value && value.indexOf("$Label")<0){
 						nm_box[nm_box.length] = folders[key][i]; 
 
 						}

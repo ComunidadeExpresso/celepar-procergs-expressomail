@@ -17,19 +17,19 @@ class ExportEml
 	var $tempDir;
 
 	function ExportEml() {
-	   
+
 		//TODO: modificar o caminho hardcodificado '/tmp' para o definido na configuracao do expresso
 		//$this->tempDir = $GLOBALS['phpgw_info']['server']['temp_dir'];
-		$this->tempDir = '/tmp';
+		$this->tempDir = '/var/www/tmp';
 	}
-	
+
 	function connectImap(){
-	
+
 		$username = $_SESSION['phpgw_info']['expressomail']['user']['userid'];
 		$password = $_SESSION['phpgw_info']['expressomail']['user']['passwd'];
 		$imap_server = $_SESSION['phpgw_info']['expressomail']['email_server']['imapServer'];
 		$imap_port 	= $_SESSION['phpgw_info']['expressomail']['email_server']['imapPort'];
-		
+
 		if ($_SESSION['phpgw_info']['expressomail']['email_server']['imapTLSEncryption'] == 'yes')
 		{
 			$imap_options = '/tls/novalidate-cert';
@@ -40,13 +40,13 @@ class ExportEml
 		}
 		$this->mbox_stream = imap_open("{".$imap_server.":".$imap_port.$imap_options."}".$this->folder, $username, $password);
 	}
-	
+
 	//export message to EML Format
-	function parseEml($header, $body)	
-	{		
+	function parseEml($header, $body)
+	{
 		$sEmailHeader = $header;
 		$sEmailBody = $body;
-		$sEMail = $sEmailHeader . "\r\n\r\n" . $sEmailBody;		
+		$sEMail = $sEmailHeader . "\r\n\r\n" . $sEmailBody;
 		return $sEMail;
 	}
 
@@ -56,7 +56,7 @@ class ExportEml
 	// Rommel Cysne (rommel.cysne@serpro.gov.br)
 	// em 17/12/2008.
 
-    function createFileEml_by_localFolder($sEMLData, $tempDir, $file){ 
+    function createFileEml_by_localFolder($sEMLData, $tempDir, $file){
 
         $file = "{$file}.eml";
 
@@ -66,7 +66,7 @@ class ExportEml
 
         fputs($f,$sEMLData);
         fclose($f);
-        
+
         return $file;
     }
 
@@ -76,17 +76,17 @@ class ExportEml
         {
             $header    = imap_headerinfo($this->mbox_stream, imap_msgno($this->mbox_stream, $id), 80, 255);
             $subject = $this->decode_subject($header->fetchsubject);
-			
+
             if (strlen($subject) > 60)
                 $subject = substr($subject, 0, 59);
- 
+
 			//$subject = preg_replace('/\//', '\'', $subject);
 			$from = "áàâãäéèêëíìîïóòôõöúùûüç?\"!@#$%¨&*()-=+´`[]{}~^,<>;:/?\\|¹²³£¢¬§ªº° .ÁÀÂÃÄÉÈÊËÍÌÎÏÓÒÔÕÖÚÙÛÜÇ";
 			$to =   "aaaaaeeeeiiiiooooouuuuc______________________________________________AAAAAEEEEIIIIOOOOOUUUUC";
 			$subject = strtr($subject,$from,$to);
 
-			$subject = preg_replace('/[^a-zA-Z0-9_]/i', '_', $subject); 
-			$file = $subject."_".$id.".eml"; 
+			$subject = preg_replace('/[^a-zA-Z0-9_]/i', '_', $subject);
+			$file = $subject."_".$id.".eml";
 		} else{
 			// Se mensagem for arquivada localmente, $subject (assunto da mensagem)
 			// sera passado para compor o nome do arquivo .eml;
@@ -96,26 +96,26 @@ class ExportEml
 				$to =   "aaaaaeeeeiiiiooooouuuuc______________________________________________AAAAAEEEEIIIIOOOOOUUUUC";
 				$subject = strtr($subject,$from,$to);
 
-				$subject = preg_replace('/[^a-zA-Z0-9_]/i', '_', $subject); 
+				$subject = preg_replace('/[^a-zA-Z0-9_]/i', '_', $subject);
 
-				// é necessário que a sessão faça parte do nome do arquivo para que o mesmo não venha vazio o.O 
-				$file = $subject."_".$i."_".$_SESSION[ 'phpgw_session' ][ 'session_id' ].".eml";  
+				// é necessário que a sessão faça parte do nome do arquivo para que o mesmo não venha vazio o.O
+				$file = $subject."_".$i."_".$_SESSION[ 'phpgw_session' ][ 'session_id' ].".eml";
 			} else{
 				$file = "email_".$_SESSION[ 'phpgw_session' ][ 'session_id' ].".eml";
-	        }    
+	        }
         }
-        
+
         $f = fopen($tempDir.'/'.$file,"w");
         if(!$f)
             return False;
-        
+
         fputs($f,$sEMLData);
         fclose($f);
-        
-        return $file;
-    } 
 
-	function createFileZip($files, $tempDir){	
+        return $file;
+    }
+
+	function createFileZip($files, $tempDir){
 
 		$tmp_zip_filename = "email_".$_SESSION[ 'phpgw_session' ][ 'session_id' ].".zip";
                 if (!empty($files))
@@ -146,7 +146,7 @@ $command = "cd " . escapeshellarg($tempDir) . " && nice zip -m9 " . escapeshella
 		}
 
 		return $tmp_zip_filename;
-				
+
 	}
 
 
@@ -157,54 +157,54 @@ function export_all($params){
 		$fileNames = "";
 		$tempDir = $this->tempDir;
 		$this->connectImap();
-		
+
 		$msgs = imap_search($this->mbox_stream,"ALL",SE_UID);
 
 		if($msgs){
 			foreach($msgs as $nMsgs){
 
-				$header	 	= $this-> getHeader($nMsgs);								 
-				$body		= $this-> getBody($nMsgs);		
+				$header	 	= $this-> getHeader($nMsgs);
+				$body		= $this-> getBody($nMsgs);
 
 				$sEMLData 	= $this -> parseEml($header, $body);
 				$fileName 	= $this -> CreateFileEml($sEMLData, $tempDir,$nMsgs);
 				if(!$fileName)	{
-					$error = True;					
+					$error = True;
 					break;
 				}
 				else
-					$fileNames .= "\"".$fileName."\" ";			
-				
+					$fileNames .= "\"".$fileName."\" ";
+
 			}
-			
+
 			imap_close($this->mbox_stream);
-			
-			$nameFileZip = 'False';			
-			if($fileNames && !$error) {			
+
+			$nameFileZip = 'False';
+			if($fileNames && !$error) {
 				$nameFileZip = $this -> createFileZip($fileNames, $tempDir);
-				if($nameFileZip)			
+				if($nameFileZip)
 					$file = $tempDir.'/'.$nameFileZip;
 				else {
 					$file = false;
-				}								
+				}
 			}
-			else 
+			else
 				$file = false;
 		}else{
 			$file["empty_folder"] = true;
 		}
 		return $file;
-		
+
 	}
 
 	// Funcao alterada para tratar a exportacao
 	// de mensagens arquivadas localmente.
 	// Rommel Cysne (rommel.cysne@serpro.gov.br)
 	// em 17/12/2008.
-	//  
-	// Funcao alterada para que, quando houver  
-	// apenas um arquivo a ser exportado, 
-	// não seja criado em zip 
+	//
+	// Funcao alterada para que, quando houver
+	// apenas um arquivo a ser exportado,
+	// não seja criado em zip
 	//
 	// Funcao altarada para exportar uma ou
 	// varia mensagens de um pesquisa
@@ -212,11 +212,11 @@ function export_all($params){
 	function makeAll($params) {
 	//Exporta menssagens selecionadas na pesquisa
 	if($params['folder'] === 'false'){
-		
+
 		$this->folder = $params['folder'];
 		$error = False;
 		$fileNames = "";
-		
+
 		$sel_msgs = explode(",", $params['msgs_to_export']);
 		@reset($sel_msgs);
 		$sorted_msgs = array();
@@ -229,10 +229,10 @@ function export_all($params){
 				$sorted_msgs[$sel_msg[0]] = $sel_msg[1];
 			}
 		}
-			
-		unset($sorted_msgs['']);			
 
-		
+		unset($sorted_msgs['']);
+
+
 		// Verifica se as n mensagens selecionadas
 		// se encontram em um mesmo folder
 		if (count($sorted_msgs)==1){
@@ -241,14 +241,14 @@ function export_all($params){
 			$msg_number = explode(',', $sorted_msgs[$array_names_keys[0]]);
 			$tempDir = $this->tempDir;
 			$this->connectImap();
-			
-			//verifica se apenas uma mensagem foi selecionada e exportar em .eml			
+
+			//verifica se apenas uma mensagem foi selecionada e exportar em .eml
 			if(count($msg_number) == 1){
 				$header         = $this->getHeader($msg_number[0]);
-				$body           = $this->getBody($msg_number[0]);                       
-				$sEMLData       = $this->parseEml($header, $body);                     
+				$body           = $this->getBody($msg_number[0]);
+				$sEMLData       = $this->parseEml($header, $body);
 				$fileName       = $this->CreateFileEml($sEMLData, $tempDir, $msg_number[0]."_".$_SESSION[ 'phpgw_session' ][ 'session_id' ]);
-		
+
 				$header    = imap_headerinfo($this->mbox_stream, imap_msgno($this->mbox_stream, $msg_number[0]), 80, 255);
             	$subject = $this->decode_subject(html_entity_decode($header->fetchsubject));
 
@@ -262,44 +262,44 @@ function export_all($params){
 					return $return;
 				}
 			}
-			
+
 			//cria um .zip com as mensagens selecionadas
             $msg_number_count = count($msg_number);
 			for($i = 0; $i < $msg_number_count; ++$i)
 			{
-				$header         = $this-> getHeader($msg_number[$i]);                                                                                   
-				$body           = $this-> getBody($msg_number[$i]);                     
-				$sEMLData       = $this -> parseEml($header, $body);                   
+				$header         = $this-> getHeader($msg_number[$i]);
+				$body           = $this-> getBody($msg_number[$i]);
+				$sEMLData       = $this -> parseEml($header, $body);
 				$fileName       = $this -> CreateFileEml($sEMLData, $tempDir, $msg_number[$i]);
 
-				if(!$fileName) 
+				if(!$fileName)
 				{
-					$error = True;                                 
+					$error = True;
 					break;
 				} else{
-					$fileNames .= "\"".$fileName."\" ";                     
+					$fileNames .= "\"".$fileName."\" ";
 				}
 			}
 			imap_close($this->mbox_stream);
 
-			$nameFileZip = 'False';                 
-			if($fileNames && !$error) 
+			$nameFileZip = 'False';
+			if($fileNames && !$error)
 			{
 				$nameFileZip = $this -> createFileZip($fileNames, $tempDir);
-				if($nameFileZip) 
-				{               
+				if($nameFileZip)
+				{
 					$file = $tempDir.'/'.$nameFileZip;
 				} else {
 					$file = false;
-				}                                                               
+				}
 			}
-			else 
+			else
 			{
 				$file = false;
 			}
 
-			return $file;			
-		
+			return $file;
+
 		//exporta mensagens de diferentes pastas
 		}else{
 			$array_names_keys = array_keys($sorted_msgs);
@@ -314,33 +314,33 @@ function export_all($params){
                 $msg_number_count = count($msg_number);
 				for($j = 0; $j < $msg_number_count; ++$j)
 				{
-					$header         = $this-> getHeader($msg_number[$j]);                                                                                   
-					$body           = $this-> getBody($msg_number[$j]);                     
-					$sEMLData       = $this -> parseEml($header, $body);                   
+					$header         = $this-> getHeader($msg_number[$j]);
+					$body           = $this-> getBody($msg_number[$j]);
+					$sEMLData       = $this -> parseEml($header, $body);
 					$fileName       = $this -> CreateFileEml($sEMLData, $tempDir, $msg_number[$j]);
 
-					if(!$fileName) 
+					if(!$fileName)
 					{
-						$error = True;                                 
+						$error = True;
 						break;
 					} else{
-						$fileNames .= "\"".$fileName."\" ";                     
+						$fileNames .= "\"".$fileName."\" ";
 					}
 				}
 				imap_close($this->mbox_stream);
 			}
-			$nameFileZip = 'False';                 
-			if($fileNames && !$error) 
+			$nameFileZip = 'False';
+			if($fileNames && !$error)
 			{
 				$nameFileZip = $this -> createFileZip($fileNames, $tempDir);
-				if($nameFileZip) 
-				{               
+				if($nameFileZip)
+				{
 					$file = $tempDir.'/'.$nameFileZip;
 				} else {
 					$file = false;
-				}                                                               
+				}
 			}
-			else 
+			else
 			{
 				$file = false;
 			}
@@ -356,16 +356,16 @@ function export_all($params){
         	$array_subjects = explode('@@',$params['subjects']);
             $array_ids = explode(',', $params['msgs_to_export']);
 			$tempDir = $this->tempDir;
-			
+
 			include_once("class.imap_functions.inc.php");
 			$imapf = new imap_functions();
 
-			// quando houver apenas um arquivo, exporta o .eml sem coloca-lo em zip 
-			if (count($array_ids)==1) 
-			{ 
-				$sEMLData=$imapf->treat_base64_from_post($array_mesgs[0]); 
-				$fileName=$this->CreateFileEml($sEMLData, $tempDir,'',$array_subjects[0],"offline"); 
-				return $tempDir.'/'.$fileName; 
+			// quando houver apenas um arquivo, exporta o .eml sem coloca-lo em zip
+			if (count($array_ids)==1)
+			{
+				$sEMLData=$imapf->treat_base64_from_post($array_mesgs[0]);
+				$fileName=$this->CreateFileEml($sEMLData, $tempDir,'',$array_subjects[0],"offline");
+				return $tempDir.'/'.$fileName;
 			}
 
 			// Para cada mensagem selecionada sera gerado um arquivo .eml cujo titulo sera o assunto (subject) da mesma;
@@ -392,7 +392,7 @@ function export_all($params){
 				$file = false;
 			}
             return $file;
-		
+
 		} else
 		// Exportacao de mensagens da caixa de entrada (imap) - processo original do Expresso
 		{
@@ -407,11 +407,11 @@ function export_all($params){
 			// quando houver apenas um arquivo, exporta o .eml sem coloca-lo em zip
 			if (count($array_ids)==1)
 			{
-				$header         = $this->getHeader($array_ids[0]);                                                                                     
-				$body           = $this->getBody($array_ids[0]);                       
-				$sEMLData       = $this->parseEml($header, $body);                     
+				$header         = $this->getHeader($array_ids[0]);
+				$body           = $this->getBody($array_ids[0]);
+				$sEMLData       = $this->parseEml($header, $body);
 				$fileName       = $this->CreateFileEml($sEMLData, $tempDir, $array_ids[0]."_".$_SESSION[ 'phpgw_session' ][ 'session_id' ]);
-			
+
 				$header    = imap_headerinfo($this->mbox_stream, imap_msgno($this->mbox_stream, $array_ids[0]), 80, 255);
 	            $subject = $this->decode_subject(html_entity_decode($header->fetchsubject));
 
@@ -429,35 +429,35 @@ function export_all($params){
             $array_ids_count = count($array_ids);
 			for($i = 0; $i < $array_ids_count; ++$i)
 			{
-				$header         = $this-> getHeader($array_ids[$i]);                                                                                   
-				$body           = $this-> getBody($array_ids[$i]);                     
-				$sEMLData       = $this -> parseEml($header, $body);                   
+				$header         = $this-> getHeader($array_ids[$i]);
+				$body           = $this-> getBody($array_ids[$i]);
+				$sEMLData       = $this -> parseEml($header, $body);
 				$fileName       = $this -> CreateFileEml($sEMLData, $tempDir, $array_ids[$i]);
 
-				if(!$fileName) 
+				if(!$fileName)
 				{
-					$error = True;                                 
+					$error = True;
 					break;
 				} else {
-					$fileNames .= "\"".$fileName."\" ";                     
+					$fileNames .= "\"".$fileName."\" ";
 				}
 			}
 			imap_close($this->mbox_stream);
 
-			$nameFileZip = 'False';                 
-			if($fileNames && !$error) 
+			$nameFileZip = 'False';
+			if($fileNames && !$error)
 			{
 				$nameFileZip = $this -> createFileZip($fileNames, $tempDir);
-				if($nameFileZip) 
-				{               
+				if($nameFileZip)
+				{
 					$file = $tempDir.'/'.$nameFileZip;
 					$ret[] = $file;
-				    return $ret;  
+				    return $ret;
 				} else {
 					$file = false;
-				}                                                               
+				}
 			}
-			else 
+			else
 			{
 				$file = false;
 			}
@@ -484,9 +484,9 @@ function export_all($params){
 		// quando houver apenas um arquivo, exporta o .eml sem coloca-lo em zip
 		if (count($array_ids)==1)
 		{
-			$header         = $this->getHeader($array_ids[0]);                                                                                     
-			$body           = $this->getBody($array_ids[0]);                       
-			$sEMLData       = $this->parseEml($header, $body);                     
+			$header         = $this->getHeader($array_ids[0]);
+			$body           = $this->getBody($array_ids[0]);
+			$sEMLData       = $this->parseEml($header, $body);
 			$fileName       = $this->CreateFileEml($sEMLData, $tempDir, $array_ids[0]."_".$_SESSION[ 'phpgw_session' ][ 'session_id' ]);
 
 			$header    = imap_headerinfo($this->mbox_stream, imap_msgno($this->mbox_stream, $array_ids[0]), 80, 255);
@@ -504,7 +504,7 @@ function export_all($params){
 		}
 	}
 
-	//MAILARCHIVER 
+	//MAILARCHIVER
 	function js_source_var($params) {
 		$this-> folder = $params['folder'];
 		if(!$this->folder){
@@ -521,7 +521,7 @@ function export_all($params){
 		$this->connectImap();
 		$header	 	= $this-> getHeader($id_number);
 		$body		= $this-> getBody($id_number);
-		
+
 		if(!strpos($header,"Date: ")){
 			$header = "Date: " . $this->getHeaderInfo($id_number)->Date . "\r\n" .$header ;
 		}
@@ -530,10 +530,10 @@ function export_all($params){
 
 		$input = $header . "\r\n\r\n" . $body;
 		$input = preg_replace('/\x1d/', '', $input); //remove special char control detected (hex 1D)
-		
+
 		return($input);
-	} 
-	
+	}
+
     function export_msg_data($id_msg,$folder) {
 		$this->folder = $folder;
 		$this->folder = mb_convert_encoding($this->folder, "UTF7-IMAP","ISO_8859-1");
@@ -552,23 +552,23 @@ function export_all($params){
 		$this->folder = $folder;
  		$this->folder = mb_convert_encoding($this->folder, "UTF7-IMAP","ISO_8859-1");
  		$tempDir = $this->tempDir;
- 		                 
- 		$this->connectImap(); 
- 		$header         = $this-> getHeader($id_msg); 
- 		$body           = $this-> getBody($id_msg); 
- 		
+
+ 		$this->connectImap();
+ 		$header         = $this-> getHeader($id_msg);
+ 		$body           = $this-> getBody($id_msg);
+
 		$file = tempnam ($tempDir, 'source_#'.$id_msg);
 		$file .= '.php';
 		$fileName = basename ($file);
 		$f = fopen($file, "w");
 		fputs($f,$phpheader.$header ."\r\n\r\n". $body);
- 		fclose($f); 
+ 		fclose($f);
 		$urlPath = 'tmpLclAtt/' . $fileName;
- 		                 
- 		imap_close($this->mbox_stream); 
+
+ 		imap_close($this->mbox_stream);
 		return "inc/gotodownload.php?idx_file=".$tempDir . '/'.$file."&newfilename=fonte_da_mensagem.txt";
         }
- 		                 
+
 	function remove_accents($string) {
 		/*
 			$array1 = array("á", "à", "â", "ã", "ä", "é", "è", "ê", "ë", "í", "ì", "î", "ï", "ó", "ò", "ô", "õ", "ö", "ú", "ù", "û", "ü", "ç" , "?", "\"", "!", "@", "#", "$", "%", "¨", "&", "*", "(", ")", "-", "=", "+", "´", "`", "[", "]", "{", "}", "~", "^", ",", "<", ">", ";", ":", "/", "?", "\\", "|", "¹", "²", "³", "£", "¢", "¬", "§", "ª", "º", "°", "Á", "À", "Â", "Ã", "Ä", "É", "È", "Ê", "Ë", "Í", "Ì", "Î", "Ï", "Ó", "Ò", "Ô", "Õ", "Ö", "Ú", "Ù", "Û", "Ü", "Ç");
@@ -583,9 +583,9 @@ function export_all($params){
 	function get_attachments_headers( $folder, $id_number ){
 
 	    $this->folder = mb_convert_encoding($folder, "UTF7-IMAP","UTF-8");
-		
+
 	    $return_attachments = array();
-		
+
 	    include_once("class.attachment.inc.php");
 
 	    $imap_attachment = new attachment();
@@ -595,20 +595,20 @@ function export_all($params){
 		foreach($attachments as $i => $attachment){
 
 		    $fileContent = $imap_attachment->getAttachment( $attachment['pid'] );
-			
+
 		    $headers = "<?php header('Content-Type: {$attachment['type']}');
 				header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
 				header('Pragma: public');
 				header('Expires: 0'); // set expiration time
 				      header('Content-Disposition: attachment; filename=\"{$attachment['name']}\"');\n
 				      echo '$fileContent';?>";
-			
+
 		    $return_attachments[ $attachment['name'] ] = array( "content" => $headers, "pid" => $attachment['pid'] );
 			}
 
 	    return( $return_attachments );
 			}
-			
+
 	function get_attachments_in_array($params) {
 		$return_attachments = array();
 
@@ -625,11 +625,11 @@ function export_all($params){
 		return $return_attachments;
 
 	}
-	
+
 	private function getFileType($nameFile) {
 		$strFileType = strrev(substr(strrev(strtolower($nameFile)),0,4));
 		$ContentType = "application/octet-stream";
-	   	if ($strFileType == ".asf") 
+	   	if ($strFileType == ".asf")
 	   		$ContentType = "video/x-ms-asf";
 	   	if ($strFileType == ".avi")
 	   		$ContentType = "video/avi";
@@ -655,15 +655,15 @@ function export_all($params){
 	   		$ContentType = "application/rtf";
 	   	if ($strFileType == ".htm" || $strFileType == "html")
 	   		$ContentType = "text/html";
-	   	if ($strFileType == ".xml") 
+	   	if ($strFileType == ".xml")
 	   		$ContentType = "text/xml";
-	   	if ($strFileType == ".xsl") 
+	   	if ($strFileType == ".xsl")
 	   		$ContentType = "text/xsl";
-	   	if ($strFileType == ".css") 
+	   	if ($strFileType == ".css")
 	   		$ContentType = "text/css";
-	   	if ($strFileType == ".php") 
+	   	if ($strFileType == ".php")
 	   		$ContentType = "text/php";
-	   	if ($strFileType == ".asp") 
+	   	if ($strFileType == ".asp")
 	   		$ContentType = "text/asp";
 	   	if ($strFileType == ".pdf")
 	   		$ContentType = "application/pdf";
@@ -733,22 +733,22 @@ function export_all($params){
 			$ContentType = "image/png";
 		return $ContentType;
 	}
-	
+
 	function download_all_attachments($params) {
-		
+
 		require_once dirname(__FILE__).'/class.attachment.inc.php';
 		$atObj = new attachment();
 		$atObj->setStructureFromMail($params['folder'],$params['num_msg']);
-		
+
 		$attachments = $atObj->getAttachmentsInfo();
-		$id_number = $params['num_msg'];		
+		$id_number = $params['num_msg'];
 		$tempDir = $this->tempDir;
 		$tempSubDir = $_SESSION['phpgw_session']['session_id'];
 		$fileNames = '';
 		exec('mkdir ' . $tempDir . '/'.$tempSubDir.'; cd ' . $tempDir . '/'.$tempSubDir);
 		$this-> folder = $params['folder'];
 		$this->folder = mb_convert_encoding($this->folder, "UTF7-IMAP","UTF-8");
-		
+
 		$fileNames = Array();
 		$attachments_count = count($attachments);
 		for ($i = 0; $i < $attachments_count; ++$i)
@@ -785,42 +785,42 @@ function export_all($params){
 
 			$f = fopen($tempDir . '/'.$tempSubDir.'/'.$fileName,"wb");
 			if(!$f)
-				return False;			
-			$fileContent = $atObj->getAttachment( $attachments[$i]['pid'] );	
+				return False;
+			$fileContent = $atObj->getAttachment( $attachments[$i]['pid'] );
 				fputs($f,$fileContent);
-				
+
 			fclose($f);
-		
+
 		}
 		imap_close($this->mbox_stream);
 		$nameFileZip = '';
-		
+
 		if(!empty($fileNames)) {
-			$nameFileZip = $this -> createFileZip($fileNames, $tempDir . '/'.$tempSubDir);						
+			$nameFileZip = $this -> createFileZip($fileNames, $tempDir . '/'.$tempSubDir);
 			if($nameFileZip)
 				$file =  $tempDir . '/'.$tempSubDir.'/'.$nameFileZip;
 			else {
 				$file = false;
 			}
 		}
-		else 
-			$file = false;	
-		
+		else
+			$file = false;
+
 		include_once(dirname(__FILE__).'/../../prototype/library/utils/Logger.php');
 		Logger::info('expressomail', 'downloadAllAttachment',$atObj->messageId);
-		
+
 		return $file;
 	}
 
-	function getHeader($msg_number){			
+	function getHeader($msg_number){
 		return imap_fetchheader($this->mbox_stream, $msg_number, FT_UID);
 	}
 
-	function getHeaderInfo($msg_number){			
+	function getHeaderInfo($msg_number){
 		$header = imap_headerinfo($this->mbox_stream, imap_msgno($this->mbox_stream, $msg_number), 80, 255);
 		return $header;
 	}
-	
+
 	function getBody($msg_number){
 		$header = imap_headerinfo($this->mbox_stream, imap_msgno($this->mbox_stream, $msg_number), 80, 255);
 		$body = imap_body($this->mbox_stream, $msg_number, FT_UID);
@@ -831,7 +831,7 @@ function export_all($params){
 	}
 
 	function decode_subject($string){
-		if ((strpos(strtolower($string), '=?iso-8859-1') !== false) 
+		if ((strpos(strtolower($string), '=?iso-8859-1') !== false)
 			|| (strpos(strtolower($string), '=?windows-1252') !== false)){
 			$elements = imap_mime_header_decode($string);
 			foreach ($elements as $el)
@@ -852,7 +852,7 @@ function export_all($params){
 		else
 			$return = $string;
 
-		return $this->remove_accents($return);		
+		return $this->remove_accents($return);
 	}
 }
 // END CLASS

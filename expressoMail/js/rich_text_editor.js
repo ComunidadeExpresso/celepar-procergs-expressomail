@@ -303,7 +303,7 @@ cRichTextEditor.prototype.setInitData = function (id,data,dataType,recursion, ca
 			$('#'+id).val(data);
 		}
 		else{
-			setTimeout(function() {RichTextEditor.setInitData(id,data,dataType,recursion); }, 500);
+			setTimeout(function() {RichTextEditor.setInitData(id,data,dataType,recursion,callback); }, 500);
 		}
 	}  
 	else{
@@ -320,15 +320,12 @@ cRichTextEditor.prototype.setInitData = function (id,data,dataType,recursion, ca
 			var divBr = '<div style="'+fontSize+fontFamily+'"><br type="_moz"></div>';
 			
 			if(dataType == 'edit')
-				editor.setData(data , null , false);
+				editor.setData(data , callback);
 			else
-				editor.setData(divBr+data , null , false);
-			
-			if(callback !== undefined)
-				callback();
+				editor.setData(divBr+divBr+data , callback);
 		}
 		else if(recursion < 20){
-			setTimeout(function() {RichTextEditor.setInitData(id,data,dataType,recursion); }, 500);
+			setTimeout(function() {RichTextEditor.setInitData(id,data,dataType,recursion,callback); }, 500);
 		}
 	} 
 }

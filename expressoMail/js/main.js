@@ -23,8 +23,7 @@ var notifyNewMessageFilter = [];
 var dynamicPersonalContacts = new Array();
 var dynamicPersonalGroups = new Array();
 var dynamicContacts = new Array();
-var topContact = 0;
-var contactsBuffer = new Array();
+
 //Os IE's < 9 não possuem suporte a trim() introduzida no JavaScript 1.8.1
 if(!String.prototype.trim){
 	String.prototype.trim = function(){
@@ -37,49 +36,11 @@ function mount_url_folder(folders){
 }
 
 function updateDynamicContact(userContacts){
-	if(userContacts != null && userContacts !== undefined)
-		contactsBuffer = userContacts;
-
-    if(contactsBuffer.length === 0){
-        userContacts = REST.get("/usercontacts", false, updateDynamicContact);
-        return true;
-    }
-
-    userContacts = contactsBuffer;
-
-    if(userContacts.collection && !userContacts.collection.error){
-        dynamicData = normalizeContacts(userContacts.collection.itens);
-    }else{
-        dynamicData = [];
-    }
-
-    if(dynamicData){
-        var dynamicContactsList = [];
-        $.each(dynamicData, function(index, dynamic){
-
-			itensContacts = userContacts.collection.itens;
-
-            var dataType = itensContacts[index].dataType;
-
-            if(dataType==='/sharedcontact' || dataType==='/dynamiccontacts') {
-				for (x=0; x < dynamicData.length; x++)
-				{
-					if(dynamic.mail == dynamicData[x].mail && itensContacts[x].dataType == '/personalContact')
-						return true;
-				}
-            }
-
-            dynamic['value'] = (dynamic.name ? dynamic.name +' - ': '') + dynamic.mail;
-            dynamic['type'] = dataType
-            dynamic['typel'] = (dataType.substring(0,7) == "/shared" ? "/"+dataType.substring(7,dataType.length)+"s" : dataType);
-
-            topContact = dynamic.number_of_messages > topContact ? dynamic.number_of_messages : topContact;
-
-            dynamicContactsList.push(dynamic);
-        });
-    }
-
-    dynamicData = dynamicContactsList;
+	$.get( "/rest/userdynamiccontacts" )
+		.done(function( data ) {
+			dynamicData = data.contacts;
+			topContact = data.topContact;
+		});
 }
 
 
@@ -132,7 +93,7 @@ function updateDynamicPersonalGroups(){
 function init()
 {
 
-	
+
 	if ( !is_ie ) Element('tableDivAppbox').width = '100%';
 
     //MailArchiver save offset to gmt user preference data to list correctly date/time from messages list
@@ -147,18 +108,18 @@ function init()
         var userName = userName.substring(3, position);
         cabecalho = '<h4>' + userName;
     }
-    
+
 	current_folder = "INBOX";
-	
-	
-	
-	
+
+
+
+
     //guanch
-    
-    
+
+
     // Get cyrus delimiter
     cyrus_delimiter = Element('cyrus_delimiter').value;
-    
+
 
 //    var handler_automatic_trash_cleanness = function(data)
 //    {
@@ -174,7 +135,7 @@ function init()
 //        }
 //    }
 
-   
+
 
     // Insere a applet de criptografia
     if( preferences.use_signature_digital_cripto == '1' ){ loadApplet(); }
@@ -243,21 +204,21 @@ function init()
 	'<td width=33% id="div_menu_c3" align=right></td>'+
 	'</tr></table>');
 
-	
-	$("#divAppbox").css("padding-left", "0px");
-	
-	cExecute ("$this.imap_functions.get_range_msgs2&folder=INBOX&msg_range_begin=1&msg_range_end="+preferences.max_email_per_page+"&sort_box_type=SORTARRIVAL&search_box_type=ALL&sort_box_reverse=1", handler_draw_box);
-	
 
-	
+	$("#divAppbox").css("padding-left", "0px");
+
+	cExecute ("$this.imap_functions.get_range_msgs2&folder=INBOX&msg_range_begin=1&msg_range_end="+preferences.max_email_per_page+"&sort_box_type=SORTARRIVAL&search_box_type=ALL&sort_box_reverse=1", handler_draw_box);
+
+
+
 
 	setTimeout('auto_refresh()', time_refresh);
 
 	// Inicia Messenger
 	setTimeout( function(){ init_messenger(); }, 1000 );
-	
-	
-	
+
+
+
 }
 
 function init_offline(){
@@ -288,7 +249,7 @@ function init_offline(){
 function init_messenger()
 {
 	var inicio = new Date();
-	
+
 	 // Function Remove Plugin
 	 var remove_plugin_im = function()
 	 {
@@ -403,7 +364,7 @@ function init_messenger()
 		// Remove Plugin
 		remove_plugin_im();
 	}
-	 
+
 }
 
 /**
@@ -671,7 +632,7 @@ function show_msg(msg_info){
 		var domains = "";
 		if (((msg_info.DispositionNotificationTo) && (!msg_is_read(ID) || (msg_info.Recent == 'N'))))
 		{
-		
+
 			//Força confirmação
 			if(preferences.confirm_read_message=="0"){
 				cExecute ("$this.imap_functions.send_notification&notificationto="+msg_info.DispositionNotificationTo+"&date="+msg_info.udate+"&subject="+url_encode(msg_info.subject), handler_sendNotification);
@@ -684,7 +645,7 @@ function show_msg(msg_info){
 				{
 					var confNotification = true;
 				}
-				
+
 				for (var i = 0; i < domains.length; i++)
 					if (Base64.decode(msg_info.DispositionNotificationTo).match("@"+domains[i]))
 					{
@@ -713,7 +674,7 @@ function show_msg(msg_info){
 					}
 					else
 						cExecute ("$this.imap_functions.send_notification&notificationto="+msg_info.DispositionNotificationTo+"&date="+msg_info.udate+"&subject="+url_encode(msg_info.subject), handler_sendNotification);
-					    
+
 				}
 			}
 
@@ -1425,6 +1386,11 @@ function move_msgs2(folder, msgs_number, border_ID, new_folder, new_folder_name,
         if( preferences.use_local_messages == 1 && expresso_local_messages.isArchiving( msgs_number, folder ) ){
 		alert( get_lang("Impossible to move messages that are still being archived.") );
 	    return;
+	}
+
+	if(currentTab) {
+		folder = Element("input_folder_"+currentTab);
+		folder = (folder) ? folder.value : folder;
 	}
 
 	if (! folder || folder == 'null')
@@ -2441,9 +2407,16 @@ function new_message(type, border_ID, flagged)
         data.date_hour = Element('date_hour_' + border_ID).value;
     }
 
-    var signature = RichTextEditor.getSignatureDefault();
-    if (corporateSignature != '') {
-        signature += "<br><br>" + corporateSignature;
+    var signature = '';
+    if (preferences.use_signature == "1")
+    {
+        signature = RichTextEditor.getSignatureDefault();
+    }
+
+    if (corporateSignature != '')
+    {
+        corporateSignature = '<div>' + corporateSignature + '</div>';
+        signature +=  (signature == '') ? corporateSignature : ('<div><br></div>' + corporateSignature) ;
     }
 
     if (type != "new" && type != "edit" && document.getElementById("is_local_" + border_ID) != null) data.is_local_message = (document.getElementById("is_local_" + border_ID).value == "1") ? true : false;
@@ -2491,10 +2464,13 @@ function new_message(type, border_ID, flagged)
             useOriginalAttachments(new_border_ID, border_ID);
             content.find('[name="msg_reply_from"]').val($("#msg_number_" + border_ID).val());
 
-            // Insert the signature automaticaly at message body if use_signature preference is set
-            if (preferences.use_signature == "1")
+            if (preferences.plain_text_editor == '1')
             {
-                RichTextEditor.setInitData(new_border_ID, '<div><br type="_moz"></div>' + signature);
+                $("#body_" + new_border_ID).val('\n\n' + remove_tags(signature), true);
+            }
+            else
+            {
+                RichTextEditor.setInitData(new_border_ID, signature, undefined, undefined, function() { this.focus(); });
             }
             break;
         case "reply_with_history":
@@ -2511,32 +2487,15 @@ function new_message(type, border_ID, flagged)
 
             useOriginalAttachments(new_border_ID, border_ID);
 
-            // Insert the signature automaticaly at message body if use_signature preference is set
-            if (preferences.use_signature == "1")
+            var body_text = signature + '<div><br type="_moz"></div>' + block_quoted_body;
+            if (preferences.plain_text_editor == '1')
             {
-                var body_text = '<div><br type="_moz"></div>' + signature + '<div><br type="_moz"></div>' + block_quoted_body;
-                if (preferences.plain_text_editor == "1")
-                {
-                    body_text = "\n\n" + remove_tags(body_text);
-                    $("#body_" + new_border_ID).val(body_text, true);
-                }
-                else
-                {
-                    RichTextEditor.setInitData(new_border_ID, body_text);
-                }
+                body_text = "\n\n" + remove_tags(signature) + '\n\n' + remove_tags(block_quoted_body);
+                $("#body_" + new_border_ID).val(body_text, true);
             }
             else
             {
-                body_text = '<div><br type="_moz"></div>' + block_quoted_body;
-                if (preferences.plain_text_editor == "1")
-                {
-                    body_text = "\n\n" + remove_tags(body_text);
-                    $("#body_" + new_border_ID).val(body_text, true);
-                }
-                else
-                {
-                    RichTextEditor.setInitData(new_border_ID, body_text);
-                }
+                RichTextEditor.setInitData(new_border_ID, body_text, undefined, undefined, function() { this.focus(); });
             }
             break;
         case "reply_to_all_without_history":
@@ -2585,11 +2544,16 @@ function new_message(type, border_ID, flagged)
             }
 
             useOriginalAttachments(new_border_ID, border_ID);
-            if (preferences.use_signature == "1")
-            {
-                RichTextEditor.setInitData(new_border_ID, '<div><br type="_moz"></div>' + signature, true);
-            }
 
+            if (preferences.plain_text_editor == '1')
+            {
+                $("#body_" + new_border_ID).val("\n\n" + remove_tags(signature), true);
+            }
+            else
+            {
+                RichTextEditor.setInitData(new_border_ID, signature, undefined, undefined, function() { this.focus(); });
+                //CKEDITOR.instances['body_'+new_border_ID].setData( signature, function() { this.focus(); });
+            }
             break;
         case "reply_to_all_with_history":
             btnSaveVerify();
@@ -2641,33 +2605,17 @@ function new_message(type, border_ID, flagged)
 
             useOriginalAttachments(new_border_ID, border_ID);
 
-            if (preferences.use_signature == "1")
+            var body_text = signature + '<div><br type="_moz"></div>' + block_quoted_body;
+            if (preferences.plain_text_editor == "1")
             {
-                var body_text = '<div><br type="_moz"></div><div><br type="_moz"></div>' + signature + '<div><br type="_moz"></div>' + block_quoted_body;
-                if (preferences.plain_text_editor == "1")
-                {
-                    body_text = "\n\n" + remove_tags(body_text);
-                    $("#body_" + new_border_ID).val(body_text, true);
-                }
-                else
-                {
-                    RichTextEditor.setInitData(new_border_ID, body_text);
-                }
+                body_text = "\n\n" + remove_tags(signature) + '\n\n' + remove_tags(block_quoted_body);
+                $("#body_" + new_border_ID).val(body_text, true);
             }
             else
             {
-                var body_text = '<div><br type="_moz"></div><div><br type="_moz"></div>' + block_quoted_body;
-                if (preferences.plain_text_editor == "1")
-                {
-                    body_text = "\n\n" + remove_tags(body_text);
-                    $("#body_" + new_border_ID).val(body_text, true);
-                }
-                else
-                {
-                    RichTextEditor.setInitData(new_border_ID, body_text);
-                }
+                RichTextEditor.setInitData(new_border_ID, body_text, undefined, undefined, function() { this.focus(); });
+                //CKEDITOR.instances['body_'+new_border_ID].setData( body_text, function() { this.focus(); });
             }
-
             break;
         case "forward":
             btnSaveVerify();
@@ -2675,40 +2623,25 @@ function new_message(type, border_ID, flagged)
             title = "Fw: " + html_entities(data.subject);
             content.find(".subject").val("Fw: " + data.subject);
             var divFiles = Element("divFiles_" + new_border_ID);
-            var campo_arquivo;
             content.find('[name="msg_forward_from"]').val($("#msg_number_" + border_ID).val());
 
-            if (Element("attachments_" + border_ID)) addOriginalAttachments(new_border_ID, border_ID);
-            RichTextEditor.dataReady(new_border_ID, 'forward');
-            // Insert the signature automaticaly at message body if use_signature preference is set
-            if (preferences.use_signature == "1")
+            if (Element("attachments_" + border_ID))
             {
-                var body_text = '<div><br type="_moz"></div><div><br type="_moz"></div>' + signature + '<div><br type="_moz"></div>' + make_forward_body(data.body, data.to, data.date, data.subject, data.to_all, data.cc);
-                if (preferences.plain_text_editor == "1")
-                {
-                    body_text = "\n\n" + remove_tags(body_text);
-                    $("#body_" + new_border_ID).val(body_text);
-                }
-                else
-                {
-                    RichTextEditor.setInitData(new_border_ID, body_text);
-                }
+                addOriginalAttachments(new_border_ID, border_ID);
+            }
+
+            var forward_body = make_forward_body(data.body, data.to, data.date, data.subject, data.to_all, data.cc);
+            var body_text = signature + '<div><br type="_moz"></div>' + forward_body;
+            if (preferences.plain_text_editor == "1")
+            {
+                body_text = "\n\n" + remove_tags(signature) + '\n\n' + remove_tags(forward_body);
+                $("#body_" + new_border_ID).val(body_text);
             }
             else
             {
-                var body_text = '<div><br type="_moz"></div><div><br type="_moz"></div>' + make_forward_body(data.body, data.to, data.date, data.subject, data.to_all, data.cc);
-                if (preferences.plain_text_editor == "1")
-                {
-                    body_text = "\n\n" + remove_tags(body_text);
-                    $("#body_" + new_border_ID).val(body_text);
-                }
-                else
-                {
-                    RichTextEditor.setInitData(new_border_ID, body_text);
-                }
+                //CKEDITOR.instances['body_'+new_border_ID].setData( body_text );
+                RichTextEditor.setInitData(new_border_ID, body_text);
             }
-            RichTextEditor.dataReady(new_border_ID, 'forward');
-
             break;
         case "new":
 
@@ -2736,24 +2669,15 @@ function new_message(type, border_ID, flagged)
                 draw_email_box(_to, content.find(".to").filter("input"));
                 Element('msg_number').value = '';
             }
-            RichTextEditor.dataReady(new_border_ID, 'new');
-            // Insert the signature automaticaly at message body if use_signature preference is set
-            if (preferences.use_signature == "1")
+
+            if (preferences.plain_text_editor == "1")
             {
-                var signature_text = '<div><br type="_moz"></div><div><br type="_moz"></div>' + signature;
-                if (preferences.plain_text_editor == "1")
-                {
-                    signature_text = "\n\n" + remove_tags(signature_text);
-                    $("#body_" + new_border_ID).val(signature_text);
-                }
-                else
-                {
-                    RichTextEditor.setInitData(new_border_ID, signature_text);
-                }
+                $("#body_" + new_border_ID).val("\n\n" + remove_tags(signature));
             }
-
-            RichTextEditor.dataReady(new_border_ID, 'new');
-
+            else
+            {
+                RichTextEditor.setInitData(new_border_ID, signature);
+            }
             break;
         case "edit":
             btnSaveVerify();
@@ -3147,8 +3071,7 @@ function addOriginalAttachments(new_border_ID,old_id_border)
 
                          RichTextEditor.setData('body_'+new_border_ID,content_body);
                     }
-
-                    fileUploadMSG.find(' .attachments-list').find('input[value="'+idAttach+'"]');
+                    fileUploadMSG.find(' .attachments-list').find("input[value='"+idAttach+"']");
                     delAttachment(new_border_ID,idAttach);
                     $(this).parent().qtip("destroy");
                     $(this).parent().remove();
@@ -3368,7 +3291,7 @@ function save_dynamic_contacts(array){
                 }
             });
             if(exist){
-                REST.put("/dynamiccontacts/"+exist, {name: $(value).find("input").val().split('"')[1], mail:$(value).find("input").val().match(reComplexEmail)[1]});
+                REST.put("/dynamiccontact/"+exist, {name: $(value).find("input").val().split('"')[1], mail:$(value).find("input").val().match(reComplexEmail)[1]});
             }else{
                 REST.post("/dynamiccontacts", {name: $(value).find("input").val().split('"')[1], mail:$(value).find("input").val().match(reComplexEmail)[1]});
             }
@@ -4143,7 +4066,7 @@ function print_search_msg(){
 		}
 	}
 	window_print.document.close();
-	window_print.print();
+	setTimeout(function () { window_print.print(); }, 500);
 }
 
 
@@ -4245,7 +4168,7 @@ function print_messages_bodies(){
 			window_print.document.write(html);
 		});
 		window_print.document.close();
-		window_print.print();
+		setTimeout(function () { window_print.print(); }, 500);
 	}
 			/*MENSAGENS LOCAIS*/
 	if ( proxy_mensagens.is_local_folder(get_current_folder()) ){
@@ -4329,7 +4252,7 @@ function print_messages_list(){
 			}
 		}
 		window_print.document.close();
-		window_print.print();
+		setTimeout(function () { window_print.print(); }, 500);
 	}
 	msgs_number = get_selected_messages();
 	if(msgs_number == false){
@@ -4469,7 +4392,6 @@ function print_msg(msg_folder, msg_number, border_ID){
 	var head = '<head><title></title><link href="'+current_path+'/templates/default/main.css" type="text/css" rel="stylesheet"/></head>';
 	window_print.document.write(head);
 
-	while (1){
 		try{
 			var html ='<body style="overflow:auto">';
 			html += cabecalho + '</h4><hr />';
@@ -4514,14 +4436,15 @@ function print_msg(msg_folder, msg_number, border_ID){
 					tab_tags[i].parentNode.replaceChild(_img,tab_tags[i]);
 				}
 
-			break;
 		}
 		catch(e){
 			//alert(e.message);
 		}
-	}
+	setTimeout(function ()
+	{
+		window_print.print();
+	}, 500);
 	window_print.document.close();
-	window_print.print();
 }
 
 function empty_trash_imap(shared, button, type){
@@ -5934,9 +5857,9 @@ function drawInitialFolders(){
 }
 
 function automaticClean(){
-	
-	
-	
+
+
+
 	 if (preferences.delete_trash_messages_after_n_days != 0 && preferences.delete_trash_messages_after_n_days != undefined){
 	        cExecute ("$this.imap_functions.automatic_trash_cleanness&before_date="+preferences.delete_trash_messages_after_n_days+"&cyrus_delimiter="+cyrus_delimiter, handler_automatic_trash_cleanness);
 	    }else{
@@ -5949,7 +5872,7 @@ function automaticClean(){
 	    }else{
 	        cExecute ("$this.imap_functions.automatic_spam_cleanness&before_date="+14+"&cyrus_delimiter="+cyrus_delimiter, handler_automatic_spam_cleanness);
 	    }
-	    
+
 }
 
 
@@ -5967,3 +5890,8 @@ var handler_automatic_spam_cleanness = function(data)
    }
 }
 
+$( document ).ready(function() {
+	if(parseInt(preferences.use_dynamic_contacts)){
+		updateDynamicContact();
+	}
+});

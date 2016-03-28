@@ -566,19 +566,25 @@ function syncColumns() {
 					document.getElementById("colgroup_main_"+numBox).childNodes[c].setAttribute("width",colSizes[tbl][c]);
 				}
 				document.getElementById("colgroup_head_"+numBox).childNodes[c].setAttribute("width",colSizes[tbl][c]);
-				if (tbH.rows[0].cells[c].className=="th_resizable") {
-					// lots of stupid fixes for FF to redraw cell content
-					if (_cell.childNodes && _cell.childNodes.length>1) {
-						_mouse_over = _cell.childNodes[1].onmouseover;
-						_mouse_out = _cell.childNodes[1].onmouseout;
-					}
-					_cell.innerHTML = trM[r].cells[c].innerHTML;
-					if (_cell.childNodes && _cell.childNodes.length>1) {
-						_cell.childNodes[1].onmouseover = _mouse_over;
-						_cell.childNodes[1].onmouseout = _mouse_out;
-					}
-					tbH.rows[0].cells[c].innerHTML = tbH.rows[0].cells[c].innerHTML;
-				}
+				/**
+				 * As linhas abaixo foram comentadas pois estava causando
+				 * o seguinte bug no firefox: ao clicar com o botao direito
+				 * em um elemento html dentro de um td o menu de contexto
+				 * de opcao nao era acionado e sim do browser.
+				 */
+				// if (tbH.rows[0].cells[c].className=="th_resizable") {
+				// 	// lots of stupid fixes for FF to redraw cell content
+				// 	if (_cell.childNodes && _cell.childNodes.length>1) {
+				// 		_mouse_over = _cell.childNodes[1].onmouseover;
+				// 		_mouse_out = _cell.childNodes[1].onmouseout;
+				// 	}
+				// 	_cell.innerHTML = trM[r].cells[c].innerHTML;
+				// 	if (_cell.childNodes && _cell.childNodes.length>1) {
+				// 		_cell.childNodes[1].onmouseover = _mouse_over;
+				// 		_cell.childNodes[1].onmouseout = _mouse_out;
+				// 	}
+				// 	tbH.rows[0].cells[c].innerHTML = tbH.rows[0].cells[c].innerHTML;
+				// }
 			}
 		}
 	}
@@ -2394,9 +2400,13 @@ function draw_message(info_msg, ID){
 	option_reply.id = 'msg_opt_reply_'+ID;
 	option_reply.className = 'message_options';
 	option_reply.onclick = function(){
-
-		new_message(($.cookie("option_reply")) ? $.cookie("option_reply") : "reply_with_history", ID);
-
+        // ldap_entry_config == true: significa que esta configurado para o ambiente 'procergs'
+        // assim, funcionalidade de responder e-mail não utiliza a opção armazenada em cookie
+        if (window.expresso.ldap_entry_config == true) {
+            new_message('reply_with_history', ID);
+        } else {
+            new_message(($.cookie('option_reply')) ? $.cookie('option_reply') : 'reply_with_history', ID);
+        }
 	};
 	option_reply.innerHTML = get_lang('Reply');
 	option_reply.onmouseover=function () {this.className='message_options_active';};
@@ -2518,8 +2528,7 @@ function draw_message(info_msg, ID){
 		var option_export = '<span onclick="proxy_mensagens.export_all_messages()" onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options">'+get_lang("Export")+'</span> | ';
 		var report_error = '<span onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options" onclick=reports_window("'+currentTab+'");>'+get_lang("Truncated message?")+'</span> | ';
 		// Opção do menu 'Mais Ações' para criar filtro a partir da mensagem aberta:
-		//var option_create_filter = '<span onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options" onclick=filter_from_msg(onceOpenedHeadersMessages[\'' + html_entities(info_msg.msg_folder) + '\'][' + info_msg.msg_number + ']);>' + get_lang("Create filter from message") + '</span> | ';
-		var option_create_filter = '';
+		var option_create_filter = '<span onmouseover="this.className=\'reply_options_active\'" onmouseout="this.className=\'reply_options\'" class="reply_options" onclick=filter_from_msg(onceOpenedHeadersMessages[\'' + html_entities(info_msg.msg_folder) + '\'][' + info_msg.msg_number + ']);>' + get_lang("Create filter from message") + '</span> | ';
 		div_other_more_options.innerHTML += option_create_filter + option_move + option_print + option_export + block_user +  report_error;
 
 
@@ -2779,7 +2788,8 @@ function draw_message(info_msg, ID){
     if(info_msg.from){
     	var td1 = document.createElement("TD");
     	td1.innerHTML = get_lang("From: ");
-    	td1.appendChild(deny_email(info_msg.from.email));
+		if(window.expresso.ldap_entry_config !== true)
+			td1.appendChild(deny_email(info_msg.from.email));
     	td1.width = "7%";
     }
 
@@ -2788,7 +2798,8 @@ function draw_message(info_msg, ID){
 		tr111.className = "tr_message_header";
 		var td111 = document.createElement("TD");
 		td111.innerHTML = get_lang("Sent by")+": ";
-		td111.appendChild(deny_email(info_msg.sender.email));
+		if(window.expresso.ldap_entry_config !== true)
+			td111.appendChild(deny_email(info_msg.sender.email));
 		td111.setAttribute("noWrap","true");
 		var sender = document.createElement("TD");
 		sender.id = "sender_"+ID;
@@ -3240,7 +3251,7 @@ function draw_message(info_msg, ID){
 		tr.className = "tr_message_header";
 	var td = document.createElement("TD");
 		td.colspan = '2';
-	td.style.fontSize = '10pt';
+	td.style.fontSize = '13pt';
  	td.style.fontFamily = 'Arial,Verdana';
  	td.style.verticalAlign = 'top';
  	td.style.height = '100%';
@@ -4113,7 +4124,9 @@ function input_binds(div, ID){
         {
             source: function(request, response){
                 if ($.trim(request.term).length == 0)
+                {
                     return false;
+                }
                 if ( request.term in cache ) {
                     response( cache[ request.term ] );
                     return;
@@ -4575,7 +4588,6 @@ function draw_new_message(border_ID){
 			primary : "expressomail-icon-search_user"
 		}
 	}).click(function(){
-		check_input(content.find('[name="input_important_message"]'));
 		searchPersons.openDialog('email', ID , 0);
 	})
 	//BOTAO ASS. DIGITAL
@@ -4893,7 +4905,7 @@ function draw_new_message(border_ID){
         	dropZone.prev().show();
 		});
 	}
-	updateDynamicContact();
+	//updateDynamicContact();
 	return ID;
 }
 
