@@ -11,7 +11,7 @@ if(!isset($GLOBALS['phpgw_info']))
     );
 }
 include_once(dirname(__FILE__).'/../../prototype/library/utils/Logger.php');
-$GLOBALS['phpgw_info']['server']['download_temp_dir'] = '/tmp';
+$GLOBALS['phpgw_info']['server']['download_temp_dir'] = '/var/www/tmp';
 //-----------------------//
 
 //-----------------------//
@@ -58,16 +58,16 @@ else
 function unhtmlentities($string)
 {
     $string = utf8_encode($string);
-    
+
     static $trans_tbl;
- 
+
     $string = preg_replace('~&#x([0-9a-f]+);~ei', 'code2utf(hexdec("\\1"))', $string);
     $string = preg_replace('~&#([0-9]+);~e', 'code2utf(\\1)', $string);
 
     if (!isset($trans_tbl))
         {
         $trans_tbl = array();
-       
+
         foreach (get_html_translation_table(HTML_ENTITIES) as $val=>$key)
             $trans_tbl[$key] = utf8_encode($val);
         }
@@ -98,7 +98,7 @@ if($msgNumber != 'null' && $indexPart !== null && $msgFolder)
     $attachment->setStructureFromMail($msgFolder, $msgNumber);
     $fileContent = $attachment->getAttachment($indexPart);
     $info = $attachment->getAttachmentInfo($indexPart);
-    $filename = $newFilename ? $newFilename : $info['name'];       
+    $filename = $newFilename ? $newFilename : $info['name'];
     $filename = unhtmlentities($filename);
     $messageId = $attachment->messageId;
 }
@@ -124,7 +124,7 @@ $disposition = $image ? "inline" : "attachment; filename=\"". addslashes($newFil
 
 if( !$ContentType || $ContentType == 'application/octet-stream')
 {
-    
+
     if( strstr($_SERVER['HTTP_USER_AGENT'],'MSIE') && $disposition != 'inline' )
         $ContentType = 'application-download';
                 else
@@ -132,7 +132,7 @@ if( !$ContentType || $ContentType == 'application/octet-stream')
         function guessContentType( $fileName )
         {
             $strFileType = strtolower(substr ( $fileName , strrpos($fileName, '.') ));
-                         
+
 	    switch( $strFileType )
 	    {
 		case ".asf": return "video/x-ms-asf";
@@ -210,13 +210,13 @@ if( $fileContent )
 {
 	$size = mb_strlen($fileContent);
     header("Content-Length: ". $size);
-    
+
     if( isset($info["encoding"]) )
     {
         header("Content-transfer-encoding: ".$info["encoding"] );
     //    header("Content-encoding: ".$info["encoding"] );
-    } 
-    
+    }
+
     if( $image === 'thumbnail'  && (strtolower(substr ( $info['name'] , (strrpos($info['name'], '.')+1))) !== 'bmp') )
     {
 	$pic = imagecreatefromstring( $fileContent );
@@ -243,10 +243,10 @@ if( $fileContent )
 	echo $fileContent;
 }
 else
-{   
+{
     /**
     * Delete Diretorio
-    * @param string $dir 
+    * @param string $dir
     */
     function cleanup( $dir )
     {
@@ -259,7 +259,7 @@ else
                 cleanup( $dir.'/'.$file );
 
         reset( $files ); //?
-        
+
         if(!rmdir( $dir ))
             return;
     }
@@ -275,8 +275,8 @@ else
 
     $size = filesize($filename);
     header("Content-Length: ". $size);
-    header("Content-encoding: text/plain" ); 
-    
+    header("Content-encoding: text/plain" );
+
     if (preg_match("#^".$tempDir."/(".$GLOBALS['phpgw']->session->sessionid."/)*[A-z0-9_]+_".$GLOBALS['phpgw']->session->sessionid."[A-z0-9]*(\.[A-z]{3,4})?$#",$filename))
     {
         session_write_close();
@@ -303,7 +303,7 @@ if(!$filename||$filename='false'){
 	Logger::info('expressomail', 'gotodownload','id:'.$messageId.'|filename:'.$filename.'|size:'.$size);
 }
 
-        
+
 //-----------------------//
 
 ?>

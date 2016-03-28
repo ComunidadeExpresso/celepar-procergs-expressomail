@@ -37,7 +37,7 @@
 			<ul class="menu-control">
 				<li><a href="#<%= data.rules[i].name %>" class="button update" title="<%= get_lang("Change rule")%> '<%= (data.rules[i].name ? (data.rules[i].name == 'vacation' ? get_lang('vacation') : data.rules[i].name) : data.rules[i].id)%>'"></a></li>
 				<li><a href="#<%= data.rules[i].name %>" class="button enable<%= (data.rules[i].enabled == "true")? '': ' hidden' %>" title="<%= get_lang("Disable rule")%> '<%= (data.rules[i].name ? (data.rules[i].name == 'vacation' ? get_lang('vacation') : data.rules[i].name) : data.rules[i].id)%>'"></a></li>
-				<li><a href="#<%= data.rules[i].name %>" class="button disable<%= (data.rules[i].enabled  == "true")? ' hidden': '' %>" title="<%= get_lang("Enable rule")%>"></a></li>
+				<li><a href="#<%= data.rules[i].name %>" class="button disable<%= (data.rules[i].enabled  == "true")? ' hidden': '' %>" title="<%= get_lang("Enable rule")%> '<%= (data.rules[i].name ? (data.rules[i].name == 'vacation' ? get_lang('vacation') : data.rules[i].name) : data.rules[i].id)%>'"></a></li>
 				<li><a href="#<%= data.rules[i].name %>" class="button close" title="<%= get_lang("Delete rule")%> '<%= (data.rules[i].name ? (data.rules[i].name == 'vacation' ? get_lang('vacation') : data.rules[i].name) : data.rules[i].id)%>'"></a></li>
 				<li class="select" ><input type="checkbox"/></li>
 			</ul>
@@ -52,7 +52,7 @@
 	
 %>
 		<% if(data.rules[i].id == "") continue; %>
-		<li class="rule" title="<%= data.rules[i].id %>">
+		<li class="rule" title="<%= data.rules[i].name %>">
 			<strong class="title <%= (data.rules[i].enabled == "true")? 'enable':'disable' %>"><%= (data.rules[i].name ? data.rules[i].name : data.rules[i].id)%></strong>
 			<input type="hidden" class="id" value="<%= data.rules[i].id %>">
 			<dl class="rule-briefing">
@@ -111,10 +111,10 @@
 			</dl>
 			<ul class="menu-control">
 				<li><a href="#<%= data.rules[i].name %>" class="button update" title="<%= get_lang("Change rule")%> '<%= data.rules[i].name %>'"></a></li>
-				<li><a href="#<%= data.rules[i].name %>" class="button enable<%= (data.rules[i].enabled == "true")? '': ' hidden' %>" title="<%= get_lang("Disable rule")%>"></a></li>
-				<li><a href="#<%= data.rules[i].name %>" class="button disable<%= (data.rules[i].enabled  == "true")? ' hidden': '' %>" title="<%= get_lang("Enable rule")%>"></a></li>
+				<li><a href="#<%= data.rules[i].name %>" class="button enable<%= (data.rules[i].enabled == "true")? '': ' hidden' %>" title="<%= get_lang("Disable rule")%> '<%= data.rules[i].name %>'"></a></li>
+				<li><a href="#<%= data.rules[i].name %>" class="button disable<%= (data.rules[i].enabled  == "true")? ' hidden': '' %>" title="<%= get_lang("Enable rule")%> '<%= data.rules[i].name %>'"></a></li>
 				<li><a href="#<%= data.rules[i].name %>" class="button close" title="<%= get_lang("Delete rule")%> '<%= data.rules[i].name %>'"></a></li>
-				<li class="select" ><input type="checkbox"/></li>
+				<li class="select" ><input type="checkbox" title="<%= data.rules[i].name %>"/></li>
 			</ul>
 		</li>
 <% 

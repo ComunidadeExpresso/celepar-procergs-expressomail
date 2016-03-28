@@ -48,10 +48,20 @@ function outOfficeVerify(force) {
  * Valida os campos do formulário da tela de filtros para salvar.
  */
 valid_save = function(){
+	// remove espaços adicionais ao redor de todos campos
+	$('input[type="text"]', list_container).each(function ()
+	{
+		$(this).val($.trim($(this).val()));
+	});
+	// substitui espaços por hifens no nome da regra pra evitar duplicaçoes ao editar
+	list_container.find('[name="name"]').val(list_container.find('[name="name"]').val().toString().replace(/\s+/g, '_'));
+
 	var accord = list_container.find(".rule-details-container").accordion({autoHeight: false});
 	if(list_container.find('[name="name"]').attr("disabled") != "disabled")
 	{
-		if($.trim(list_container.find('[name="name"]').val()) == ""){
+		var namePattern = /[^0-9a-zA-Z_]/g;
+		var ruleName = list_container.find('[name="name"]').val();
+		if($.trim(ruleName) == ""){
 			$.Zebra_Dialog(get_lang("No name filled"),{
                 'overlay_opacity': '0.5',
                 'custom_class': 'custom-zebra-filter',
@@ -61,7 +71,7 @@ valid_save = function(){
 			});
 			accord.accordion({active: 0});
 			return false;
-		}else if($.trim(list_container.find('[name="name"]').val()) == "vacation"){
+		}else if($.trim(ruleName) == "vacation"){
 			$.Zebra_Dialog(get_lang("Invalid name, 'vacation' is a reserved word"),{
                 'overlay_opacity': '0.5',
                 'custom_class': 'custom-zebra-filter',
@@ -71,11 +81,21 @@ valid_save = function(){
 			});
 			accord.accordion({active: 0});
 			return false;
-		}else{
+		} else if (namePattern.test(ruleName)) {
+			$.Zebra_Dialog(get_lang("Invalid name, use only letters and numbers"),{
+				'overlay_opacity': '0.5',
+				'custom_class': 'custom-zebra-filter',
+				'onClose':  function(caption) {
+					list_container.find('[name="name"]').focus();
+				}
+			});
+            accord.accordion({active: 0});
+            return false;
+		} else {
 			filter_list = DataLayer.get("filter", true);
 			var error = false;
 			$.each(filter_list, function(index, value){
-				if(filter_list[index].name == list_container.find('[name="name"]').val()){
+                if(filter_list[index].name == ruleName){
 					$.Zebra_Dialog(get_lang("There is already a filter with this name"),{
                         'overlay_opacity': '0.5',
                         'custom_class': 'custom-zebra-filter',
@@ -85,7 +105,7 @@ valid_save = function(){
 					});
 					accord.accordion({active: 0});
 					error = true;
-					return;
+					return false;
 				}
 			});
 			if(error){
@@ -223,7 +243,7 @@ keys = function( object ){
 
   return( array );
 
-}
+};
 
 /*
  * Preenche o formulário de filtros com as informações originais para edição
@@ -270,7 +290,7 @@ showDetails = function( filter ){
 
 	if (filter.alertMessage == 'true') $('.alertMessage').attr('checked', 'True');
 	if (filter.verifyNextRule == 'true') $('.verifyNextRule').attr('checked', 'True');
-}
+};
 
 
 DataLayer.codec( "filter", "detail", {
@@ -285,7 +305,7 @@ DataLayer.codec( "filter", "detail", {
 		isExact: false,
 		applyMessages : "",
 		enabled : true
-      }
+     };
 
 	var apply_messages_ = keys(selectedMessages);
 
@@ -695,6 +715,7 @@ function list_filters(html) {
 				nameObj = details_container.find( 'input[name="name"]' );
 				isExact = details_container.find( 'input[name="isExact"]' );
 				showDetails(filters);
+
 				var accord = list_container.find(".rule-details-container").accordion({autoHeight: false});
 				list_container.find(".button").button().filter(".forth").click(function(){
 					accord.accordion({active: 1});
@@ -710,9 +731,13 @@ function list_filters(html) {
 					if(nameObj)
 						nameObj.attr("disabled", "false");
 					if(valid_save())
+					{
 						$(this).submit();
+					}
 					else
+					{
 						return;
+					}
 					DataLayer.commit( 'filter', false,function(data){
 						if(filters['alertMessage'] == "true"){
 							if(filters['alertMessage'] != $('.alertMessage').is(':checked').toString()){
@@ -737,7 +762,7 @@ function list_filters(html) {
 						showGridMessages($(this));
 					else
 						return;
-				})
+				});
 			}else{
 				list_container.find(".vacation-details-container").removeClass("hidden");
 				list_container.find(".rule-details-container").addClass("hidden");
@@ -995,7 +1020,7 @@ function render_new_rule (from, subject) {
 		delimiter: cyrus_delimiter,
 		from: from,
 		subject: subject ? html_entities(subject) : subject
-	}
+	};
 
 	DataLayer.render(BASE_PATH + 'modules/filters/edit-filter.ejs', data, function(html)
 	{

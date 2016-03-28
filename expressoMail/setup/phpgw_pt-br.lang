@@ -920,6 +920,7 @@ No name filled	expressoMail	pt-br	Nenhum nome preenchido
 No criteria filled	expressoMail	pt-br	Nenhum critério preenchido
 Invalid name, 'vacation' is a reserved word	expressoMail	pt-br	Nome inválido, 'vacation' é uma palavra reservada
 There is already a filter with this name	expressoMail	pt-br	Já existe um filtro com este nome
+Invalid name, use only letters and numbers	expressoMail	pt-br	Nome inválido, use somente letras ou números
 Fill the action value	expressoMail	pt-br	Preencha o valor da ação
 This user is already blocked. Would you like to unlock it?	expressoMail	pt-br	Esse usuário já está bloqueado. Deseja desbloquea-lo?
 Lock User	expressoMail	pt-br	Bloqueio do usuário
@@ -931,8 +932,8 @@ Exclusion Confirmation	expressoMail	pt-br	Confirmação de exclusão
 List	expressoMail	pt-br	Listagem
 Rules for message classification	expressoMail	pt-br	Regras de classificação de mensagem
 Add new rule	expressoMail	pt-br	Adicionar nova regra
-Add rule out of office	expressoMail	pt-br	Adicionar regra Fora do escritorio
-Out of office	expressoMail	pt-br	Fora do escritorio
+Add rule out of office	expressoMail	pt-br	Adicionar regra Fora do escritório
+Out of office	expressoMail	pt-br	Fora do escritório
 Do you want to display date in format numerical?	expressoMail	pt-br	Você deseja exibir a data no formato numérico?
 at	expressoMail	pt-br	às
 Remove Label	expressoMail	pt-br	Desmarcar

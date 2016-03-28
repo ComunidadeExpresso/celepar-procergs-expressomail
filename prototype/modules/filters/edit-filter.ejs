@@ -15,7 +15,7 @@
 		<div>
 			<fieldset>
 				<label class="small"><%= get_lang("Name of the rule")%></label>
-				<input type="text" name="name" />
+				<input type="text" name="name" size="30" maxlength="30"/>
 			</fieldset>
 			<fieldset>
 				<label class="small"><%= get_lang("Sender")%></label>
@@ -27,7 +27,7 @@
 					<option value="$"><%= get_lang("ends with")%></option>
 
 				</select>
-				<input type="text" name="criteriaValue[]" value="<%= data.from %>" />
+				<input type="text" name="criteriaValue[]" value="<%= data.from %>" size="50" />
 				<input type="hidden" name="criteriaType[]" value="from"/>
 			</fieldset>
 			<fieldset>
@@ -39,7 +39,7 @@
 					<option value="^"><%= get_lang("starting with")%></option>
 					<option value="$"><%= get_lang("ends with")%></option>
 				</select>
-				<input type="text" name="criteriaValue[]" />
+				<input type="text" name="criteriaValue[]" size="50" />
 				<input type="hidden" name="criteriaType[]" value="to"/>
 			</fieldset>
 			<fieldset>
@@ -52,7 +52,7 @@
 					<option value="$"><%= get_lang("ends with")%></option>
 
 				</select>
-				<input type="text" name="criteriaValue[]" value="<%= data.subject %>" />
+				<input type="text" name="criteriaValue[]" value="<%= data.subject %>" size="50" />
 				<input type="hidden" name="criteriaType[]" value="subject"/>
 			</fieldset>
 			<fieldset>
@@ -64,7 +64,7 @@
 					<option value="^"><%= get_lang("starting with")%></option>
 					<option value="$"><%= get_lang("ends with")%></option>
 				</select>
-				<input type="text" name="criteriaValue[]" />
+				<input type="text" name="criteriaValue[]" size="50" />
 				<input type="hidden" name="criteriaType[]" value="body"/>
 			</fieldset>
 			<fieldset>
@@ -73,7 +73,7 @@
 					<option value=">"><%= get_lang("is over than")%></option>
 					<option value="<"><%= get_lang("is under than")%></option>
 				</select>
-				<input type="text" class="sizeRule" name="criteriaValue[]" />
+				<input type="text" class="sizeRule" name="criteriaValue[]" size="7" maxlength="7" />
 				<input type="hidden" name="criteriaType[]" value="size"/>
 			</fieldset>
 			<fieldset>

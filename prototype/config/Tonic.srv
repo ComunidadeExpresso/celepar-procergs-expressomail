@@ -70,6 +70,9 @@ TokenResource = /oauth/TokenResource.php
 [/usercontacts]
 UserContactsResource = /catalog/UserContactsResource.php
 
+[/userdynamiccontacts]
+UserDynamicContactsResource = /catalog/UserDynamicContactsResource.php
+
 [/usersldap]
 UsersResource = /user/UsersResource.php
 

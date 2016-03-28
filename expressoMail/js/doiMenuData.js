@@ -192,7 +192,6 @@
                     "remove": {"name": get_lang("Delete"),      "icon": "delete", callback: function(key, opt){ proxy_mensagens.delete_msgs('null','selected','null'); }},
                     "export": {"name": get_lang("Export"),      "icon": "export", callback: function(key, opt){ proxy_mensagens.export_all_messages(); }},
 					/*Abre o diálogo de criação de filtro a partir da mensagem:*/
-					/*
 					"filterFromMsg": {
 						"name": get_lang("Create filter from message"),
 						"icon": "filter",
@@ -206,7 +205,6 @@
 						},
 						disabled: is_filterFromMsg_disabled()
 					},
-					*/
                     "archive": archive
                 }
 

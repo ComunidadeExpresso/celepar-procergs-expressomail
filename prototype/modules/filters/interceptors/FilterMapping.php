@@ -65,19 +65,19 @@ class FilterMapping
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
 	* @sponsor    Caixa Econômica Federal
 	* @author     Airton Bordin Junior <airton@prognus.com.br>
-	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>	
-	* @author	  Natan Fonseca <natan@prognus.com.br>	
-	* @param      <$uri> 
-	* @param      <$result> 
-	* @param      <$criteria> 
-	* @param      <$original> 
+	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>
+	* @author	  Natan Fonseca <natan@prognus.com.br>
+	* @param      <$uri>
+	* @param      <$result>
+	* @param      <$criteria>
+	* @param      <$original>
 	* @access     <public>
 	*/
 	public function makeId(&$uri , &$result , &$criteria , $original) {
 		$result['id'] = $uri['id'];
 	}
-	
-	
+
+
 	/**
 	* Método que formata o Script de acordo com a sintaxe do Sieve.
 	*
@@ -85,7 +85,7 @@ class FilterMapping
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
 	* @sponsor    Caixa Econômica Federal
 	* @author     Airton Bordin Junior <airton@prognus.com.br>
-	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>	
+	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>
 	* @param      <Array> <$rules> <Array com as regras do usuário>
 	* @return     <Regra de acordo com a sintaxe do Sieve>
 	* @access     <public>
@@ -95,18 +95,18 @@ class FilterMapping
 		$require_fileinto = $require_flag = $require_reject = $require_vacation = $require_body = $require_imapflag = $vacation = $startswith = $endswith = false;
 		$script_rules = $script_header = $script_criteria = $vacation_action = "";
 		$i = 0;
-		
+
 		foreach( $rules as $name => $data )
-		{	
+		{
 			if( $data['enabled'] == 'false' )
 				continue;
-				
-			if(array_key_exists("block", $data)) 
+
+			if(array_key_exists("block", $data))
 			{
 				/* Usado na opção Bloquear usuário do ExpressoMail */
 				if($data['block']) {
 					($i >0) ? $script_match = 'elsif anyof' : $script_match = 'if anyof';
-					$script_match = $script_match . "(address :is \"from\" [\"" .$data['name'] . "\"]) {\r\n";  
+					$script_match = $script_match . "(address :is \"from\" [\"" .$data['name'] . "\"]) {\r\n";
 					$script_match .= "fileinto \"INBOX/Spam\"; \r\n}\r\n";
 					$script_rules .= $script_match;
 					$script_match = "";
@@ -116,49 +116,50 @@ class FilterMapping
 					continue;
 				}
 			}
-			
 
-				
+
+
 			$vacation = false;
 			$criteria = $data['criteria'];
 			$action   = $data['actions'];
-			
+
 			($i >0 && $verifyNextRule == 'false') ? $script_match = 'els' : $script_match = '';
 			$data['isExact'] == 'false' ?  $script_match .= 'if anyof (' : $script_match .= 'if allof (';
 
 			$verifyNextRule = 'false';
-			
+
 			if( is_array($criteria) )
 			foreach ($criteria as $j => $value)
-			{					
+			{
 				if ($criteria[$j]['operator'] == '!*') $script_criteria .= "not ";
-				
+
 				switch(strtoupper($criteria[$j]['field'])) {
-					case 'TO':    
+					case 'TO':
 					case 'CC':
-						$criteria[$j]['field'] = "[\"To\", \"TO\", \"Cc\", \"CC\"]"; 
+						$criteria[$j]['field'] = "[\"To\", \"TO\", \"Cc\", \"CC\"]";
 						$script_criteria .= "address :";
 						break;
 					case 'FROM':
 						$criteria[$j]['field'] = "\"" . $criteria[$j]['field'] . "\"";
 						$script_criteria .= "address :";
 						break;
-					case 'SIZE':	
+					case 'SIZE':
 						$criteria[$j]['field'] = '';
 						$script_criteria .= "size :";
 						break;
 					case 'SUBJECT':
 						$criteria[$j]['field'] = "\"" . $criteria[$j]['field'] . "\"";
+						$criteria[$j]['value'] = mb_convert_encoding($criteria[$j]['value'], 'ISO-8859-1', 'UTF-8');
 						$script_criteria .= "header :";
 						if($criteria[$j]['operator'] == "$") {
-							$criteria[$j]['value'] = "" . $criteria[$j]['value'] . "\", \"*" . base64_encode($criteria[$j]['value']) . "";
+							$criteria[$j]['value'] = "" . $this->convert_specialchar($criteria[$j]['value']) . "\", \"*" . base64_encode($criteria[$j]['value']) . "";
 							break;
 						}
 						if($criteria[$j]['operator'] == "^") {
-							$criteria[$j]['value'] = "" . $criteria[$j]['value'] . "*\", \"" . base64_encode($criteria[$j]['value']) . "";
+							$criteria[$j]['value'] = "" . $this->convert_specialchar($criteria[$j]['value']) . "*\", \"" . base64_encode($criteria[$j]['value']) . "";
 							break;
 						}
-						$criteria[$j]['value'] = "" . $criteria[$j]['value'] . "\", \"" . base64_encode($criteria[$j]['value']) . "";
+						$criteria[$j]['value'] = "" . $this->convert_specialchar($criteria[$j]['value']) . "\", \"" . base64_encode($criteria[$j]['value']) . "";
 						break;
 					case 'BODY':
 						$criteria[$j]['field'] = '';
@@ -177,7 +178,7 @@ class FilterMapping
 						$script_criteria .= "header :";
 						break;
 				}
-				
+
 				switch ($criteria[$j]['operator']) {
 					case '>':
 						$criteria[$j]['operator'] = "over";
@@ -194,7 +195,7 @@ class FilterMapping
 					case '*':
 						$criteria[$j]['operator'] = "contains";
 						$criteria[$j]['value'] = "[\"" . $criteria[$j]['value'] . "\"]";
-						break;						
+						break;
 					case '^':
 						$criteria[$j]['operator'] = "matches";
 						$criteria[$j]['value'] = "[\"" . $criteria[$j]['value'] . "*\"]";
@@ -215,24 +216,24 @@ class FilterMapping
 						$criteria[$j]['value'] = "[\"" . $criteria[$j]['value'] . "\"]";
 						break;
 				}
-				
+
 				if ($criteria[$j]['field'] == "" || $criteria[$j]['field'] == "\"subject\"" || $startswith || $endswith)
 				{
-					$script_criteria .= $criteria[$j]['operator'] . " " . $criteria[$j]['field'] . " " . $criteria[$j]['value'] . ", "; 
+					$script_criteria .= $criteria[$j]['operator'] . " " . $criteria[$j]['field'] . " " . $criteria[$j]['value'] . ", ";
 					$startswith = $endswith = false;
 				}
 				else
 					$script_criteria .= $criteria[$j]['operator'] . " " . $criteria[$j]['field'] . " " . $criteria[$j]['value'] . ", ";
 			}
 			$script_criteria = substr($script_criteria,0,-2);
-			$script_criteria .= ")"; 
+			$script_criteria .= ")";
 
 			$action_addFlag = '';
-			
+
 			// 			[parameter] => 7
 			// 			[type] => markLabel
-			
-			
+
+
 			if( is_array($action) )
 			foreach ($action as $k => $value)
 			{
@@ -247,7 +248,7 @@ class FilterMapping
 						$require_flag = true;
 						$action[$k]['parameter'] = "\\\\" . $action[$k]['parameter'];
 						break;
-					case 'addflag':	
+					case 'addflag':
 						$require_flag = true;
 						$action_addFlag = "addflag \"" . $action[$k]['parameter'] . "\";\r\n ";
 						break;
@@ -258,7 +259,7 @@ class FilterMapping
 						break;
 					case 'fileinto':
 						$require_fileinto = true;
-						$action[$k]['parameter'] = mb_convert_encoding($action[$k]['parameter'], "UTF7-IMAP","UTF-8, ISO-8859-1, UTF7-IMAP"); 
+						$action[$k]['parameter'] = mb_convert_encoding($action[$k]['parameter'], "UTF7-IMAP","UTF-8, ISO-8859-1, UTF7-IMAP");
 						break;
 					case 'vacation':
 						$require_vacation = true;
@@ -273,17 +274,17 @@ class FilterMapping
 					$script_action .= $action[$k]['type'].";\r\n";
 				}
 				elseif ($vacation == false && $action[$k]['type'] != 'addflag' && $action[$k]['type']!='markLabel'){
-					$script_action .= $action[$k]['type'] . " \"" . $action[$k]['parameter'] . "\";\r\n ";
+					$script_action .= $action[$k]['type'] . " \"" . $action[$k]['parameter'] . "\";\r\n";
 				}elseif ($vacation == false && $action[$k]['type']=='markLabel'){
-					$script_action .= "setflag" . " \"" . $action[$k]['parameter'] . "\";\r\n ";
+					$script_action .= "setflag" . " \"" . $action[$k]['parameter'] . "\";\r\n";
 				}
 			}
-			
-			
+
+
 			/* ATENÇÃO: Colocar sempre o comando addflag antes de qualquer outro no caso de ações compostas no Sieve */
-			if ($action_addFlag != '') $script_action = $action_addFlag . $script_action; 
-			
-			$script_action = "{\r\n " . $script_action . "}";
+			if ($action_addFlag != '') $script_action = $action_addFlag . $script_action;
+
+			$script_action = "{\r\n\t" . $script_action . "}";
 			$action_addFlag = '';
 			if($vacation == false)
 				$script_rules .= $script_match . $script_criteria . $script_action . "\r\n";
@@ -291,11 +292,11 @@ class FilterMapping
 			if($data['id'] != "vacation")
 				++$i;
 			$script_match = "";
-			$script_criteria = "";	
+			$script_criteria = "";
 			$script_action = "";
-			$data['applyMessages'] = "";	
+			$data['applyMessages'] = "";
 
-			$verifyNextRule = $data['verifyNextRule'];	
+			$verifyNextRule = $data['verifyNextRule'];
 		}
 
 		/*
@@ -303,11 +304,11 @@ class FilterMapping
 		{
 			// Para habilitar as funções desejadas, edite a diretiva sieve_extensions no arquivo de configuração "/etc/imapd.conf"
 			$script_header .= "require [";
-			$require_reject ? $script_header .= "\"reject\", " : ""; 
-			$require_fileinto ? $script_header .= "\"fileinto\", " : ""; 
-			$require_vacation? $script_header .= "\"vacation\", " : "";  
-			$require_flag ? $script_header .= "\"imapflags\", " : "";  
-			$require_body ? $script_header .= "\"body\", " : "";  
+			$require_reject ? $script_header .= "\"reject\", " : "";
+			$require_fileinto ? $script_header .= "\"fileinto\", " : "";
+			$require_vacation? $script_header .= "\"vacation\", " : "";
+			$require_flag ? $script_header .= "\"imapflags\", " : "";
+			$require_body ? $script_header .= "\"body\", " : "";
 			$script_header = substr($script_header,0,-2);
 			$script_header .= "];\r\n";
 		}
@@ -315,19 +316,19 @@ class FilterMapping
 
 		if( $vacation_action )
 		  $script_rules .= "vacation" . $vacation_action . "\r\n";
-		
 
-		foreach ($rules as &$values) {						
+
+		foreach ($rules as &$values) {
 			if($values['applyMessages'])
 				$this->msgs_apply[] = $values['applyMessages'];
 			$values['applyMessages'] = array();
 		}
-		
+
 		$json_data = json_encode($rules);
 		$script_begin = "#Generated by Expresso\r\n";
-		
+
 		$hasBody = $require_body? " \"body\", ":"";
-		
+
 		$script_header = "require [\"include\", \"envelope\", \"fileinto\", \"reject\", ".
 						 "\"vacation\", \"regex\", \"relational\",". $hasBody.
 						 "\"comparator-i;ascii-numeric\", \"imapflags\"];\r\n".
@@ -344,12 +345,12 @@ class FilterMapping
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
 	* @sponsor    Caixa Econômica Federal
 	* @author     Airton Bordin Junior <airton@prognus.com.br>
-	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>	
+	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>
 	* @param      <$scriptName> <Regras do usuário>
 	* @return     <Regra do usuário parseada>
 	* @access     <public>
 	*/
-	public function readOldScript($scriptName) 
+	public function readOldScript($scriptName)
 	{
         // Recebe o conteúdo do array;
         $lines = array();
@@ -369,17 +370,17 @@ class FilterMapping
         $retorno['rule'] = array();
 
         $line = array_shift($lines);
-        while (isset($line)) { 
+        while (isset($line)) {
             foreach ($regexps as $regp) {
                 if (preg_match("/$regp/i", $line)) {
                     // Recebe todas as regras criadas no servidor;
                     if (preg_match("/#rule&&/i", $line)) {
-                        $retorno['rule'][] = ltrim($line) . "\n";                          
+                        $retorno['rule'][] = ltrim($line) . "\n";
                     }
 					if(preg_match("/#vacation/i",$line)) {
 						if(!preg_match("/&&off/i",$line)) {
 							$retorno['vacation'] = true;
-						} 
+						}
 					}
                 }
             }
@@ -388,10 +389,10 @@ class FilterMapping
         }
         return $retorno;
     }
-	
-	
-	
-	
+
+
+
+
 	/**
 	* Método que faz o parsing do Script Sieve, transformando em Array.
 	*
@@ -399,7 +400,7 @@ class FilterMapping
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
 	* @sponsor    Caixa Econômica Federal
 	* @author     Airton Bordin Junior <airton@prognus.com.br>
-	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>	
+	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>
 	* @param      <String> <$script> <Script Sieve com as regras do usuário>
 	* @return     <Regras do usuário em Array>
 	* @access     <public>
@@ -409,18 +410,21 @@ class FilterMapping
 		$old_rule = strripos($script, "##PSEUDO script start");
 		/* Tem regra antiga */
 		if($old_rule) {
+			preg_match_all('/if.*\(.*\).*{/i', $script, $condicoes);
+			$condicoes = $condicoes[0];
+
 			$parsed_rule = $this->readOldScript($script);
-			$old_rules = array(); 
+			$old_rules = array();
 			$i_return = 0;
 			foreach ($parsed_rule['rule'] as $i => $value) {
 				$array_rule = explode("&&", $parsed_rule['rule'][$i]);
-				
+
 				$action_type = array();
 				$action_parameter = array();
 				$criteria_value = array();
 				$criteria_operator = array();
 				$criteria_field = array();
-					
+
 				$i_criteria = 0;
 				$i_action = 0;
 
@@ -432,8 +436,8 @@ class FilterMapping
 						++$i_action;
 						break;
 					case 'discard':
-						$action_type[$i_action] = 'discard';
-						$action_parameter[$i_action] = "";
+						$action_type[$i_action] = 'fileinto';
+						$action_parameter[$i_action] = "INBOX.Trash";
 						++$i_action;
 						break;
 					case 'folder':
@@ -446,13 +450,13 @@ class FilterMapping
 						$action_parameter[$i_action] = 'flagged';
 						++$i_action;
 						break;
-					case 'address': 
+					case 'address':
 						$action_type[$i_action] = 'redirect';
 						$action_parameter[$i_action] = $array_rule[7];
 						++$i_action;
 						break;
 					/* Somente para tratar casos em que a ação não é suportada */
-					default:	
+					default:
 						$action_type[$i_action] = 'setflag';
 						$action_parameter[$i_action] = 'flagged';
 						++$i_action;
@@ -469,41 +473,93 @@ class FilterMapping
 					$criteria_operator[$i_criteria] = '*';
 					$criteria_field[$i_criteria] = 'from';
 					++$i_criteria;
-				} 
+				}
 				if($array_rule[4] != "") {
 					$criteria_value[$i_criteria] = mb_convert_encoding ($array_rule[4],'UTF-8');
 					$criteria_operator[$i_criteria] = '*';
 					$criteria_field[$i_criteria] = 'to';
 					++$i_criteria;
-				} 
+				}
 				if($array_rule[5] != "") {
 					$criteria_value[$i_criteria] = mb_convert_encoding ($array_rule[5],'UTF-8');
 					$criteria_operator[$i_criteria] = '*';
 					$criteria_field[$i_criteria] = 'subject';
 					++$i_criteria;
 				}
+
+				// caso a regra migrada tenha mençao a tamanho de anexo
+				if ($array_rule[11] != '')
+				{
+					// a regra "amigavel" nao possui nenhuma mençao ao tipo de regra sendo
+					// aplicada ("menor" ou "maior"), entao precisamos pegar da regra do sieve
+					preg_match('/size\s+(?<criteria>:.*)\s(?<valor>\d+)/i', $condicoes[$i], $matches);
+					if (isset($matches['criteria']) && isset($matches['valor']))
+					{
+						// assume que eh "maior que" e inverte caso aplicavel
+						$criteria_operator[$i_criteria] = '>';
+						if (strtolower($matches['criteria']) == ':under')
+						{
+							$criteria_operator[$i_criteria] = '<';
+						}
+						$criteria_value[$i_criteria] = $matches['valor'];
+						$criteria_field[$i_criteria] = 'size';
+						++$i_criteria;
+					}
+				}
 				$old_retorno = array();
-				$old_retorno['isExact']  = true;
+				$old_retorno['isExact']  = 'false';
 				$old_retorno['name'] = 'regra_migrada_' . $array_rule[1];
-				
-				$old_retorno['criteria'] = array();				
+
+				$old_retorno['criteria'] = array();
 				foreach($criteria_value as $j => $value) {
 					$old_retorno['criteria'][$j] = array();
 					$old_retorno['criteria'][$j]['value'] = $criteria_value[$j];
 					$old_retorno['criteria'][$j]['operator'] = $criteria_operator[$j];
 					$old_retorno['criteria'][$j]['field'] = $criteria_field[$j];
 				}
-				
-				$old_retorno['actions'] = array();				
+
+				$old_retorno['actions'] = array();
 				foreach($action_parameter as $j => $value) {
 					$old_retorno['actions'][$j] = array();
 					$old_retorno['actions'][$j]['parameter'] = $action_parameter[$j];
 					$old_retorno['actions'][$j]['type'] = $action_type[$j];
 				}
-				
+
 				$old_retorno['enabled'] = ($array_rule[2] == 'ENABLED') ? 'true' : 'false';
 				$old_retorno['id'] = 'Regra_migrada_' . $i_return;
 				$old_retorno['applyMessages']  = '';
+
+				/**
+				 * significados/valores possiveis da flag "8" das regras
+				 * no array
+				 *
+				 * 1 - verificar a proxima regra;
+				 * 4 - atender todos criterios ("allof"/"and")
+				 * 8 - manter uma copia na caixa de entrada
+				 * 9 - verificar a proxima e manter uma copia
+				 * 12 - atender todos criterios e manter uma copia
+				 * 13 - atender todos criterios, manter uma copia e verificar a proxima regra
+				 *
+				 */
+
+				// caso verifique a proxima regra
+				if ($array_rule[8] == 1 || $array_rule[8] == 5 || $array_rule[8] == 9 || $array_rule[8] == 13)
+				{
+					$old_retorno['verifyNextRule'] = 'true';
+				}
+				// se marcar para atender todos criterios
+				if ($array_rule[8] == 4 || $array_rule[8] == 5 || $array_rule[8] == 12 || $array_rule[8] == 13)
+				{
+					$old_retorno['isExact'] = true;
+				}
+				// caso mantenha uma copia na caixa de entrada
+				if ($array_rule[8] == 8 || $array_rule[8] == 9 || $array_rule[8] == 12 || $array_rule[8] == 13)
+				{
+					$total = count($old_retorno['actions']);
+					$old_retorno['actions'][$total] = array();
+					$old_retorno['actions'][$total]['type'] = 'fileinto';
+					$old_retorno['actions'][$total]['parameter'] = 'INBOX';
+				}
 
 				$old_rules[$i_return] = $old_retorno;
 				++$i_return;
@@ -516,7 +572,7 @@ class FilterMapping
 				$old_retorno['enabled'] = 'true';
 				$old_retorno['applyMessages'] = array();
 				$old_retorno['isExact'] = "false";
-				$old_retorno['actions'] = array();			
+				$old_retorno['actions'] = array();
 				$old_retorno['actions'][0] = array();
 				$old_retorno['actions'][0]['parameter'] = "";
 				$old_retorno['actions'][0]['type'] = "vacation";
@@ -526,15 +582,15 @@ class FilterMapping
 				$old_retorno['criteria'][0]['operator'] = "";
 				$old_retorno['criteria'][0]['field'] = "vacation";
 				$old_rules[] = $old_retorno;
-			}			
+			}
 			return $old_rules;
-		} 
+		}
 		/* Não tem regra antiga */
 		$pos = strripos($script, "#PseudoScript#");
 		$pseudo_script = substr( $script, $pos+17 );
 
 		$return = json_decode( $pseudo_script, true );
-	
+
 		return $return;
 	}
 
@@ -547,15 +603,15 @@ class FilterMapping
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
 	* @sponsor    Caixa Econômica Federal
 	* @author     Airton Bordin Junior <airton@prognus.com.br>
-	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>	
+	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>
 	* @access     <public>
 	*/
 	public function __construct()
-	{ 
+	{
 		$this->service = Controller::service("Sieve");
 	}
 
-	
+
 	/**
 	* Método que recupera as regras do usuário.
 	*
@@ -563,7 +619,7 @@ class FilterMapping
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
 	* @sponsor    Caixa Econômica Federal
 	* @author     Airton Bordin Junior <airton@prognus.com.br>
-	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>	
+	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>
 	* @return     <Regras do usuário>
 	* @access     <public>
 	*/
@@ -577,7 +633,7 @@ class FilterMapping
 		return( $this->rules );
 	}
 
-	
+
 	/**
 	* Método que aplica o filtro para as mensagens do usuário.
 	*
@@ -585,26 +641,26 @@ class FilterMapping
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
 	* @sponsor    Caixa Econômica Federal
 	* @author     Airton Bordin Junior <airton@prognus.com.br>
-	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>	
-	* @param      <$uri> 
-	* @param      <$result> 
-	* @param      <$criteria> 
-	* @param      <$original> 
+	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>
+	* @param      <$uri>
+	* @param      <$result>
+	* @param      <$criteria>
+	* @param      <$original>
 	* @access     <public>
 	*/
 	public function applySieveFilter( &$uri , &$result , &$criteria , $original  )
 	{
-		$rule_apply = array(); 
-			
+		$rule_apply = array();
+
 		$filter = Controller::read($uri);
 		$filter_ = $this->parseSieveScript($filter['content']);
-		
+
 		foreach ($filter_ as $f_) {
-			if($f_['id'] == $uri['id']) { 
+			if($f_['id'] == $uri['id']) {
 				$rule_apply	= $f_;
 			}
 		}
-				
+
 		$actions = array();
 		$actions['type'] = $rule_apply['actions'][0]['type'];
 		$actions['parameter'] = $rule_apply['actions'][0]['parameter'];
@@ -616,13 +672,13 @@ class FilterMapping
 		//$messages = $rule_apply['applyMessages'];
 		$messages = $this->msgs_apply[0];
 		$this->msgs_apply = array();
-			
+
 		$imap = Controller::service( 'Imap' );
-		$imap->apliSieveFilter($messages, $actions); 
+		$imap->apliSieveFilter($messages, $actions);
 		return $result;
 	}
 
-	
+
 	/**
 	* Método que lê o script do usuário.
 	*
@@ -630,20 +686,20 @@ class FilterMapping
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
 	* @sponsor    Caixa Econômica Federal
 	* @author     Airton Bordin Junior <airton@prognus.com.br>
-	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>	
-	* @param      <$uri> 
-	* @param      <$result> 
-	* @param      <$criteria> 
-	* @param      <$original> 
+	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>
+	* @param      <$uri>
+	* @param      <$result>
+	* @param      <$criteria>
+	* @param      <$original>
 	* @return     <Script do usuário>
 	* @access     <public>
 	*/
 	public function readUserScript( &$uri , &$params , &$criteria , $original )
-	{  
+	{
 		$uri['id'] = $this->service->config['user'];
 	}
-  
-  
+
+
 	/**
 	* Método que seta o script do usuário.
 	*
@@ -651,11 +707,11 @@ class FilterMapping
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
 	* @sponsor    Caixa Econômica Federal
 	* @author     Airton Bordin Junior <airton@prognus.com.br>
-	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>	
-	* @param      <$uri> 
-	* @param      <$result> 
-	* @param      <$criteria> 
-	* @param      <$original> 
+	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>
+	* @param      <$uri>
+	* @param      <$result>
+	* @param      <$criteria>
+	* @param      <$original>
 	* @return     <Script do usuário>
 	* @access     <public>
 	*/
@@ -686,7 +742,7 @@ class FilterMapping
 			     'active' => true );
 	}
 
-	
+
 	/**
 	* Método que deleta o script do usuário.
 	*
@@ -694,18 +750,18 @@ class FilterMapping
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
 	* @sponsor    Caixa Econômica Federal
 	* @author     Airton Bordin Junior <airton@prognus.com.br>
-	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>	
-	* @param      <$uri> 
-	* @param      <$result> 
-	* @param      <$criteria> 
-	* @param      <$original> 
+	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>
+	* @param      <$uri>
+	* @param      <$result>
+	* @param      <$criteria>
+	* @param      <$original>
 	* @access     <public>
 	*/
 	public function deleteRule( &$uri, &$params, &$criteria, $original )
 	{
-		if( !$this->rules ) {	
+		if( !$this->rules ) {
 			$this->rules = $this->getRules();
-		}	  
+		}
 		$params['id'] = $uri['id'];
 
 		$rules = array();
@@ -715,7 +771,7 @@ class FilterMapping
 				$rules[] = $this->rules[$i];
 
 		$this->rules = $rules;
-		
+
 		$uri['id'] = '';
 
 		$params = array( 'name' => $this->service->config['user'],
@@ -724,11 +780,11 @@ class FilterMapping
 
 		$URI = Controller::URI( $uri['concept'], $this->service->config['user'] );
 		$this->service->update( $URI, $params );
-	
+
 		return( false );
 	}
 
-	
+
 	/**
 	* Método que pega o script do usuário.
 	*
@@ -736,16 +792,16 @@ class FilterMapping
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
 	* @sponsor    Caixa Econômica Federal
 	* @author     Airton Bordin Junior <airton@prognus.com.br>
-	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>	
-	* @param      <$uri> 
-	* @param      <$result> 
-	* @param      <$criteria> 
-	* @param      <$original> 
+	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>
+	* @param      <$uri>
+	* @param      <$result>
+	* @param      <$criteria>
+	* @param      <$original>
 	* @return     <Script do usuário>
 	* @access     <public>
 	*/
 	public function getSieveRule( &$uri , &$params , &$criteria , $original )
-	{	  
+	{
 		$script = $this->parseSieveScript( $params['content'] );
 
 		foreach( $script as $i => $rule )
@@ -754,7 +810,7 @@ class FilterMapping
 				return( $params = $rule );
 	}
 
-	
+
 	/**
 	* Método que lista as regras do usuário.
 	*
@@ -762,118 +818,127 @@ class FilterMapping
 	* @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
 	* @sponsor    Caixa Econômica Federal
 	* @author     Airton Bordin Junior <airton@prognus.com.br>
-	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>	
-	* @param      <$uri> 
-	* @param      <$result> 
-	* @param      <$criteria> 
-	* @param      <$original> 
+	* @author	  Gustavo Pereira dos Santos <gustavo@prognus.com.br>
+	* @param      <$uri>
+	* @param      <$result>
+	* @param      <$criteria>
+	* @param      <$original>
 	* @return     <Regras do usuário>
 	* @access     <public>
 	*/
 	public function listSieveRules( &$uri , &$params , &$criteria , $original  )
 	{
-		$return = $params = $this->parseSieveScript( $params[0]['content'] ); 
+		$return = $params = $this->parseSieveScript( $params[0]['content'] );
 		return( $return );
 	}
 
-	/** 
-	 * Método que insere no ldap as informações do vacation 
-	 * 
-	 * @license    http://www.gnu.org/copyleft/gpl.html GPL 
-	 * @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br) 
-	 * @sponsor     Caixa Econômica Federal 
-	 * @author     Cristiano Corrêa Schmidt 
-	 * @param      <$uri> 
-	 * @param      <$result> 
-	 * @param      <$criteria> 
-	 * @param      <$original> 
-	 * @return     <void> 
-	 * @access     public 
-	 */ 
-	public function verifyVacationRule( &$uri , &$params , &$criteria , $original  ) 
-	{ 
-	    if( $original['properties']['id'] === 'vacation' ) 
-	    { 
-	    	
-	    	
+	/**
+	 * Método que insere no ldap as informações do vacation
+	 *
+	 * @license    http://www.gnu.org/copyleft/gpl.html GPL
+	 * @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
+	 * @sponsor     Caixa Econômica Federal
+	 * @author     Cristiano Corrêa Schmidt
+	 * @param      <$uri>
+	 * @param      <$result>
+	 * @param      <$criteria>
+	 * @param      <$original>
+	 * @return     <void>
+	 * @access     public
+	 */
+	public function verifyVacationRule( &$uri , &$params , &$criteria , $original  )
+	{
+	    if( $original['properties']['id'] === 'vacation' )
+	    {
+
+
 	    	$userLdap     	= $_SESSION['phpgw_info']['expressomail']['email_server']['imapUsername'];
 	    	$passLdap  		= $_SESSION['phpgw_info']['expressomail']['email_server']['imapPassword'];
 	    	$hostLdap       = $_SESSION['phpgw_info']['expressomail']['server']['ldap_host'];
 	    	$contextoLdap	= $_SESSION['phpgw_info']['expressomail']['server']['ldap_context'];
 
-	        $user = Controller::read(array('concept' => 'user' , 'id' => config::me('uidNumber') , 'service' => 'OpenLDAP')); 
-	        $ldapConf = Config::service('OpenLDAP', 'config'); 
-	        $con = ldap_connect( $hostLdap ); 
-	        
+	        $user = Controller::read(array('concept' => 'user' , 'id' => config::me('uidNumber') , 'service' => 'OpenLDAP'));
+	        $ldapConf = Config::service('OpenLDAP', 'config');
+	        $con = ldap_connect( $hostLdap );
+
 	        ldap_set_option( $con,LDAP_OPT_PROTOCOL_VERSION, 3 );
 	        //die(print_r($user['dn'])." - ".$passLdap);
-	        ldap_bind( $con, $user['dn'], $passLdap); 
+	        ldap_bind( $con, $user['dn'], $passLdap);
 
-	        $info = array(); 
-	        if(!in_array('Vacation', $user['objectClass'])) 
-	                $info['objectClass'] = 'Vacation'; 
+	        $info = array();
+	        if(!in_array('Vacation', $user['objectClass']))
+	                $info['objectClass'] = 'Vacation';
 
 	        $info['vacationActive'] = strtoupper($original['properties']['enabled']);
-	        //die($info['vacationActive']); 
+	        //die($info['vacationActive']);
 
-	        if(isset($original['properties']['actions']) && isset($original['properties']['actions'][0]['parameter'])) 
-	                $info['vacationInfo']   = $original['properties']['actions'][0]['parameter']; 
-	        else if( !isset($user['vacationInfo']) ) 
-	        { 
-	            $rules = $this->getRules(); 
-	            if(is_array($rules)) 
-	                foreach ($rules as $rule) 
-	                if($rule['id'] === 'vacation') 
-	                	$info['vacationInfo'] = $rule['actions'][0]['parameter']; 
-	        } 
+	        if(isset($original['properties']['actions']) && isset($original['properties']['actions'][0]['parameter']))
+	                $info['vacationInfo']   = $original['properties']['actions'][0]['parameter'];
+	        else if( !isset($user['vacationInfo']) )
+	        {
+	            $rules = $this->getRules();
+	            if(is_array($rules))
+	                foreach ($rules as $rule)
+	                if($rule['id'] === 'vacation')
+	                	$info['vacationInfo'] = $rule['actions'][0]['parameter'];
+	        }
 
-	        
-	        
+
+
 	        if(!in_array('Vacation', $user['objectClass'])){
 	            if($info['vacationActive']==""){
 	            	$info['vacationActive']="TRUE";
-	            }    
+	            }
 	        	ldap_mod_add ( $con , $user['dn'] ,  $info );
-	        } 
-	        else{ 
+	        }
+	        else{
 	                ldap_modify ( $con , $user['dn'] ,  $info );
-	        } 
+	        }
 
 
-	        ldap_close($con); 
+	        ldap_close($con);
 
-	    } 
-	 
+	    }
+
 	}
 
-	/** 
-	 * Método que remove do ldap as informações do vacation 
-	 * 
-	 * @license    http://www.gnu.org/copyleft/gpl.html GPL 
-	 * @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br) 
-	 * @sponsor     Caixa Econômica Federal 
-	 * @author     Cristiano Corrêa Schmidt 
-	 * @param      <$uri> 
-	 * @param      <$result> 
-	 * @param      <$criteria> 
-	 * @param      <$original> 
-	 * @return     <void> 
-	 * @access     public 
-	 */ 
-	public function deleteVacationRule( &$uri , &$params , &$criteria , $original  ) 
-	{         
-	    if( $original['URI']['id'] === 'vacation' ) 
-	    { 
-	        $user = Controller::read(array('concept' => 'user' , 'id' => config::me('uidNumber') , 'service' => 'OpenLDAP')); 
-	        $ldapConf = Config::service('OpenLDAP', 'config'); 
-	        $con = ldap_connect( $ldapConf['host'] ); 
-	        ldap_set_option( $con,LDAP_OPT_PROTOCOL_VERSION, 3 ); 
-	        ldap_bind( $con, $ldapConf['user'], $ldapConf['password']); 
-	        $info = array(); 
-	        $info['vacationActive'] = 'FALSE'; 
-	        $info['vacationInfo'] = ""; 
-	        ldap_modify ( $con , $user['dn'] ,  $info ); 
-	        ldap_close($con); 
-	    } 
+	/**
+	 * Método que remove do ldap as informações do vacation
+	 *
+	 * @license    http://www.gnu.org/copyleft/gpl.html GPL
+	 * @author     Consórcio Expresso Livre - 4Linux (www.4linux.com.br) e Prognus Software Livre (www.prognus.com.br)
+	 * @sponsor     Caixa Econômica Federal
+	 * @author     Cristiano Corrêa Schmidt
+	 * @param      <$uri>
+	 * @param      <$result>
+	 * @param      <$criteria>
+	 * @param      <$original>
+	 * @return     <void>
+	 * @access     public
+	 */
+	public function deleteVacationRule( &$uri , &$params , &$criteria , $original  )
+	{
+	    if( $original['URI']['id'] === 'vacation' )
+	    {
+	        $user = Controller::read(array('concept' => 'user' , 'id' => config::me('uidNumber') , 'service' => 'OpenLDAP'));
+	        $ldapConf = Config::service('OpenLDAP', 'config');
+	        $con = ldap_connect( $ldapConf['host'] );
+	        ldap_set_option( $con,LDAP_OPT_PROTOCOL_VERSION, 3 );
+	        ldap_bind( $con, $ldapConf['user'], $ldapConf['password']);
+	        $info = array();
+	        $info['vacationActive'] = 'FALSE';
+	        $info['vacationInfo'] = "";
+	        ldap_modify ( $con , $user['dn'] ,  $info );
+	        ldap_close($con);
+	    }
 	}
+
+   public function convert_specialchar($input) {
+		$temp_input = $input;
+		$temp_input = imap_8bit($temp_input);
+		$patterns[0] = '/ /';
+		$replacements[0] = '_';
+		$temp_input = preg_replace($patterns, $replacements, $temp_input);
+		return ($temp_input);
+    }
 }

@@ -87,7 +87,157 @@ class CatalogDBMapping {
 			}
 		}
     }
-	
+
+   /**
+    * Busca todos os contatos que o usario possui, que sao os seguintes:
+    * - contatos dynamicos
+    * - contatos pessoais
+    * - grupos pessoais
+    * - contatos compartilhados
+    * - grupos compartilhados
+    * Converte nomes acentuados de iso para utf-8 (para o json_encode) e elimina repeticoes.
+	* @param string $uidNumber: Id de identificacao do usuario no banco de dados.
+    * @return array: Contem a lista dos contatos e o rate maior de um
+    * contato dinamico.
+    */
+	public function allContactsUser($uidNumber )
+	{
+
+		$relations = Controller::service('PostgreSQL')->execResultSql("select id_related from phpgw_cc_contact_rels where id_contact='{$uidNumber}' and id_typeof_contact_relation=1");
+
+		$sqlOwnerContacts = '';
+		$sqlOwnerGroups   = '';
+
+		if(empty($relations))
+		{
+			$sqlOwnerContacts = " A.id_owner={$uidNumber} ";
+			$sqlOwnerGroups = " owner={$uidNumber} ";
+		}
+		else
+		{
+			$idRelations = "{$uidNumber},";
+			foreach ($relations as $value)
+				$idRelations.= $value['id_related'].',';
+			$idRelations = substr($idRelations,0,-1);
+			$sqlOwnerContacts = " A.id_owner in ({$idRelations}) ";
+			$sqlOwnerGroups = " owner in ({$idRelations}) ";
+		}
+
+		$sql = "select
+					id,
+					name,
+					mail,
+					text('/dynamiccontacts') as type,
+					text('/dynamiccontacts') as typel,
+					owner,
+					number_of_messages
+				from expressomail_dynamic_contact
+				where owner={$uidNumber}
+				union all
+				select A.id_contact as id,
+					A.names_ordered as name,
+					C.connection_value as mail,
+					CASE WHEN A.id_owner='{$uidNumber}' THEN '/personalContact' ELSE '/sharedcontact' END as type,
+					CASE WHEN A.id_owner='{$uidNumber}' THEN '/personalContact' ELSE '/contacts' END as typel,
+					A.id_owner as owner,
+					null as number_of_messages
+				from phpgw_cc_contact A,
+					phpgw_cc_contact_conns B,
+					phpgw_cc_connections C
+				where A.id_contact = B.id_contact and B.id_connection = C.id_connection
+					and B.id_typeof_contact_connection = 1 and
+					{$sqlOwnerContacts}
+				union all
+				select id_group as id,
+					title as name,
+					short_name as mail,
+					CASE WHEN owner='{$uidNumber}' THEN '/groups' ELSE '/sharedgroup' END as type,
+					CASE WHEN owner='{$uidNumber}' THEN '/groups' ELSE '/groups' END as typel,
+				    owner,
+				    null as number_of_messages
+				from phpgw_cc_groups
+				where $sqlOwnerGroups
+				order by name";
+
+		$contacts = Controller::service('PostgreSQL')->execResultSql($sql);
+		$total = count($contacts);
+		$topContact = 0;
+		$arrContacts = array('dynamiccontacts'=>array(), 'personalContact'=>array(),
+							 'groups'=>array(), 'sharedcontact'=>array(), 'sharedgroup'=>array()
+							 );
+
+		$tmp = array();
+		for($x = 0; $x < $total; $x++)
+		{
+			$contacts[$x]['name'] = mb_convert_encoding($contacts[$x]['name'], 'UTF-8', 'UTF-8 , ISO-8859-1');
+			$contacts[$x]['value'] = empty($contacts[$x]['name']) ?
+								$contacts[$x]['mail'] :
+								$contacts[$x]['name'] . ' - ' . $contacts[$x]['mail'];
+
+			if($contacts[$x]['number_of_messages'] === null)
+				unset($contacts[$x]['number_of_messages']);
+			else
+				$topContact = $contacts[$x]['number_of_messages'] > $topContact ?
+							$contacts[$x]['number_of_messages'] : $topContact;
+
+			// Se a lista de contatos contiver emails repetidos seguir
+			// a seguinte regra:
+			// os emails do contato pessoal sempre prevalecem,
+			// seguidos pelo contato compartilhado. Contato dinamico
+			// soh aparecera se nao contiver em nenhum outro catalogo
+			// do usuario. Logica:
+			// email X == Y verificar:
+			// ->se X eh dinamico e o Y eh pessoal
+			// 	 ->nao adiciona
+			// ->se X eh compartilhado e o Y eh pessoal
+			// 	 ->nao adiciona
+			// ->se X eh dynamico e o Y eh compartilhado
+			// 	 ->nao adiciona
+			$addToArray = true;
+			for ($y=0; $y < $total; $y++)
+			{
+				if($contacts[$x]['mail'] == $contacts[$y]['mail'] &&
+					(
+						($contacts[$x]['type']==='/dynamiccontacts' && $contacts[$y]['type']==='/personalContact') ||
+						($contacts[$x]['type']==='/sharedcontact' && $contacts[$y]['type']==='/personalContact') ||
+						($contacts[$x]['type']==='/dynamiccontacts' && $contacts[$y]['type']==='/sharedcontact')
+						)
+					)
+				{
+					$addToArray = false;
+					break;
+				}
+			}
+			/*
+
+			 */
+			if($addToArray === true)
+			{
+				switch ($contacts[$x]['type']) {
+					case '/dynamiccontacts':
+						$arrContacts['dynamiccontacts'][] = $contacts[$x];
+						break;
+					case '/personalContact':
+						$arrContacts['personalContact'][] = $contacts[$x];
+						break;
+					case '/groups':
+						$arrContacts['groups'][] = $contacts[$x];
+						break;
+					case '/sharedcontact':
+						$arrContacts['sharedcontact'][] = $contacts[$x];
+						break;
+					case '/sharedgroup':
+						$arrContacts['sharedgroup'][] = $contacts[$x];
+						break;
+				}
+			}
+        }
+		$return['contacts'] = array_merge($arrContacts['dynamiccontacts'], $arrContacts['personalContact'],
+		                      $arrContacts['groups'], $arrContacts['sharedcontact'],
+		                      $arrContacts['sharedgroup']);
+		$return['topContact'] = $topContact;
+		return $return;
+    }
 }
 
 ?>

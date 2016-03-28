@@ -384,7 +384,6 @@
 		echo '<link rel="stylesheet" type="text/css" href="../contactcenter/styles/search_persons.css"/>';
 	}
 
-
 	if ( isset($GLOBALS['phpgw_info']['user']['preferences']['expressoMail']['use_shortcuts']) ) //usar teclas de atalho ?
 	{
 		echo '<script type="text/javascript" src="js/shortcut.js" ></script>';
