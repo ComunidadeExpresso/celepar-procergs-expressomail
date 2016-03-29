@@ -1186,9 +1186,13 @@ function draw_box(headers_msgs, msg_folder, alternate){
 			});
 	}
 
-	if ((preferences.use_shortcuts == '1') && (headers_msgs[0]))
-		select_msg(headers_msgs[0].msg_number, 'null', true);
-
+	if( $.isArray(headers_msgs) )
+	{
+		if(  preferences.use_shortcuts && ( preferences.use_shortcuts == '1') )
+		{
+			setTimeout(function(){ select_msg( headers_msgs[0].msg_number, 'null', true); }, 500);
+		}
+	}
 
 	var tdFolders  =  Element("folderscol");
 	if ( !currentTab )
