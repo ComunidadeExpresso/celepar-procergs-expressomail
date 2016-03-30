@@ -4,6 +4,15 @@
  * By Binny V A
  * License : BSD
  */
+var Shortcut = new function() {
+	var _focus_index = 1;
+	this.focus_index = function( value ) {
+		if ( value == undefined ) return _focus_index;
+		var int = parseInt(String(value))
+		_focus_index = (isNaN(int))? 1 : int;
+		return this;
+	};
+}
 shortcut = {
 	'all_shortcuts':{},//All the shortcuts are stored in this array
     'disabled': false,
