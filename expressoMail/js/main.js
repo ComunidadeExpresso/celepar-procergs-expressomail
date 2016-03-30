@@ -1307,6 +1307,10 @@ function move_search_msgs(border_id, new_folder, new_folder_name, action){
 		}
 
 		draw_new_tree_folder();
+		if ( preferences['use_followupflags_and_labels'] != "0" )
+		{
+			draw_tree_labels();
+		}
 		EsearchE.refresh();
 	}
 
