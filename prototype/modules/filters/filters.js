@@ -285,6 +285,9 @@ showDetails = function( filter ){
             actions.filter( '[value="' + filter.actions[i].type + '"]' ).val( filter.actions[i].type )
             .siblings( '[name="actionParameter[]"]' ).val( filter.actions[i].parameter );
         }
+        if (filter.actions[i].type == "markLabel") {
+			actions.parent().find('[value="'+filter.actions[i].parameter+'"]').attr("selected", "selected");
+		}
     }
 	isExact.filter('[value="'+(filter.isExact != "false"? "and" : "or")+'"]').attr("checked", "True");
 
