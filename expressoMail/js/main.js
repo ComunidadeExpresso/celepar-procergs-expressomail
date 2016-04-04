@@ -2300,11 +2300,12 @@ function new_message(type, border_ID, flagged)
 
     RichTextEditor.editorReady = false;
 
-
-    if (Element('show_img_link_' + border_ID))
-    {
-        show_msg_img(border_ID.match(/^\d*/)[0], Element('input_folder_' + border_ID).value);
-    }
+    // este trecho de código foi comentado pois o envio de mensagens foi modificado 
+    // para que o usuário confirme ao tentar enviar uma mensagem sem imagens renderizadas
+    // if (Element('show_img_link_' + border_ID))
+    // {
+    //     show_msg_img(border_ID.match(/^\d*/)[0], Element('input_folder_' + border_ID).value);
+    // }
     var new_border_ID = draw_new_message((type == 'new') ? parseInt(border_ID.replace('_r','')) : border_ID.replace('_r',''));
 
     // Does this block has any purpose at all?
