@@ -2404,6 +2404,10 @@ function draw_message(info_msg, ID){
 	option_reply.id = 'msg_opt_reply_'+ID;
 	option_reply.className = 'message_options';
 	option_reply.onclick = function(){
+		if (!confirmSendWithoutImages(ID))
+		{
+			return false;
+		}
         // ldap_entry_config == true: significa que esta configurado para o ambiente 'procergs'
         // assim, funcionalidade de responder e-mail não utiliza a opção armazenada em cookie
         if (window.expresso.ldap_entry_config == true) {
@@ -2460,7 +2464,13 @@ function draw_message(info_msg, ID){
 		option_forward.id = 'msg_opt_forward_'+ID;
 		option_forward.className = 'message_options';
 		option_forward.innerHTML = get_lang('Forward');
-		option_forward.onclick = function(){new_message('forward', ID);};
+		option_forward.onclick = function() {
+			if (!confirmSendWithoutImages(ID))
+			{
+				return false;
+			}
+			new_message('forward', ID);
+		};
 		option_forward.onmouseover=function () {this.className='message_options_active';};
         option_forward.onmouseout=function () {this.className='message_options'};
 		option_forward.title = (preferences.use_shortcuts == '1') ? get_lang('Shortcut: %1', 'E') : get_lang('Forward');
@@ -2552,6 +2562,10 @@ function draw_message(info_msg, ID){
 		option_reply_to_all.onmouseout = function () {this.className= "reply_options";};
 		option_reply_to_all.className = "reply_options";
 		option_reply_to_all.onclick = function(){
+			if (!confirmSendWithoutImages(ID))
+			{
+				return false;
+			}
 			new_message('reply_to_all_with_history', ID);
 			$.cookie ("option_reply", "reply_to_all_with_history", { expires: 5});
 		};
@@ -2586,6 +2600,10 @@ function draw_message(info_msg, ID){
 		option_reply_with_history.onmouseout = function () {this.className= "reply_options";};
 		option_reply_with_history.className = "reply_options";
 		option_reply_with_history.onclick = function(){
+			if (!confirmSendWithoutImages(ID))
+			{
+				return false;
+			}
 			new_message('reply_with_history', ID);
 			$.cookie ("option_reply", "reply_with_history", { expires: 5});
 		};
@@ -3260,7 +3278,7 @@ function draw_message(info_msg, ID){
  	td.style.verticalAlign = 'top';
  	td.style.height = '100%';
 	div.appendChild(table_message_others_options);
-	var imgTag = info_msg.body.match(/(<img[^>]*src[^>=]*=['"]?[^'">]*["']?[^>]*>)|(<[^>]*(style[^=>]*=['"][^>]*background(-image)?:[^:;>]*url\()[^>]*>)/gi);
+	var imgTag = info_msg.body.match(/(<img[^>]*src[^>=]*=['"]?[^'">]+["']?[^>]*>)|(<[^>]*(style[^=>]*=['"][^>]*background(-image)?:[^:;>]*url\()[^>]*>)/gi);
 	var newBody = info_msg.body;
 	if(!info_msg.showImg && imgTag)
 	{
@@ -3286,7 +3304,13 @@ function draw_message(info_msg, ID){
 				}
 				if (forbidden)
 				{
-					newBody = newBody.replace(imgTag[j],"<img src='templates/"+template+"/images/forbidden.jpg'>");
+					var imgHeight = imgTag[j].match(/height=('|")\d+('|")/gi);
+					var imgWidth = imgTag[j].match(/width=('|")\d+('|")/gi);
+					var imgAlt = imgTag[j].match(/alt=('|")[^'"]+('|")/gi);
+					imgHeight = imgHeight ? imgHeight[0] : '';
+					imgWidth = imgWidth ? imgWidth[0] : '';
+					imgAlt = is_webkit ? (imgAlt ? imgAlt[0] : 'alt=""') : '';
+					newBody = newBody.replace(imgTag[j],'<img src="" ' + imgHeight + ' ' + imgWidth + ' ' + imgAlt + ' style="border-style: solid;">');
 					blocked=true;
 				}
 			}
@@ -3534,6 +3558,22 @@ function draw_message(info_msg, ID){
 	resizeWindow();
 
 	$("#div_message_scroll_"+ID).scrollTo( 0, 400, {queue:true} );
+}
+
+/**
+ * Esta função verifica se o email possui imagens que não foram exibidas e, caso verdade,
+ * abre uma janela para que o usuário confirme o envio do email sem as imagens renderizadas.
+ * @param  string id [id de um email]
+ * @return bool    [true se o usuario confirmar o envio do email, ou se o email aberto não possui
+ *                  imagens não renderizadas. False se o usuario nao confirmar o envio da mensagem]
+ */
+function confirmSendWithoutImages (id)
+{
+	if (Element('show_img_link_' + id))
+	{
+		return confirm("Confirme que deseja encaminhar sem todas as imagens.\n\nEsta mensagem contém imagens que não estão sendo exibidas atualmente. O destinatário não poderá vê-las. Encaminhar mesmo assim?");
+	}
+	return true;
 }
 
 function changeLinkState(el,state){
