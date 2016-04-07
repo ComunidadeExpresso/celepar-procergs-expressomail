@@ -91,39 +91,12 @@
 	echo '<script type="text/javascript" src="../prototype/plugins/lazy/jquery.lazy.js"></script>';
 	echo '<script type="text/javascript" src="../prototype/plugins/jquery.autoscroll/jquery.aautoscroll.min.2.41.js"></script>';
 
-	// Jquery - Expresso Messenger
-	echo '<link rel="stylesheet" type="text/css" href="../prototype/plugins/wijmo/jquery.wijmo.css"/>';
-	echo '<link rel="stylesheet" type="text/css" href="../prototype/plugins/messenger/im.css"/>';
-
 	//Configuração Datalayer
 	echo '<script type="text/javascript">
 		DataLayer.dispatchPath = "../prototype/";
 		REST.dispatchPath = "../prototype/";
 		REST.load("");
 	</script>';
-
-	//Enable/Disable Expresso Messenger -> ExpressoMail Config
-	$messenger = array();
-	$messenger_groups = array();
-	if( isset($GLOBALS['phpgw_info']['server']['groups_expresso_messenger']) && $GLOBALS['phpgw_info']['server']['groups_expresso_messenger'] != "" )
-	{
-		$messenger_groups = unserialize($GLOBALS['phpgw_info']['server']['groups_expresso_messenger']);
-		foreach( $messenger_groups as $group )
-		{
-			$values = explode( ";", $group );
-			$messenger[] = $values[1];
-		}
-		foreach( $GLOBALS['phpgw']->accounts->membership() as $group )
-		{
-			$search = array_search( $group['account_name'], $messenger_groups );
-			if( array_search( $group['account_name'], $messenger ) !== FALSE )
-			{
-				echo '<input type="hidden" name="expresso_messenger_enabled" value="true">';
-				echo '<input type="hidden" name="messenger_fullName" value="'.$GLOBALS['phpgw_info']['user']['fullname'].'">';
-				break;
-			}
-		}
-	}
 
 	// Get Data from ldap_manager and emailadmin.
 	$ldap_manager = CreateObject('contactcenter.bo_ldap_manager');
