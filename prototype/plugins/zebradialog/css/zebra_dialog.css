@@ -33,7 +33,7 @@
     padding: 7px 10px\9;    /* IE8 */
 }
 
-.ZebraDialog .ZebraDialog_Body              { background: no-repeat 10px 10px; padding: 10px; text-align: left }
+.ZebraDialog .ZebraDialog_Body              { background-repeat: no-repeat; background-position: 10px 10px; padding: 10px; text-align: left }
 
 .ZebraDialog .ZebraDialog_Icon              { padding: 10px 10px 10px 68px; min-height: 48px; _height: 48px }
 
