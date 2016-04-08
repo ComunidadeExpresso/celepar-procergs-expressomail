@@ -53,7 +53,6 @@
 	  { "url": "../../phpgwapi/templates/default/login.css" },
 	  { "url": "../../phpgwapi/templates/default/login.css" },
 	  { "url": "../../phpgwapi/js/wz_dragdrop/wz_dragdrop.js?1.222" },
-	  { "url": "../../phpgwapi/js/dJSWin/dJSWin.js?1.222" },
 	  { "url": "../../phpgwapi/js/dftree/dftree.js?1.222" },
 	  
 	  { "url": "../templates/default/main.css" },

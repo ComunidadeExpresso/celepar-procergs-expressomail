@@ -27,10 +27,13 @@
 		$template->set_var("user_email_alternative", implode(",", $AlternateEmailExpresso));
 	}
 
-  	if (execmethod('emailadmin.ui.countProfiles') == 0){
-        execmethod('emailadmin.ui.addDefaultProfile');
-    }
-
+	if( LDAP_ENTRY_CONFIG )
+	{	
+	  	if (execmethod('emailadmin.ui.countProfiles') == 0){
+	        execmethod('emailadmin.ui.addDefaultProfile');
+	    }
+	}
+	
 	$update_version = $GLOBALS['phpgw_info']['apps']['expressoMail']['version'];
 	$_SESSION['phpgw_info']['expressomail']['user'] = $GLOBALS['phpgw_info']['user'];
 
@@ -90,6 +93,30 @@
 	echo '<script type="text/javascript" src="../prototype/plugins/mask/jquery.maskedinput.js"></script>';
 	echo '<script type="text/javascript" src="../prototype/plugins/lazy/jquery.lazy.js"></script>';
 	echo '<script type="text/javascript" src="../prototype/plugins/jquery.autoscroll/jquery.aautoscroll.min.2.41.js"></script>';
+
+
+	//Enable/Disable Expresso Messenger -> ExpressoMail Config
+	$im = CreateObject('phpgwapi.messenger');
+	
+	if ( $im->checkAuth() )
+	{ 
+		echo '<input type="hidden" name="expresso_messenger_enabled" value="true">';
+		
+		// FullName Messenger
+		echo '<input type="hidden" name="messenger_fullName" value="'.$GLOBALS['phpgw_info']['user']['fullname'].'">';		
+
+		// CSS - Expresso Messenger
+		echo '<link rel="stylesheet" type="text/css" href="../prototype/plugins/wijmo/jquery.wijmo.css"/>';
+		echo '<link rel="stylesheet" type="text/css" href="../prototype/plugins/contextmenu/jquery.contextMenu.css"/>';
+		echo '<link rel="stylesheet" type="text/css" href="../prototype/plugins/messenger/im.css"/>';
+
+		// JS - Expresso Messenger
+		echo '<script type="text/javascript" src="../prototype/plugins/jquery-xmpp/APIAjax.js"></script>';
+		echo '<script type="text/javascript" src="../prototype/plugins/jquery-xmpp/jquery.xmpp.js"></script>';
+		echo '<script type="text/javascript" src="../prototype/plugins/messenger/lang/messages.js"></script>';	
+		echo '<script type="text/javascript" src="../prototype/plugins/messenger/im.js"></script>';
+	}	
+
 
 	//Configuração Datalayer
 	echo '<script type="text/javascript">
