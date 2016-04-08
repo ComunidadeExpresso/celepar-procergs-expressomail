@@ -1532,3 +1532,68 @@ function quickSearchPersons(txtSearch)
 
     return false;
 }
+
+var Catalog = new function()
+{
+    var _xhr             = null;
+    var _timeout         = null;
+    var _lastTimeout     = null;
+    var _lastSearchValue = null;
+    var _minChars        = 3;
+
+    this.search = function( type, value, afterCallback, beforeCallback, delay = 1500 ) {
+
+            if ( value != _lastSearchValue || ( delay == 0 && _lastTimeout != 0 ) || type == 'get' ) {
+
+                    clearTimeout( _timeout );
+
+                    _timeout = setTimeout( function(){
+
+                            Catalog.searchDispatch( type, value, beforeCallback, afterCallback, delay );
+
+                    }, delay );
+
+            }
+
+            return this;
+
+    };
+
+    this.searchDispatch = function( type, value, beforeCallback, afterCallback, delay ) {
+
+            if ( value && value.length >= _minChars ) {
+
+                    if ( _xhr && _xhr.readystate != 4 ) _xhr.abort();
+
+                    if ( beforeCallback ) beforeCallback();
+
+                    _lastSearchValue = value;
+
+                    _lastTimeout     = ( type == 'get' )? 10 : delay;
+
+                    var params = { action: '$this.ldap_functions.simpleSearch' };
+
+                    if ( type == 'get' || type == 'search' ) params[type] = value;
+
+                    if ( delay == 0 ) params['timelimit'] = 0;
+
+                    _xhr = $.ajax( {
+
+                            url: 'controller.php',
+
+                            dataType: 'json',
+
+                            data: params,
+
+                            success: afterCallback
+
+                    } );
+
+            }
+
+            _timeout = null;
+
+            return this;
+
+    };
+}
