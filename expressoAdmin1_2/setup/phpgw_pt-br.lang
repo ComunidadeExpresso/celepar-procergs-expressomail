@@ -1,0 +1,477 @@
+A updated version of these files can be found here	expressoAdmin1_2	pt-br	Uma versão atualizada destes arquivos pode ser encontrada aqui
+access control list	expressoAdmin1_2	pt-br	Lista de controle de accesso
+access log	expressoAdmin1_2	pt-br	Registro de acesso
+Account Active	expressoAdmin1_2	pt-br	Conta Ativa
+account type	expressoAdmin1_2	pt-br	Tipo de Conta
+Active email account	expressoAdmin1_2	pt-br	Conta de E-mail ativa
+active user	expressoAdmin1_2	pt-br	usuário ativo
+added user samba attribute	expressoAdmin1_2	pt-br	Adicionado atributos samba ao usuário
+Add Email Lists	expressoAdmin1_2	pt-br	Criar listas de e-mail
+add external emails	expressoAdmin1_2	pt-br	Adicionar emails externos
+Add Groups	expressoAdmin1_2	pt-br	Criar grupos
+add institutional accounts	expressoAdmin1_2	pt-br	Criar contas institucionais
+Add Manager	expressoAdmin1_2	pt-br	Adicionar Gerente
+Add Managers	expressoAdmin1_2	pt-br	Adicionar Gerentes
+add owner	expressoAdmin1_2	pt-br	Adicionar dono
+Add Samba Domain	expressoAdmin1_2	pt-br	Criar domínio Samba
+Add Samba Domains	expressoAdmin1_2	pt-br	Criar domínios Samba
+Add Sectores	expressoAdmin1_2	pt-br	Adicionar Setores
+Add Sectors	expressoAdmin1_2	pt-br	Criar Setor
+Add Sub Sectors	expressoAdmin1_2	pt-br	Criar Sub-Setore
+Add User	expressoAdmin1_2	pt-br	Adicionar Usuário
+Add users	expressoAdmin1_2	pt-br	Adicionar usuários
+alert your administrator about this	expressoAdmin1_2	pt-br	Alerte seu administrador sobre isto
+Alias email	expressoAdmin1_2	pt-br	E-mail alternativo
+all users groups and subsectors from this sector will be deleted	expressoAdmin1_2	pt-br	Todos os usuários, grupos, listas e sub-setores serão deletados
+alternative email is being used by 1 user	expressoAdmin1_2	pt-br	E-mail alternativo está sendo usado por 1 usuário
+alternative email is being used by 2 or more users	expressoAdmin1_2	pt-br	E-mail alternativo está sendo usado por 2 ou mais usuários
+Anonymous	expressoAdmin1_2	pt-br	Anônimo
+Any user is in the list	expressoAdmin1_2	pt-br	Nenhum usuário faz parte da lista
+Aplication Permission	expressoAdmin1_2	pt-br	Aplicações
+application info	expressoAdmin1_2	pt-br	Informação sobre a aplicação
+applications	expressoAdmin1_2	pt-br	Aplicações
+applications	expressoAdmin1_2	pt-br	Aplicações
+Applications for this group	expressoAdmin1_2	pt-br	Aplicações para este grupo
+apply send control list to this list	expressoAdmin1_2	pt-br	Aplicar controle de envio à esta lista de e-mail
+Are you sure that you want to delete this institutional account	expressoAdmin1_2	pt-br	Você tem certeza que deseja apagar esta conta institucional
+available groups	expressoAdmin1_2	pt-br	Grupos disponíveis
+available mail lists	expressoAdmin1_2	pt-br	Listas de e-mail disponíveis
+Available filter	common	pt-br	Filtor disponível
+Awaiting execution	expressoAdmin1_2	pt-br	Aguardando execução
+block personal data edit	expressoAdmin1_2	pt-br	Bloqueio na edição de dados pessoais
+change first name	expressoAdmin1_2	pt-br	Alterado primeiro nome
+Change password	expressoAdmin1_2	pt-br	Alterar senha
+Change users password	expressoAdmin1_2	pt-br	Alterar senhas dos usuários
+Change users quote	expressoAdmin1_2	pt-br	Alterar cota dos usuários
+characters	expressoAdmin1_2	pt-br	caracteres
+Computer	expressoAdmin1_2	pt-br	Computador
+Computers	expressoAdmin1_2	pt-br	Computadores
+Computer Type	expressoAdmin1_2	pt-br	Tipo do Computador
+Computer UID	expressoAdmin1_2	pt-br	UID do Computador
+Connection with ldap fail	expressoAdmin1_2	pt-br	Conexão com ldap falhou
+Content the folling groups	expressoAdmin1_2	pt-br	Contêm os seguintes grupos
+Content the folling sectors	expressoAdmin1_2	pt-br	Contêm os seguintes setores
+Content the folling users	expressoAdmin1_2	pt-br	Contêm os seguintes usuários
+context does not exist	expressoAdmin1_2	pt-br	Contexto não existe
+Context	expressoAdmin1_2	pt-br	Contexto
+context field is empty	expressoAdmin1_2	pt-br	Campo contexto está vazio
+Contexts	expressoAdmin1_2	pt-br	Contextos
+Corporative Information	expressoAdmin1_2	pt-br	Informações Corporativas
+close	expressoAdmin1_2	pt-br	Fechar
+cpf	expressoAdmin1_2	pt-br	CPF
+create	expressoAdmin1_2	pt-br	Criar
+Create Computers	expressoAdmin1_2	pt-br	Criar computadores
+created user	expressoAdmin1_2	pt-br	Criado usuário
+Create Email List	expressoAdmin1_2	pt-br	Criar Lista de Email
+Create Group	expressoAdmin1_2	pt-br	Criar Grupo de Usuários
+create institutional account	expressoAdmin1_2	pt-br	Criar conta institucional
+Create Organizations	expressoAdmin1_2	pt-br	Criar organizações
+Create Sector	expressoAdmin1_2	pt-br	Criar Setor
+Create Sectors	expressoAdmin1_2	pt-br	Criar setores
+Create User	expressoAdmin1_2	pt-br	Criar Usuário
+create user inbox	expressoAdmin1_2	pt-br	Criar caixa postal
+criation of institutional accounts	expressoAdmin1_2	pt-br	Criação de contas institucionais
+date for password expiration	expressoAdmin1_2	pt-br	Data para expiração da senha
+default password already registered	expressoAdmin1_2	pt-br	Senha padrão já registrada
+default password not registered	expressoAdmin1_2	pt-br	Senha padrão não registrada
+default password successful saved	expressoAdmin1_2	pt-br	Senha padrão salva com sucesso
+Delete computers	expressoAdmin1_2	pt-br	Deletar computadores
+deleted user	expressoAdmin1_2	pt-br	Deletado usuário
+Delete email lists	expressoAdmin1_2	pt-br	Deletar listas de emails
+delete	expressoAdmin1_2	pt-br	Remover
+Delete Group	expressoAdmin1_2	pt-br	Deletar Grupo
+Delete groups	expressoAdmin1_2	pt-br	Deletar grupos
+Delete Organizations	expressoAdmin1_2	pt-br	Deletar organizações
+delete photo	expressoAdmin1_2	pt-br	Deletar foto
+Delete Sectors	expressoAdmin1_2	pt-br	Deletar setores
+Delete user	expressoAdmin1_2	pt-br	Excluir Usuário
+Delete users	expressoAdmin1_2	pt-br	Deletar usuários
+desactive user	expressoAdmin1_2	pt-br	usuário inativo
+DESCRIPTION field contains characters not allowed	expressoAdmin1_2	pt-br	Campo DESCRIÇÃO contém caracteres não permitidos
+DESCRIPTION field is empty	expressoAdmin1_2	pt-br	Campo DESCRIÇÃO está vazio
+do not show this account in the contact center	expressoAdmin1_2	pt-br	Ocultar esta conta no catálogo geral
+do not show this email list	expressoAdmin1_2	pt-br	Ocultar esta lista de e-mail
+do not show this group	expressoAdmin1_2	pt-br	Ocultar este grupo
+do not show this sector	expressoAdmin1_2	pt-br	Ocultar este setor
+Do you really want delete the email list	expressoAdmin1_2	pt-br	Você realmente quer DELETAR o lista de e-mail
+Do you really want delete the group	expressoAdmin1_2	pt-br	Você realmente quer DELETAR o grupo
+Do you really want delete the user	expressoAdmin1_2	pt-br	Você realmente quer DELETAR o usuário
+do you really want delete this sector	expressoAdmin1_2	pt-br	Você realmente quer excluir este setor
+Do you really want delete this sector	expressoAdmin1_2	pt-br	Você realmente quer EXCLUIR este setor
+Do you want to continue anyway	expressoAdmin1_2	pt-br	Você quer continuar assim mesmo
+drafts	expressoAdmin1_2	pt-br	Rascunhos
+Edit computers	expressoAdmin1_2	pt-br	Editar computadores
+Edit email attribute from the groups	expressoAdmin1_2	pt-br	Editar campo e-mail do grupo
+Edit Email Lists	expressoAdmin1_2	pt-br	Editar Lista de Email
+Edit Group	expressoAdmin1_2	pt-br	Editar grupo
+Edit groups	expressoAdmin1_2	pt-br	Editar grupos
+edit institutional accounts	expressoAdmin1_2	pt-br	Editar contas institucionais
+Edit Managers	expressoAdmin1_2	pt-br	Editar Gerentes
+Edit Organizations	expressoAdmin1_2	pt-br	Editar organizações
+Edit SAMBA domains	expressoAdmin1_2	pt-br	Editar domínios SAMBA
+Edit SAMBA users attributes	expressoAdmin1_2	pt-br	Editar atributos SAMBA
+edit SCL email lists	expressoAdmin1_2	pt-br	Editar SCL das listas de email
+Edit Sector	expressoAdmin1_2	pt-br	Editar Setor
+Edit Sectors	expressoAdmin1_2	pt-br	Editar setores
+Edit Sending Control List	expressoAdmin1_2	pt-br	Editar Lista de Controle de Envio
+Edit User	expressoAdmin1_2	pt-br	Editar Usuário
+Edit users	expressoAdmin1_2	pt-br	Editar usuários
+edit users phonenumber	expressoAdmin1_2	pt-br	Editar telefone dos usuários
+edit users picture	expressoAdmin1_2	pt-br	Editar foto dos usuários
+Eg	common	pt-br	Ex
+Email Config	expressoAdmin1_2	pt-br	Configuração de Email
+Email field is empty	expressoAdmin1_2	pt-br	Campo E-MAIL está vazio
+Email field is not valid	expressoAdmin1_2	pt-br	Campo E-MAIL não é valido
+email list	expressoAdmin1_2	pt-br	Lista de e-mail
+email list is active	expressoAdmin1_2	pt-br	Lista de e-mail está ativa
+Email List name	expressoAdmin1_2	pt-br	Nome da Lista de E-mail
+email lists	expressoAdmin1_2	pt-br	Listas de e-mail
+Email Lists Logins	expressoAdmin1_2	pt-br	Login da Lista
+Email Lists Names	expressoAdmin1_2	pt-br	Nome da Lista
+Email list successful created	expressoAdmin1_2	pt-br	Lista de e-mails criada com sucesso
+Email list successful deleted	expressoAdmin1_2	pt-br	Lista de e-mails deletada com sucesso
+Email list successful saved	expressoAdmin1_2	pt-br	Lista de e-mails salva com sucesso
+Email quota in MB	expressoAdmin1_2	pt-br	Cota de e-mail em MB
+emails did not find	expressoAdmin1_2	pt-br	e-mails não encontrados
+EmployeeNumber contains characters not allowed	expressoAdmin1_2	pt-br	Campo matrícula contém caracteres não permitidos
+Employee number	expressoAdmin1_2	pt-br	Matrícula
+empty user inbox	expressoAdmin1_2	pt-br	Esvaziar INBOX do usuário
+error adding application to new manager	expressoAdmin1_2	pt-br	Erro adicionando aplicação ao novo gerente
+ERROR in the copy of the mailbox	expressoAdmin1_2	pt-br	ERRO na cópia da caixa postal
+Error on function	expressoAdmin1_2	pt-br	Erro na função
+Error in OpenLDAP.	expressoAdmin1_2	pt-br	Erro no OpenLDAP.
+Expire	expressoAdmin1_2	pt-br	Expira
+expressoAdmin1_2	common	pt-br	ExpressoAdmin 1.2
+expressoadmin	expressoAdmin1_2	pt-br	ExpressoAdmin
+external email	expressoAdmin1_2	pt-br	Email externo
+Fields blocked	expressoAdmin1_2	pt-br	Campos bloqueados
+Field CPF is invalid	expressoAdmin1_2	pt-br	Campo CPF é inválido
+Field CPF must be completed	expressoAdmin1_2	pt-br	Campo CPF é de preenchimento obrigatório
+Field CPF used by	expressoAdmin1_2	pt-br	Campo CPF está em uso por
+Field mail already in use	expressoAdmin1_2	pt-br	Campo e-mail já está em uso
+Field mailAlternateAddress is not formed correcty	expressoAdmin1_2	pt-br	Campo E-mail Alternativo não está formado corretamente
+Field mail is not formed correcty	expressoAdmin1_2	pt-br	Campo E-mail não está formado corretamente
+Field mail or name is empty	expressoAdmin1_2	pt-br	Campo e-mail ou nome está vazio
+First name field contains characters not allowed	expressoAdmin1_2	pt-br	Campo primeiro nome contém caracteres não permitidos
+First name field is empty	expressoAdmin1_2	pt-br	Campo primeiro nome está vazio
+forward email is empty	expressoAdmin1_2	pt-br	E-mail de encaminhamento está vazio
+Forwarding email	expressoAdmin1_2	pt-br	E-mail de encaminhamento
+found managers	expressoAdmin1_2	pt-br	Gerentes encontrados
+full name	expressoAdmin1_2	pt-br	Nome completo
+General Information	expressoAdmin1_2	pt-br	Informações Gerais
+generate password	expressoAdmin1_2	pt-br	Gerar senha
+Global Configuration	common	pt-br	Configurações Globais
+group	expressoAdmin1_2	pt-br	grupo
+Group Info	expressoAdmin1_2	pt-br	Informação sobre o grupo
+group only exist on DB, but does not exist on ldap	expressoAdmin1_2	pt-br	Grupo só existe no BD, mas não existe no LDAP
+Group Organization	expressoAdmin1_2	pt-br	Organização do Grupo
+groups from the sector	expressoAdmin1_2	pt-br	Grupos do setor
+Groups Name	expressoAdmin1_2	pt-br	Nome do grupo
+Groups Names	expressoAdmin1_2	pt-br	Nome dos Grupos
+Groups Permission	expressoAdmin1_2	pt-br	Grupos
+group successful copied	expressoAdmin1_2	pt-br	Grupo copiado com sucesso
+Group successful created	expressoAdmin1_2	pt-br	Grupo criado com sucesso
+Group successful deleted	expressoAdmin1_2	pt-br	Grupo deletado com sucesso
+Group successful saved	expressoAdmin1_2	pt-br	Grupo salvo com sucesso
+Group users	expressoAdmin1_2	pt-br	Usuários do Grupo
+Home Directory	expressoAdmin1_2	pt-br	Diretório Home
+Home	expressoAdmin1_2	pt-br	Residencial
+Hour	expressoAdmin1_2	pt-br	Hora
+included memberuid on ldap	expressoAdmin1_2	pt-br	incluído memberUID no ldap
+included user on group	expressoAdmin1_2	pt-br	incluído usuário no grupo
+included user to group	expressoAdmin1_2	pt-br	Incluído usuário ao grupo
+included user to maillist	expressoAdmin1_2	pt-br	Incluído usuário à lista de email
+institutional accounts	expressoAdmin1_2	pt-br	Contas Institucionais
+Institutional account successful created	expressoAdmin1_2	pt-br	Conta insticional criada com sucesso
+Institutional account successful deleted	expressoAdmin1_2	pt-br	Conta insticional deletada com sucesso
+Institutional account successful saved	expressoAdmin1_2	pt-br	Conta Insticional salva com sucesso
+invalid external email	expressoAdmin1_2	pt-br	Email externo inválido
+ip address	expressoAdmin1_2	pt-br	Endereço IP
+is account active	expressoAdmin1_2	pt-br	Conta está ativa
+it is needed to create samba passwords	expressoAdmin1_2	pt-br	É necessário para criar senhas do samba
+It is not allow select all users from the root organization	expressoAdmin1_2	pt-br	Não é permitido selecionar todos os usuários da raiz
+it was not possible to change users mailbox quota	expressoAdmin1_2	pt-br	Não foi possível alterar a cota da caixa postal do usuário
+it was not possible to delete users mailbox	expressoAdmin1_2	pt-br	Não foi possível deletar a caixa postal do usuário
+It was not possible create the group because the LDAP schemas are not update	expressoAdmin1_2	pt-br	Não foi possível criar o grupo poruqe os esquemas do LDAP não estão atualizados
+The surname field contains characters not allowed	expressoAdmin1_2	pt-br	O campo sobrenome contém caracteres não permitidos
+The surname field must contain letters or numbers	expressoAdmin1_2	pt-br	O campo de sobrenome deve conter letras ou números
+The surname field is empty	expressoAdmin1_2	pt-br	O campo sobrenome está vazio
+leave empty for no quota	expressoAdmin1_2	pt-br	deixe vazio para não ter quota
+list 	expressoAdmin1_2	pt-br	Lista
+ListGroups	expressoAdmin1_2	pt-br	Lista de Grupos
+List Managers	expressoAdmin1_2	pt-br	Lista de Gerentes
+listname	expressoAdmin1_2	pt-br	Nome da lista
+List of current users	expressoAdmin1_2	pt-br	Lista de Usuários Conectados
+login field contains characters not allowed	expressoAdmin1_2	pt-br	Campo LOGIN contém caracteres não permitidos
+login field is empty	expressoAdmin1_2	pt-br	Campo LOGIN está vazio
+login field is incomplete	expressoAdmin1_2	pt-br	Campo LOGIN está incompleto
+login field must be bigger than	expressoAdmin1_2	pt-br	Campo LOGIN precisa ser maior que
+Login ID	expressoAdmin1_2	pt-br	Login
+Logon Script	expressoAdmin1_2	pt-br	Script de Logon
+Logon script is empty	expressoAdmin1_2	pt-br	Script de logon está vazio
+Logs	expressoAdmin1_2	pt-br	Logs
+mail	expressoAdmin1_2	pt-br	E-mail
+Maillist login	expressoAdmin1_2	pt-br	Login da Lista de Email
+Maillist Mail	expressoAdmin1_2	pt-br	E-Mail da Lista de Email
+Maillist name	expressoAdmin1_2	pt-br	Nome da Lista de Email
+Maillist Organization	expressoAdmin1_2	pt-br	Organização da Lista de Email
+Maillist users	expressoAdmin1_2	pt-br	Usuários da Lista de Email
+manager already exist	expressoAdmin1_2	pt-br	Gerente já existe
+manager	expressoAdmin1_2	pt-br	Gerente
+Manage RADIUS attributes	common	pt-br	Gerenciar atributos RADIUS
+Manager LID	expressoAdmin1_2	pt-br	Login do Gerente
+Manager Login	expressoAdmin1_2	pt-br	Login do Gerente
+Manager name	expressoAdmin1_2	pt-br	Nome do Gerente
+Manager successful saved	expressoAdmin1_2	pt-br	Gerente salvo com sucesso
+Manipulate corporative information	expressoAdmin1_2	pt-br	Manipular informações corporativas
+Migration	expressoAdmin1_2	pt-br	Migração
+modified user email	expressoAdmin1_2	pt-br	Modificado campo e-mail do usuário
+modified user homedirectory	expressoAdmin1_2	pt-br	Modificado campo home do usuário
+modified user password	expressoAdmin1_2	pt-br	Modificado campo senha do usuário
+modified user primary group	expressoAdmin1_2	pt-br	Modificado grupo primário do usuário
+modified user telephonenumber	expressoAdmin1_2	pt-br	Modificado campo telefone do usuário
+More then one uid was found	expressoAdmin1_2	pt-br	Mais de uma login foi encontrado
+NAME field contains characters not allowed	expressoAdmin1_2	pt-br	Campo contém caracteres não permitidos
+NAME field is empty	expressoAdmin1_2	pt-br	Campo NOME está vazio
+NAME field is incomplete	expressoAdmin1_2	pt-br	Campo NOME está incompleto
+No matches found	expressoAdmin1_2	pt-br	Nenhum resultando encontrado
+No uid was found	expressoAdmin1_2	pt-br	Nenhum login foi encontrado
+Occult Sector	expressoAdmin1_2	pt-br	Ocultar setor
+omit account from the catalog	expressoAdmin1_2	pt-br	Omitir conta do catálogo
+Only allow access to these networks	common	pt-br	Só permitir o acesso a essas redes
+Only forwarding	expressoAdmin1_2	pt-br	Somente encaminhar
+Only forwarding	expressoAdmin1_2	pt-br	Somente encaminhar mensagens
+Only numbers are allowed	expressoAdmin1_2	pt-br	Apenas números são permitidos
+only on ldap	expressoAdmin1_2	pt-br	somente no ldap
+organization	expressoAdmin1_2	pt-br	Organização
+Organizations	expressoAdmin1_2	pt-br	Organizações
+owners	expressoAdmin1_2	pt-br	Donos
+participants from the list can send email to this list	expressoAdmin1_2	pt-br	Participantes da lista podem enviar e-mail para a mesma
+password and re-Password are different	expressoAdmin1_2	pt-br	Senha e re-senha são diferentes
+Password expired	expressoAdmin1_2	pt-br	Senha expirada
+Password field is empty	expressoAdmin1_2	pt-br	Campo SENHA está vazio
+Phone	expressoAdmin1_2	pt-br	Telefone
+Phone field is incorrect	expressoAdmin1_2	pt-br	Campo telefone está incorreto
+Photo	expressoAdmin1_2	pt-br	Foto
+Primary Group	expressoAdmin1_2	pt-br	Grupo Primário
+problems getting user id	expressoAdmin1_2	pt-br	Problemas obtendo ID do usuário
+Quota used in MB	expressoAdmin1_2	pt-br	Cota de e-mail usada em MB
+recursive list search	expressoAdmin1_2	pt-br	Procura recursiva
+removed user from group	expressoAdmin1_2	pt-br	Removido usuário do grupo
+removed user from list	expressoAdmin1_2	pt-br	Removido usuário da lista de e-mail
+Remove	expressoAdmin1_2	pt-br	Remover
+remove institutional accounts	expressoAdmin1_2	pt-br	Deletar contas institucionais
+remove owner	expressoAdmin1_2	pt-br	Remover dono
+Remove User	expressoAdmin1_2	pt-br	Remover Usuários
+Remove Users	expressoAdmin1_2	pt-br	Remover Usuários
+Rename users	expressoAdmin1_2	pt-br	Renomear usuários
+Rename users login from	expressoAdmin1_2	pt-br	Renomear login do usuário de
+Re-Password	expressoAdmin1_2	pt-br	Re-Senha
+re-password field is empty	expressoAdmin1_2	pt-br	Campo re-senha está vazio
+re-password field is empty	expressoAdmin1_2	pt-br	Campo re-senha está vazio
+return user password	expressoAdmin1_2	pt-br	Retornar senha do usuário
+rg	expressoAdmin1_2	pt-br	RG
+rguf	expressoAdmin1_2	pt-br	rgUF
+Running	expressoAdmin1_2	pt-br	Em execução
+Samba Config	expressoAdmin1_2	pt-br	Configurações do SAMBA
+Samba domain name	expressoAdmin1_2	pt-br	Nome do domínio Samba
+Samba domain name or SID already exist	expressoAdmin1_2	pt-br	O nome do domínio samba ou sambaSID já existe
+Samba Domains	expressoAdmin1_2	pt-br	Dominios Samba
+Samba domain SID	expressoAdmin1_2	pt-br	SID do domínio Samba
+Samba domains name	expressoAdmin1_2	pt-br	Nome dos domínios Samba
+Samba domains name is empty	expressoAdmin1_2	pt-br	O nome do domínio samba está vazio
+sambaSID	expressoAdmin1_2	pt-br	sambaSID
+Samba SID is empty	expressoAdmin1_2	pt-br	O SID do domínio samba está vazio
+Samba User Active	expressoAdmin1_2	pt-br	Usuário Samba Ativo
+Samba User Desactive	expressoAdmin1_2	pt-br	Usuário Samba Desabilitado
+scl	expressoAdmin1_2	pt-br	scl
+scl successful saved	expressoAdmin1_2	pt-br	SCL salva com sucesso
+search email list	expressoAdmin1_2	pt-br	Procurar listas de e-mail
+search for group	expressoAdmin1_2	pt-br	Procurar por grupos
+search for manager	expressoAdmin1_2	pt-br	Buscar gerentes
+searching	expressoAdmin1_2	pt-br	procurando
+search organization	expressoAdmin1_2	pt-br	Procurar organização
+Search user	expressoAdmin1_2	pt-br	Procurar usuário
+Sector	expressoAdmin1_2	pt-br	Setor
+Sector Name	expressoAdmin1_2	pt-br	Nome do Setor
+Sectors	expressoAdmin1_2	pt-br	Setores
+select all	expressoAdmin1_2	pt-br	Selecionar todos
+select one manager	expressoAdmin1_2	pt-br	Selecione um gerente
+Select users from all sub-organizations	expressoAdmin1_2	pt-br	Selecionar usuários de todas as sub-organizações
+sent	expressoAdmin1_2	pt-br	Enviados
+Server	expressoAdmin1_2	pt-br	Servidor
+Server return	expressoAdmin1_2	pt-br	Retorno do servidor
+Server returns	expressoAdmin1_2	pt-br	Retorno do servidor
+Set default users password	expressoAdmin1_2	pt-br	Setar senha padrão
+show access logs	expressoAdmin1_2	pt-br	Exibir registros de acesso
+Show Session - Global	expressoAdmin1_2	pt-br	Exibir Sessões - Global
+Show Sessions	expressoAdmin1_2	pt-br	Exibir Sessões
+Show users from all sub-organizations	expressoAdmin1_2	pt-br	Exibir usuários de todas as sub-organizações
+spam	expressoAdmin1_2	pt-br	Spam
+subsectors from the sector	expressoAdmin1_2	pt-br	Sub-setores do setor
+The administrator must update the directory /etc/ldap/schema/ and re-start LDAP	expressoAdmin1_2	pt-br	O administrador precisa atualizar o diretório /etc/ldap/schema/ e re-iniciar o Ldap
+the binary file /home/expressolivre/mkntpwd does not exist	expressoAdmin1_2	pt-br	O arquivo binário /home/expressolivre/mkntpwd não existe
+the expressoadmin corrected the following inconsistencies	expressoAdmin1_2	pt-br	O expressoAdmin corrigiu as seguintes inconsistências
+the login field must be formed like	expressoAdmin1_2	pt-br	O campo login deve ser formado camo
+The mailbox is being migrated wait	expressoAdmin1_2	pt-br	A caixa postal está sendo migrada aguarde
+the name field must be formed like	expressoAdmin1_2	pt-br	O campo nome precisa ser formado como
+the user is part of this email lists	expressoAdmin1_2	pt-br	O usuário participa destas listas de e-mail
+this email address is already used	expressoAdmin1_2	pt-br	Este endereço de e-mail já está sendo usado
+this email address is being used by 1 user	expressoAdmin1_2	pt-br	Este endereço de e-mail já está sendo usado por 1 usuário
+this email address is being used by 2 or more users	expressoAdmin1_2	pt-br	Este endereço de e-mail já está sendo usado por 2 ou mais usuários
+this email list login is already used	expressoAdmin1_2	pt-br	Este LOGIN da lista de e-mail já está sendo usado
+this login can not be used because is a system account	expressoAdmin1_2	pt-br	Este login não pode ser usado pois é uma conta de sistema
+this login is already used by a user in another organization	expressoAdmin1_2	pt-br	Este login já está sendo usado por um usuário em outra organização
+this login is already used by	expressoAdmin1_2	pt-br	Este login já está sendo usado por
+this login is already used by	expressoAdmin1_2	pt-br	Este LOGIN já está sendo usado por
+This login is being used by a group	expressoAdmin1_2	pt-br	Este login está sendo usado por um grupo
+This name is already used	expressoAdmin1_2	pt-br	Este nome já está sendo usado
+to delete	expressoAdmin1_2	pt-br	Excluir
+to	expressoAdmin1_2	pt-br	para
+to rename	expressoAdmin1_2	pt-br	Renomear
+to search	expressoAdmin1_2	pt-br	Procurar
+Total Sessions	expressoAdmin1_2	pt-br	Total de Sessões
+Total sessions on server	expressoAdmin1_2	pt-br	Total de sessões no servidor
+trash	expressoAdmin1_2	pt-br	Lixeira
+Trust Account	expressoAdmin1_2	pt-br	Conta de TRUST
+type the common name of the new group	expressoAdmin1_2	pt-br	Digite o nome do novo grupo
+type new managers login	expressoAdmin1_2	pt-br	Digite o login do novo gerente
+User Accounts	expressoAdmin1_2	pt-br	Contas de usuários
+User email alredy exist.	expressoAdmin1_2	pt-br	E-mail do usuário já cadastrado.
+User Groups	expressoAdmin1_2	pt-br	Grupos do usuário
+User Info	expressoAdmin1_2	pt-br	Informação sobre o usuário
+User is not in any group	expressoAdmin1_2	pt-br	Usuário não faz parte de nenhum grupo
+User login alredy exist.	expressoAdmin1_2	pt-br	Login do usuário já cadastrado.
+User login successful renamed	expressoAdmin1_2	pt-br	Login do usuário renomeado com sucesso
+users did not find on DB, only on ldap	expressoAdmin1_2	pt-br	Usuários não encontrados no DB, somente no LDAP
+users	expressoAdmin1_2	pt-br	Usuários
+Users for inclusion	expressoAdmin1_2	pt-br	Usuários para inclusão
+users from the sector	expressoAdmin1_2	pt-br	Usuários do setor
+Users home directory is empty	expressoAdmin1_2	pt-br	Diretório HOME do usuário está vazio
+Users in Email List	expressoAdmin1_2	pt-br	Usuários na Lista de Email
+User inbox successful created	expressoAdmin1_2	pt-br	Caixa postal criada com sucesso
+Users password successful returned	expressoAdmin1_2	pt-br	Senha do usuário retornada com sucesso
+User successful created	expressoAdmin1_2	pt-br	Usuário criado com sucesso
+User successful deleted	expressoAdmin1_2	pt-br	Usuário deletado com sucesso
+User successful saved	expressoAdmin1_2	pt-br	Usuário salvo com sucesso
+user without inbox	expressoAdmin1_2	pt-br	Usuário sem caixa postal
+users who can send email to this list	expressoAdmin1_2	pt-br	Usuários que podem enviar email para à mesma
+user without email quota	expressoAdmin1_2	pt-br	Usuário sem cota de e-mail
+Use samba attributes	expressoAdmin1_2	pt-br	Usar atributos samba
+Use password generator	common	pt-br	Usar gerador de senha
+senhas email lists	expressoAdmin1_2	pt-br	Exibir listas de emails
+View Log	expressoAdmin1_2	pt-br	Exibir Log
+View logs	expressoAdmin1_2	pt-br	Exibir Logs
+View user	expressoAdmin1_2	pt-br	Exibir usuário
+View users	expressoAdmin1_2	pt-br	Exibir usuários
+Wait	expressoAdmin1_2	pt-br	Aguarde
+without quota	expressoAdmin1_2	pt-br	Sem cota
+when to expire the password	expressoAdmin1_2	pt-br	Quando expirar a senha
+password will expire on	expressoAdmin1_2	pt-br	Senha irá expirar em
+days	expressoAdmin1_2	pt-br	dias
+now	expressoAdmin1_2	pt-br	Agora
+WorkStation Active	expressoAdmin1_2	pt-br	Estação de Trabalho (ATIVO)
+WorkStation Desactive	expressoAdmin1_2	pt-br	Estação de Trabalho (INATIVO)
+you do not have access to create sectors	expressoAdmin1_2	pt-br	Você não tem acesso para criar setores
+You do not have access to this organization	expressoAdmin1_2	pt-br	Você não tem acesso a esta organização
+You do not have right to create institutional accounts	expressoAdmin1_2	pt-br	Você não tem acesso para criar contas institucionais
+You do not have right to delete institutional accounts	expressoAdmin1_2	pt-br	Você não tem acesso para deletar contas institucionais
+You do not have right to edit institutional accounts	expressoAdmin1_2	pt-br	Você não tem acesso para editar contas institucionais
+You do not have right to list institutional accounts	expressoAdmin1_2	pt-br	Você não tem acesso para listar contas institucionais
+You do not have access to this module	expressoAdmin1_2	pt-br	Você não tem acesso a este módulo
+You do not have access to this module or you are accessing this module from a denied network	expressoAdmin1_2	pt-br	Você não tem acesso a este módulo ou esta acessando este módulo de uma rede proibida
+sending control mail	expressoAdmin1_2	pt-br	Controle de envio de emails
+text	expressoAdmin1_2	pt-br	Texto
+password without expiration	expressoAdmin1_2	pt-br	Senha nunca irá expirar
+general	expressoAdmin1_2	pt-br	Gerais
+corporative	expressoAdmin1_2	pt-br	Corporativas
+lists	expressoAdmin1_2	pt-br	Listas
+aplication	expressoAdmin1_2	pt-br	Aplicações
+samba	expressoAdmin1_2	pt-br	Samba
+radius	expressoAdmin1_2	pt-br	Radius
+user removed from group because the group was not found	expressoAdmin1_2	pt-br	Usuário removido do grupo porque o grupo não foi encontrado
+Profile not found	expressoAdmin1_2	pt-br	Perfil não encontrado
+Can not login sieve	expressoAdmin1_2	pt-br	Não foi possível connectar no servidor de filtro
+Problem activating sieve script	expressoAdmin1_2	pt-br	Problema na ativação do filtro
+Problem deleting old script	expressoAdmin1_2	pt-br	Problema na remoção do filtro antigo
+Mailbox profile	expressoAdmin1_2	pt-br	Perfil de caixa postal
+Asynchronous service unavailable	expressoAdmin1_2	pt-br	Serviço de agendamento indisponível
+This action completely erase the mailbox	expressoAdmin1_2	pt-br	Esta ação apagará completamente a caixa de correio
+Inbox already exists in destiny	expressoAdmin1_2	pt-br	Caixa de entrada já existe no destino
+Cannot open mailbox	expressoAdmin1_2	pt-br	Não é possível abrir caixa de correio
+Total sessions on server	expressoAdmin1_2	pt-br	Total de sessões no servidor
+Session path	expressoAdmin1_2	pt-br	Diretório das sessões
+Memcache Server version	expressoAdmin1_2	pt-br	Versão do servidor Memcache
+Process id of this server process	expressoAdmin1_2	pt-br	ID de processo do servidor
+Runtime server (days h:m:s)	expressoAdmin1_2	pt-br	Tempo de execução do servidor (dias h:m:s)
+Accumulated user time for this process (seconds)	expressoAdmin1_2	pt-br	Tempo de usuário acumulado para este processo (segundos)
+Accumulated system time for this process (seconds)	expressoAdmin1_2	pt-br	Tempo de sistema acumulado para este processo (segundos)
+Total number of items stored by this server ever since it started	expressoAdmin1_2	pt-br	Número total de itens armazenados desde o servidor começou
+Number of open connections	expressoAdmin1_2	pt-br	Número de conexões abertas
+Number of connection structures allocated by the server	expressoAdmin1_2	pt-br	Número de estruturas de conexão alocadas pelo servidor
+Total number of connections opened since the server started running	expressoAdmin1_2	pt-br	Número total de conexões abertas desde o servidor começou
+Cumulative number of retrieval requests	expressoAdmin1_2	pt-br	Número acumulado de pedidos de recuperação
+Cumulative number of storage requests	expressoAdmin1_2	pt-br	Número acumulado de solicitações de armazenamento
+Number of keys that have been requested and found present	expressoAdmin1_2	pt-br	Número de itens que foram solicitados e foram encontrados
+Number of items that have been requested and not found	expressoAdmin1_2	pt-br	Número de itens que foram solicitados e não foram encontrados
+Total number of bytes read by this server from network	expressoAdmin1_2	pt-br	Número total de bytes lidos pelo servidor
+Total number of bytes sent by this server to network	expressoAdmin1_2	pt-br	Número total de bytes enviados pelo servidor
+Number of bytes this server is allowed to use for storage	expressoAdmin1_2	pt-br	Número de bytes permitido para armazenamento pelo servidor
+Number of valid items removed from cache to free memory for new items	expressoAdmin1_2	pt-br	Número de itens válidos removido do cache de memória livre para novos itens
+Number of session keys allocated	expressoAdmin1_2	pt-br	Número de chaves de sessão alocados
+Radius	expressoAdmin1_2	pt-br	Radius
+Radius Config	expressoAdmin1_2	pt-br	Configuração Radius
+Enable Radius	expressoAdmin1_2	pt-br	Habilitar Radius
+Group Name Field	expressoAdmin1_2	pt-br	Campo nome de grupo
+Radius Profiles	expressoAdmin1_2	pt-br	Perfis Radius
+Add Profile	expressoAdmin1_2	pt-br	Adicionar Perfil
+Remove Profile	expressoAdmin1_2	pt-br	Remover Perfil
+Profile Name	expressoAdmin1_2	pt-br	Nome do perfil
+Add Field	expressoAdmin1_2	pt-br	Adicionar Campo
+Add	expressoAdmin1_2	pt-br	Adicionar
+Error requesting page	expressoAdmin1_2	pt-br	Erro na consulta da página
+unknown	expressoAdmin1_2	pt-br	desconhecido
+The name length must be between 1 and 32 characters	expressoAdmin1_2	pt-br	O comprimento do nome deve ter entre 1 e 32 caracteres
+The name must begin with a letter, without spaces	expressoAdmin1_2	pt-br	O nome deve começar com uma letra, sem espaços
+This name is in use	expressoAdmin1_2	pt-br	Este nome está em uso
+Description must be non empty	expressoAdmin1_2	pt-br	A descrição não deve ser vazia
+Description has an invalid character	expressoAdmin1_2	pt-br	A descrição tem um carácter inválido
+description	expressoAdmin1_2	pt-br	descrição
+Configuration saved successfully	expressoAdmin1_2	pt-br	Configuração salva com sucesso
+Invalid value	expressoAdmin1_2	pt-br	Valor inválido
+Another operation is using this feature, try later	expressoAdmin1_2	pt-br	Outra operação esta usando esse recurso, tente mais tarde
+Description field required	expressoAdmin1_2	pt-br	Campo descrição é obrigatório
+Profile in use	expressoAdmin1_2	pt-br	Perfil em uso
+admin group	expressoAdmin1_2	pt-br	grupo administrador
+Select value	expressoAdmin1_2	pt-br	Selecione o valor
+Required value	expressoAdmin1_2	pt-br	Valor requerido
+Field is single value	expressoAdmin1_2	pt-br	Campo é um valor único
+Empty value	expressoAdmin1_2	pt-br	Valor vazio
+Repeated value	expressoAdmin1_2	pt-br	Valor repetido
+i really want delete this sector	expressoAdmin1_2	pt-br	Eu realmente quero excluir esta organização
+Brief	expressoAdmin1_2	pt-br	Resumo
+Others	expressoAdmin1_2	pt-br	Outros
+Errors	expressoAdmin1_2	pt-br	Erros
+Unknown entries below the sector	expressoAdmin1_2	pt-br	Entradas desconhecidas abaixo da organização
+Sector name is empty	expressoAdmin1_2	pt-br	Nome da organização está vazio
+Context not found	expressoAdmin1_2	pt-br	Contexto não encontrado
+Sector name already exist	expressoAdmin1_2	pt-br	Já existe uma organização com este nome
+Error in OpenLDAP recording	expressoAdmin1_2	pt-br	Erro no registro OpenLDAP
+Error sector count invalid	expressoAdmin1_2	pt-br	Contagem de organizações inválida
+Enable Messenger	expressoAdmin1_2	pt-br	Ativar o Messenger
+Public Key	expressoAdmin1_2	pt-br	Chave pública
+Encrypts the password before sending to jabber server	expressoAdmin1_2	pt-br	Criptografa a senha antes de enviar para o servidor jabber
+Store in PEM format: base64 encoded, closed between "%1" and "%2"	expressoAdmin1_2	pt-br	Armazene no formato PEM: base64 codificado, fechado entre "%1" e "%2"
+Enable filter by group	expressoAdmin1_2	pt-br	Ativar filtro por grupo
+Group filter options	expressoAdmin1_2	pt-br	Opções de filtro do grupo
+Base DN for the directory	expressoAdmin1_2	pt-br	Base DN para o diretório
+Search filter for user groups	expressoAdmin1_2	pt-br	Filtro de pesquisa para grupos de usuários
+RootDn	expressoAdmin1_2	pt-br	Raiz do diretório
+FirstParent	expressoAdmin1_2	pt-br	Primeiro parente do usuário
+LastParent	expressoAdmin1_2	pt-br	Último parente do usuário
+There are shares that will be lost when moving the mailbox between servers	expressoAdmin1_2	pt-br	Existem compartilhamentos que serão perdidos ao mover a caixa de email entre servidores
+Forwarding email	expressoAdmin1_2	pt-br	E-mail de encaminhamento
+Alternate email	expressoAdmin1_2	pt-br	E-mail alternativo
+is not valid or duplicate	expressoAdmin1_2	pt-br	não é válido ou duplicado
+Displaying	expressoAdmin1_2	pt-br	Mostrando
+of	expressoAdmin1_2	pt-br	de

@@ -27,10 +27,13 @@
 		$template->set_var("user_email_alternative", implode(",", $AlternateEmailExpresso));
 	}
 
-  	if (execmethod('emailadmin.ui.countProfiles') == 0){
-        execmethod('emailadmin.ui.addDefaultProfile');
-    }
-
+	if( LDAP_ENTRY_CONFIG )
+	{	
+	  	if (execmethod('emailadmin.ui.countProfiles') == 0){
+	        execmethod('emailadmin.ui.addDefaultProfile');
+	    }
+	}
+	
 	$update_version = $GLOBALS['phpgw_info']['apps']['expressoMail']['version'];
 	$_SESSION['phpgw_info']['expressomail']['user'] = $GLOBALS['phpgw_info']['user'];
 
@@ -91,9 +94,29 @@
 	echo '<script type="text/javascript" src="../prototype/plugins/lazy/jquery.lazy.js"></script>';
 	echo '<script type="text/javascript" src="../prototype/plugins/jquery.autoscroll/jquery.aautoscroll.min.2.41.js"></script>';
 
-	// Jquery - Expresso Messenger
-	echo '<link rel="stylesheet" type="text/css" href="../prototype/plugins/wijmo/jquery.wijmo.css"/>';
-	echo '<link rel="stylesheet" type="text/css" href="../prototype/plugins/messenger/im.css"/>';
+
+	//Enable/Disable Expresso Messenger -> ExpressoMail Config
+	$im = CreateObject('phpgwapi.messenger');
+	
+	if ( $im->checkAuth() )
+	{ 
+		echo '<input type="hidden" name="expresso_messenger_enabled" value="true">';
+		
+		// FullName Messenger
+		echo '<input type="hidden" name="messenger_fullName" value="'.$GLOBALS['phpgw_info']['user']['fullname'].'">';		
+
+		// CSS - Expresso Messenger
+		echo '<link rel="stylesheet" type="text/css" href="../prototype/plugins/wijmo/jquery.wijmo.css"/>';
+		echo '<link rel="stylesheet" type="text/css" href="../prototype/plugins/contextmenu/jquery.contextMenu.css"/>';
+		echo '<link rel="stylesheet" type="text/css" href="../prototype/plugins/messenger/im.css"/>';
+
+		// JS - Expresso Messenger
+		echo '<script type="text/javascript" src="../prototype/plugins/jquery-xmpp/APIAjax.js"></script>';
+		echo '<script type="text/javascript" src="../prototype/plugins/jquery-xmpp/jquery.xmpp.js"></script>';
+		echo '<script type="text/javascript" src="../prototype/plugins/messenger/lang/messages.js"></script>';	
+		echo '<script type="text/javascript" src="../prototype/plugins/messenger/im.js"></script>';
+	}	
+
 
 	//Configuração Datalayer
 	echo '<script type="text/javascript">
@@ -101,29 +124,6 @@
 		REST.dispatchPath = "../prototype/";
 		REST.load("");
 	</script>';
-
-	//Enable/Disable Expresso Messenger -> ExpressoMail Config
-	$messenger = array();
-	$messenger_groups = array();
-	if( isset($GLOBALS['phpgw_info']['server']['groups_expresso_messenger']) && $GLOBALS['phpgw_info']['server']['groups_expresso_messenger'] != "" )
-	{
-		$messenger_groups = unserialize($GLOBALS['phpgw_info']['server']['groups_expresso_messenger']);
-		foreach( $messenger_groups as $group )
-		{
-			$values = explode( ";", $group );
-			$messenger[] = $values[1];
-		}
-		foreach( $GLOBALS['phpgw']->accounts->membership() as $group )
-		{
-			$search = array_search( $group['account_name'], $messenger_groups );
-			if( array_search( $group['account_name'], $messenger ) !== FALSE )
-			{
-				echo '<input type="hidden" name="expresso_messenger_enabled" value="true">';
-				echo '<input type="hidden" name="messenger_fullName" value="'.$GLOBALS['phpgw_info']['user']['fullname'].'">';
-				break;
-			}
-		}
-	}
 
 	// Get Data from ldap_manager and emailadmin.
 	$ldap_manager = CreateObject('contactcenter.bo_ldap_manager');

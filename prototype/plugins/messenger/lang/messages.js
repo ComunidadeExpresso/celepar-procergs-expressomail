@@ -1,7 +1,7 @@
 
-messages =
+messages = 
 {
-	'pt_br' :
+	'pt_br' : 
 	{
 		'ADD'						: "Adicionar",
 		'ADD_CONTACT'				: "Adicionar contato",
@@ -19,20 +19,27 @@ messages =
 		'EDIT_CONTACT'				: "Editar Contato",
 		'EDIT'						: "Editar",
 		'ENTER_A_JID'				: "Digite um JID (Jabber ID)",
-		'ENTER_A_NAME'				: "Digite um nome",
+		'ENTER_A_NAME'				: "Digite um apelido",
+		'ERROR'						: "Ocorreu um erro desconhecido.",
 		'GONE'						: "saiu",
+		'IDENTIFICATION'			: "Identifica&ccedil;&atilde;o",
 		'IS_TYPING'					: "est&aacute digitando",
 		'JID'						: "JID",
 		'ME'						: "Eu",
 		'NAME'						: "Nome",
 		'NEW_MESSAGE'				: "Nova Mensagem",
+		'NICK'						: "Apelido",
 		'QUIT'						: "Sair",
 		'ONLINE'					: "Dispon&iacute;vel",
 		'OFFLINE'					: "Indispon&iacute;vel",
+		'SEARCH'					: "Buscar",
 		'SEEN'						: "Ativo",
+		'SIZE LIMIT EXCEEDED'		: "Limite de resultados atingido.",
 		'STOPPED_TYPING'			: "parou a digita&ccedil;&atilde;o",
+		'TIME LIMIT EXCEEDED'		: "Limite de tempo atingido.",
 		'UPDATE'					: "Atualizar",
+		'NO_RESULTS_FOUND'			: "Nenhum resultado encontrado.",
 		'WRITE_YOUR_MESSAGE_HERE'	: "Escreva sua mensagem aqui",
 		'YOUR_MESSAGE_TODAY' 		: "Sua mensagem de hoje"
 	}
-};
+}

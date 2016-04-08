@@ -1,4 +1,6 @@
-
+.chat-container {
+	overflow: auto;
+}
 
 .chat-list-title{
 	border-bottom: 1px solid #CCCCCC;

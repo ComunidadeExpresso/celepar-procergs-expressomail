@@ -621,22 +621,154 @@
 				debug("Prepared");
 	  	}
 
-	  	function addContact(e, data, select){
-	  		if(!$.xmpp.isConnected())
-	  			return false;
-	  		//MD5.hexdigest
-	  		var offset;
-	  		if(!select){
-	  			offset = $(this).offset();
-	  		}else{
-	  			offset = $(select).offset()
-	  		}
-	  		
+		function addContact( e, data, select ) {
+			if( !$.xmpp.isConnected() ) return false;
+			var hasCatalogSearch = typeof Catalog == 'object' && typeof Catalog.search == 'function';
+			return hasCatalogSearch && !data? drawAddContactFromCatalog( this ) : drawAddContact( this, data, select );
+		}
+		
+		function drawAddContactFromCatalog( obj ) {
+			var img_empty = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNgYAAAAAMAASsJTYQAAAAASUVORK5CYII=';
+			var div = $('<div>').addClass( 'chat-add-contact' )
+				.append( $('<div>').css( { 'display': 'table' } )
+					.append( $('<div>').css( { 'display': 'table-cell', 'width': '100%', 'float': 'left', 'position': 'relative' } )
+						.append( $('<span>').html( messages.pt_br.SEARCH + ':' ) )
+						.append( $('<img>')
+							.attr( { 'id': 'img_cc_loader', 'src': '../prototype/plugins/messenger/images/ajax-loader.gif' } )
+							.css( { 'display': 'none', 'position': 'absolute', 'right': '0px', 'top': '-3px' } )
+						)
+						.append( $('<input>').attr( { 'type': 'text' } ).css( { 'margin': '2px 0 4px'} )
+							.bind( 'keyup.srccc input.srccc paste.srccc', function( e ) {
+								Catalog.search( 'search', $(e.currentTarget).val(), function( data ) {
+									console.log( data );
+									$('#img_cc_loader').hide();
+									if ( !data ) return false;
+									$('#msg_cc_error').html(
+										( data.status && data.status != 'SUCCESS' )? (
+											(messages.pt_br[data.status])? messages.pt_br[data.status] : messages.pt_br.ERROR
+										) + ' ' : ''
+									);
+									if ( data.user ) {
+										$('#jid_inpt_txt').val( data.user.uid+'@'+settings.domain );
+										$('#nick_inpt_txt').attr( { 'disabled': null } ).wijtextbox( { 'disabled': false } ).val( data.user.cn );
+										if ( data.user.img ) $('#im_photo_img').attr( { 'src': data.user.img } );
+									} else if ( data.users ) {
+										$('#nick_inpt_sel').append( $('<option>').html( 'Select' ) );
+										for ( key in data.users ) $('#nick_inpt_sel').append(
+											$('<option>').val( key ).html( data.users[key] + ' (' + key + ')' )
+										);
+										$('#nick_inpt_sel').show();
+										$('#nick_inpt_txt').hide();
+									} else $('#msg_cc_error').append( messages.pt_br.NO_RESULTS_FOUND );
+								}, function() {
+									$('#img_cc_loader').show();
+									$('#msg_cc_error').html('');
+									$('#jid_inpt_txt').val('');
+									$('#nick_inpt_txt').attr( { 'disabled': 'disabled' } ).wijtextbox( { 'disabled': true } ).val('').show();
+									$('#nick_inpt_sel').html('').hide();
+									$('#im_photo_img').attr( { 'src': img_empty } );
+								}, ( e.type == 'keyup' && ( e.keyCode || e.which ) == KeyEvent.DOM_VK_RETURN )? 0 : 1500 );
+							} )
+						)
+						.append( $('<span>').html( messages.pt_br.NICK + ':' ) )
+						.append( $('<input>').attr( { 'id': 'nick_inpt_txt', 'type': 'text', 'disabled': 'disabled' } ).css( { 'margin': '2px 0 4px' } ) )
+						.append( $('<select>')
+							.attr( { 'id': 'nick_inpt_sel', 'type': 'text', 'class': 'ui-widget ui-state-default ui-corner-all wijmo-wijtextbox' } )
+							.css( { 'margin': '2px 0 4px', 'width': '100%', 'display': 'none', 'padding': '4px' } )
+							.hover( function() { $(this).addClass('ui-state-hover'); }, function() { $(this).removeClass('ui-state-hover'); } )
+							.change( function() {
+								Catalog.search( 'get', $('#nick_inpt_sel').val(), function( data ) {
+									console.log( data );
+									$('#img_cc_loader').hide();
+									if ( !data ) return false;
+									if ( data.user ) {
+										$('#nick_inpt_sel').hide();
+										$('#jid_inpt_txt').val( data.user.uid+'@'+settings.domain );
+										$('#nick_inpt_txt').show().attr( { 'disabled': null } ).wijtextbox( { 'disabled': false } ).val( data.user.cn );
+										if ( data.user.img ) $('#im_photo_img').attr( { 'src': data.user.img } );
+									}
+								}, function() {
+									$('#img_cc_loader').show();
+									$('#msg_cc_error').html('');
+								}, 0 );
+							} )
+						)
+						.append( $('<span>').html( messages.pt_br.IDENTIFICATION + ':' ) )
+						.append( $('<input>').attr( { 'id': 'jid_inpt_txt', 'type': 'text', 'disabled': 'disabled' } ).css( { 'margin': '2px 0 4px'} ) )
+					)
+					.append( $('<div>').css( { 'display': 'table-cell', 'padding-left': '10px' } )
+						.append( $('<div>').css( { 'border': '1px solid #79b7e7', 'padding': '2px' } )
+							.append( $('<div>').css( { 'width': '90px', 'height': '120px', 'position': 'relative', 'overflow': 'hidden' } )
+								.append( $('<div>').css( { 'width': '270px', 'position': 'absolute', 'left': '-90px' } )
+									.append( $('<img>')
+										.attr( { 'id': 'im_photo_img', 'src': img_empty } )
+										.css( { 'height': '120px', 'position': 'absolute', 'margin': '0 auto', 'left': '0', 'right': '0', 'background': 'url("./templates/default/images/photo.jpg") no-repeat scroll center center' } )
+									)
+								)
+							)
+						)
+					)
+				).append(
+					$('<div>').css( { 'margin': '4px 0 -5px', 'min-height': '14px' } ).append(
+						$('<span>').attr( { 'id': 'msg_cc_error'} ).css( { 'font-weight': 'lighter', 'color': 'red' } )
+					)
+				);
+			
+			$(div).find( 'input' ).wijtextbox();
+			
+			
+			var offset = $(obj).offset();
+			$(div).wijdialog( {
+				autoOpen: true,
+				title: messages.pt_br.ADD_CONTACT,
+				draggable: true,
+				width: 400,
+				dialogClass: 'add-contact-dialog',
+				captionButtons: {
+					pin: { visible: false },
+					refresh: { visible: false },
+					toggle: { visible: false },
+					minimize: { visible: false },
+					maximize: { visible: false }
+				},
+				resizable: false,
+				position: [ offset.left, offset.top ],
+				buttons: [
+					{
+						text: messages.pt_br.ADD,
+						click: function() {
+							var data = {
+								'type': 'subscribe',
+								'name': $('#nick_inpt_txt').val(),
+								'to': $('#jid_inpt_txt').val()
+							}
+							$.xmpp.addContact( data );
+							$.xmpp.subscription( data );
+							$(this).wijdialog( 'destroy' );
+						}
+					},
+					{
+						text: messages.pt_br.CANCEL,
+						click: function(){
+							$(this).wijdialog( 'destroy' );
+						}
+					}
+				],
+				close: function(){
+					$(this).wijdialog( 'destroy' );
+				}
+			} );
+			$('#jid_inpt_txt').removeClass('ui-state-disabled');
+		}
+		
+		function drawAddContact(obj, data, select){
+			if( !$.xmpp.isConnected() ) return false;
+			
 			var div = $("<div/>")
 			.addClass("chat-add-contact");
 
 			$("<span>")
-			.html( messages.pt_br.NAME + ": " )
+			.html( messages.pt_br.NICK + ": " )
 			.appendTo(div);
 
 			$("<input type='text'>")
@@ -648,7 +780,7 @@
 			.appendTo(div);
 
 			$("<span>")
-			.html( messages.pt_br.JID + ": ")
+			.html( messages.pt_br.IDENTIFICATION + ": ")
 			.appendTo(div);
 
 			var emailAttrs = { name: 'to', placeholder: messages.pt_br.ENTER_A_JID };
@@ -663,6 +795,7 @@
 
 			$(div).find("input").wijtextbox();
 
+			var offset = $(select? select : obj).offset();
 			var _data = data;
 			div.wijdialog({
 				autoOpen: true,
@@ -694,7 +827,7 @@
 								_data = $.extend( {}, _data, {name: $(this).find("input:first").val()} );
 								$.xmpp.updateContact(_data);
 							}
-							$(this).wijdialog("destroy");	
+							$(this).wijdialog("destroy");
 						}
 					},
 					{
@@ -708,7 +841,7 @@
 					$(this).wijdialog ("destroy");
 				}
 			});
-			//.appendTo("body");	
+			//.appendTo("body");
 	  	}
 
 		function authorize(data, subscription){
@@ -776,6 +909,11 @@
 			if(settings.debug)
 				debug("Generated contact in the list");
 	  	}
+		
+		function htmlEntities( str ) {
+			return String(str)
+				.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+		}
 
 	  	function openChat(options){
 	  		if($.fn.wijdialog){
@@ -809,7 +947,7 @@
 	  					e.preventDefault();
 	  					if(settings.debug)
 							debug("Sending message: "+message+"\nfrom: "+options.from);
-	  					$.xmpp.sendMessage({body: message, to:options.from, resource:"Chat", otherAttr:"value"},
+	  					$.xmpp.sendMessage({body: htmlEntities(message), to:options.from, resource:"Chat", otherAttr:"value"},
 	   						"<error>"+messages.pt_br.AN_ERROR_HAS_OCURRED+"</error>");
 
 	  					var conversation_box = div.find(".chat-conversation-box");
@@ -817,7 +955,7 @@
 
 						$("<div/>")
 						.addClass("chat-conversation-box-me")
-						.html(date+"<strong> "+messages.pt_br.ME+": </strong>"+formatters(message))
+						.html( date + "<strong> " + messages.pt_br.ME + ": </strong>" + htmlEntities( message ) )
 						.appendTo(conversation_box);
 						conversation_box.scrollTo("div:last");
 						conversation_box.next().html("");

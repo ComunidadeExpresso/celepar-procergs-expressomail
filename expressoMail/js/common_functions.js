@@ -44,34 +44,92 @@ function config_events(pObj, pEvent, pHandler)
     }
 }
 
-function openMessenger()
+function addContactMessenger( uid, name )
 {
-	var content_folders		= $("#content_folders");
-	var content_messenger	= $("#content_messenger");
+	if( $.xmpp.isConnected() )
+	{
+		var contact = 
+		{ 
+			'to' 	: uid+"@"+$.xmpp.getDomain(),
+			'name'	: name,
+			'group' : "",
+			'type'  : "subscribe"
+		}
 
-	content_folders.css("display","none");
-	content_messenger.find("div#_plugin").css("display","block");
-	content_messenger.find("div#_menu").off("click", openMessenger ).on("click", closeMessenger );
+		// Add Contact
+		$.xmpp.addContact(contact);
+		
+		// Send Subscription
+		$.xmpp.subscription(contact);
 
+		write_msg( get_lang("added contact") );
+	}
+	else
+	{
+		write_msg( get_lang("You must be logged in Messenger Express") );
+	}
+}	
+
+function initMessenger( event )
+{
+	var init_open = ( event.type == 'click' );
+	
+	$( event.currentTarget ).off( 'click' );
+	
+	// Load IM
+	$( event.currentTarget ).find( 'div#_plugin' ).im( {
+		'resource'  : event.data['dt__a'],
+		'url'       : event.data['dt__b'],
+		'domain'    : event.data['dt__c'],
+		'username'  : event.data['dt__d'],
+		'auth'      : event.data['dt__e'],
+		'debug'     : false,
+		'soundPath' : '../prototype/plugins/messenger/'
+	} );
+	
+	//Full Name Expresso Messenger
+	var fullName = $( 'input[name=messenger_fullName]' ).val();
+	
+	$( '.chat-title' ).find( '.chat-name' )
+		.html( fullName.substring( 0, 20 ) + '...' )
+		.attr( 'alt', fullName )
+		.attr( 'title', fullName );
+	
+	$( '#conversation-bar-container' ).css( { 'overflow': 'hidden', 'bottom': '1px' } );
+	
+	$( event.currentTarget ).find( 'div#_menu' ).on( 'click', { 'fadeIn': ( init_open? 3000 : 0 ) }, openMessenger );
+	
+	if ( init_open ) $( event.currentTarget ).find( 'div#_menu' ).trigger( 'click' );
+	
+}
+
+function openMessenger( event )
+{
+	$( '#content_folders' ).hide();
+	
+	if ( event && event.data && event.data.fadeIn ) $( '#content_messenger #_plugin ').fadeIn( event.data.fadeIn );
+	else $( '#content_messenger #_plugin ').show();
+	
+	$( '#content_messenger #_menu' ).off( 'click', openMessenger ).on( 'click', closeMessenger );
+	
 	resizeWindow();
 }
 
 function closeMessenger()
 {
-	var content_folders 	= $("#content_folders");
-	var content_messenger	= $("#content_messenger");
-
-	content_folders.css("display","block");
-	content_messenger.find("div#_plugin").css("display","none");
-	content_messenger.find("div#_menu").off("click", closeMessenger ).on("click", openMessenger );
-
+	$( '#content_messenger #_plugin ').hide();
+	
+	$( '#content_folders' ).show();
+	
+	$( '#content_messenger #_menu' ).off( 'click', closeMessenger ).on( 'click', openMessenger );
+	
 	resizeWindow();
 }
 
 function resizeWindow()
 {
 	var clientWidth 		= $(window).innerWidth();
-	var clientHeight 		= $(window).innerHeight() - 8;
+	var clientHeight 		= $(window).innerHeight() - 34;
 	var divScrollMain 		= $("#divScrollMain_"+numBox);
 	var table_message 		= Element("table_message");
 	var content_folders 	= $("#content_folders");
@@ -150,6 +208,8 @@ function resizeWindow()
 
 	resizeMailList();
 }
+
+
 // END: FUNCTION RESIZE WINDOW
 
 var _beforeunload_ = window.onbeforeunload;
