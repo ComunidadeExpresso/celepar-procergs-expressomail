@@ -125,9 +125,7 @@
 			</table>
 			<div id="content_id_0" class="conteudo"></div>
 			<div id="content_blank" style="display: none"></div>
-			<div id="footer_menu_messenger">
-				<div id="messenger-conversation-bar-container"></div>
-			</div>
+			<div id="messenger-conversation-bar-container"></div>
 		</div>
 	</td>
 </tr>
