@@ -62,12 +62,12 @@
 		</tr>
 		<tr>
 			<td class="image-menu" valign="top" style="padding:0px">
-				<div id="content_folders" class="menu-degrade" style="width:230px;height:100%;overflow:auto"></div>
+				<div id="content_folders" class="menu-degrade" style="width:225px;overflow:auto"></div>
 			</td>
 		</tr>
 		<tr>
 			<td>
-				<div id="content_messenger" style="width:225px;"></div>
+				<div id="content_messenger"></div>
 			</td>
 		</tr>
 		</tbody>

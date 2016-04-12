@@ -105,6 +105,8 @@ function initMessenger( event )
 
 function openMessenger( event )
 {
+	var _content_folders_height = $('#content_folders').height();
+
 	$( '#content_folders' ).hide();
 	
 	if ( event && event.data && event.data.fadeIn ) $( '#content_messenger #_plugin ').fadeIn( event.data.fadeIn );
@@ -112,99 +114,86 @@ function openMessenger( event )
 	
 	$( '#content_messenger #_menu' ).off( 'click', openMessenger ).on( 'click', closeMessenger );
 	
-	resizeWindow();
+	resizeWindow( _content_folders_height );
 }
 
 function closeMessenger()
 {
+	var _content_messenger_height = $('#content_messenger').height();
+
 	$( '#content_messenger #_plugin ').hide();
 	
 	$( '#content_folders' ).show();
 	
 	$( '#content_messenger #_menu' ).off( 'click', closeMessenger ).on( 'click', openMessenger );
 	
-	resizeWindow();
+	resizeWindow( _content_messenger_height );
 }
 
 function resizeWindow()
 {
 	var clientWidth 		= $(window).innerWidth();
-	var clientHeight 		= $(window).innerHeight() - 34;
-	var divScrollMain 		= $("#divScrollMain_"+numBox);
-	var table_message 		= Element("table_message");
+	var clientHeight 		= $(window).innerHeight();
+	var table_message 		= $("#table_message");
 	var content_folders 	= $("#content_folders");
 	var content_messenger 	= $("#content_messenger");
 
-	if( divScrollMain.length )
-	{
-		divScrollMain.css("height", (clientHeight - ( divScrollMain.position().top + (table_message.clientHeight ? table_message.clientHeight : table_message.offsetHeight))));
-	}
+	var _all_borders = $("td[id^='border_id']");
 
-	if( typeof(BordersArray) != 'undefined' )
+	$.each( _all_borders, function(index, value)
 	{
-		for( var i = 1; BordersArray.length > 1 && i < BordersArray.length; i++ )
+		var _idx = $(value).attr("id").replace("border_id_", "");
+
+	  	var _content = $("div[id=content_id_" + _idx +"]");
+	   
+		if( _content.position().top >  0 )
+		{ 
+		    _content.height( clientHeight - ( _content.position().top + $("#footer_menu").height() ) );
+				
+		    if( _content.find("div.editor").length > 0 )
+			{
+		        _content.find("div.editor").height( clientHeight - ( _content.position().top ) );
+			}
+	  	}
+		
+		var _divScrollMain = $("#divScrollMain_" + _idx );
+
+		if( _divScrollMain.length > 0 )
 		{
-			var div_scroll	= $("#div_message_scroll_"+BordersArray[i].sequence);
-			var div 		= $("#content_id_"+BordersArray[i].sequence);
+			_divScrollMain.height(  clientHeight - ( _divScrollMain.position().top + table_message.height() ) );
+		}
+	});
 
-			if( div.length )
-			{
-				div.css('height',(clientHeight - (div.position().top + (table_message.clientHeight ? table_message.clientHeight : table_message.offsetHeight)+2)) + "px");
-				div.css('width',(clientWidth - (div.position().left+10)) + "px");
-			}
+	var _height = $("#folderscol").height() - ( $("#folderscol").find("td.content-menu").height() + 40 );
 
-			if( div_scroll.length )
-			{
-				div_scroll.css('height', (clientHeight - (div_scroll.position().top + (table_message.clientHeight ? table_message.clientHeight : table_message.offsetHeight)+5)) + "px");
-				div_scroll.css('width',(clientWidth - (div_scroll.position().left+15)) + "px");
-			}
+	_height = ( arguments.length > 0 ) ? arguments[0] : _height ;
+
+	if( content_folders.length > 0 && content_folders.is(":visible") )
+	{
+		content_folders.height( _height );
+	}
+	else
+	{
+		if( content_messenger.find("#_plugin").is(":visible") )
+		{
+			content_messenger.height( _height );
+
+			var _heights = [];
+				_heights[0] = parseInt(content_messenger.find("div.chat-title.chat-me").height());
+				_heights[1] = parseInt(content_messenger.find("div.chat-list-title").height());
+				_heights[2] = parseInt(content_messenger.find("#_menu").height());
+
+			_height = _height - ( _heights[0] + _heights[1] + _heights[2] ) ;
+
+			_height = _height - 12;
+
+			content_messenger.find("#_plugin ul.chat-list").height( _height );
+
+			console.log( "Chat-list : " + _height );
 		}
 	}
 
-	if( content_folders.length )
-	{
-		var positionContent = content_folders.position();
-
-		if( content_messenger.find("div#_menu").length > 0 )
-		{
-			var _heightBrowser = 0;
-
-			// FIREFOX
-			if( $.browser.mozilla )
-			{
-				_heightBrowser = ( parseInt($.browser.version) > 15 ) ? _heightBrowser = $(window).innerHeight() - 335 : _heightBrowser = $(window).innerHeight() - 342;
-			}
-
-			// CHROME
-			if( $.browser.chrome )
-			{
-				_heightBrowser = $(window).innerHeight() - 341;
-			}
-
-			// MSIE
-			if( $.browser.msie )
-			{
-				_heightBrowser = $(window).innerHeight() - 332;
-			}
-
-			if( BordersArray.length > 1 )
-			{
-				content_folders.css("height", $(window).innerHeight() - ( positionContent.top + $("#table_message").height() + 27 ) );
-			}
-			else
-			{
-				content_folders.css("height", $(window).innerHeight() - ( positionContent.top + $("#table_message").height() + 20 ) );
-			}
-
-			content_messenger.find("div ul.chat-list").css("height", _heightBrowser );
-		}
-		else
-		{
-			content_folders.css('height',(clientHeight - (content_folders.position().top + (content_folders.position().top > $("#search_div").position().top ? 0 : ($("#search_div").height() ? $("#search_div").height() : $("#search_div").height()) + 5))) + "px");
-		}
-	}
-
-	redim_borders(count_borders());
+	redim_borders( count_borders() );
 
 	resizeMailList();
 }

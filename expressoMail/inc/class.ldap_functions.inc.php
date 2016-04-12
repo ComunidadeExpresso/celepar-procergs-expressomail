@@ -1255,5 +1255,98 @@ class ldap_functions
         }
         return $result;
     }
+
+	function simpleSearch( $params )
+	{
+
+		$result = array();
+
+		if ( isset( $params['search'] ) ) {
+			if ( strlen( $params['search'] ) < 3 ) $this->return_json( array( 'status' => 'FEW CHARACTERS TO SEARCH' ) );
+
+			if ( !$this->ds ) $this->ldapRootConnect();
+
+			$search = $this->ldap_escape( $params['search'] );
+
+			$sr = ldap_search(
+
+				$this->ds, $this->ldap_context,
+
+				'(|(uid='.$search.')(cn=*'.str_replace( ' ', '*', $search ).'*))', array( 'cn', 'uid' ), 0,
+
+				100, isset( $params['timelimit'] )? $params['timelimit'] : 10
+
+			);
+
+			$result['status'] = strtoupper( ldap_error( $this->ds ) );
+
+			if ( connection_aborted() || !$sr ) $this->return_json( $result );
+
+			if ( ldap_count_entries( $this->ds, $sr ) > 0 ) {
+
+				$entries = ldap_get_entries( $this->ds, $sr );
+
+				if ( $entries['count'] == 1 ) {
+
+					$params['get'] = $entries[0]['uid'][0];
+
+				} else {
+
+					for ( $i = 0; $i < $entries['count']; $i++ )
+
+						$result['users'][$entries[$i]['uid'][0]] = $entries[$i]['cn'][0];
+
+					asort( $result['users'] );
+
+					$this->return_json( $result );
+
+				}
+			}
+		}
+
+		if ( isset( $params['get'] ) )
+		{
+			if ( strlen( $params['get'] ) < 1 ) $this->return_json( array( 'status' => 'FEW CHARACTERS TO SEARCH' ) );
+
+			if ( !$this->ds ) $this->ldapRootConnect();
+
+			$sr = ldap_search(
+				$this->ds, $this->ldap_context, '(uid='.$this->ldap_escape( $params['get'] ).')', array( 'cn', 'uid', 'jpegPhoto' )
+			);
+
+			$result['status'] = strtoupper( ldap_error( $this->ds ) );
+
+			if ( connection_aborted() || !$sr ) $this->return_json( $result );
+
+			if ( ldap_count_entries( $this->ds, $sr ) == 1 )
+			{
+				$entry = ldap_get_entries( $this->ds, $sr );
+
+				$result['user'] = array(
+
+					'cn'  => $entry[0]['cn'][0],
+
+					'uid' => $entry[0]['uid'][0],
+
+					'img' => isset( $entry[0]['jpegphoto'][0] )?'data:image/jpeg;base64,'.base64_encode( $entry[0]['jpegphoto'][0] ) : false,
+				);
+			}
+		}
+
+		$this->return_json( $result );
+	}
+
+	function return_json( $value )
+	{
+		header( 'Content-Type: application/json' );
+
+		echo json_encode( $value );
+
+		exit;
+	}
+
+	function ldap_escape( $string )
+	{
+		return str_replace( array( '\\', '*', '(', ')', "\x00" ), array( '\\\\', '\*', '\(', '\)', "\\x00" ), $string );
+	}
 }
-?>
