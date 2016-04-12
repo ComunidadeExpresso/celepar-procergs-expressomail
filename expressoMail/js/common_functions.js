@@ -174,7 +174,7 @@ function resizeWindow()
 	}
 	else
 	{
-		if( content_messenger.find("#_plugin").is(":visible") )
+		if( content_messenger.length > 1 && content_messenger.find("#_plugin").is(":visible") )
 		{
 			content_messenger.height( _height );
 
@@ -188,8 +188,6 @@ function resizeWindow()
 			_height = _height - 12;
 
 			content_messenger.find("#_plugin ul.chat-list").height( _height );
-
-			console.log( "Chat-list : " + _height );
 		}
 	}
 
