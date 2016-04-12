@@ -196,7 +196,6 @@ function init()
     //Carga do autocomplete será após criar primeiro email
 	//if(parseInt(preferences.use_dynamic_contacts)){ updateDynamicContact(); }
 
-
 	// Versão
 	$('#divAppboxHeader').html('<table height="16px" border=0 width=100% cellspacing=0 cellpadding=2><tr>'+
 	'<td style="padding-left:17px" width=33% id="content_quota" align=left></td>'+
@@ -204,21 +203,14 @@ function init()
 	'<td width=33% id="div_menu_c3" align=right></td>'+
 	'</tr></table>');
 
-
 	$("#divAppbox").css("padding-left", "0px");
 
 	cExecute ("$this.imap_functions.get_range_msgs2&folder=INBOX&msg_range_begin=1&msg_range_end="+preferences.max_email_per_page+"&sort_box_type=SORTARRIVAL&search_box_type=ALL&sort_box_reverse=1", handler_draw_box);
-
-
-
 
 	setTimeout('auto_refresh()', time_refresh);
 
 	// Inicia Messenger
 	setTimeout( function(){ init_messenger(); }, 1000 );
-
-
-
 }
 
 function init_offline(){
@@ -250,21 +242,12 @@ function init_messenger()
 {
 	var inicio = new Date();
 
-	 // Function Remove Plugin
-	 var remove_plugin_im = function()
-	 {
-		// Remove tr/td/div
-		$("#content_messenger").parent().parent().remove();
-
+	// Function Remove Plugin
+	var remove_plugin_im = function()
+	{
 		// Remove Input
 		$("input[name=expresso_messenger_enabled]").remove();
-
-		// Div bar
-		$("#messenger-conversation-bar-container").parent().remove();
-
-		// Resize Window
-		resizeWindow();
-	 };
+	};
 
 	 if( $("input[name=expresso_messenger_enabled]").length > 0 )
 	 {
@@ -364,7 +347,6 @@ function init_messenger()
 		// Remove Plugin
 		remove_plugin_im();
 	}
-
 }
 
 /**
