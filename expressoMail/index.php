@@ -300,7 +300,7 @@
 		$("#menu2Container").hide();
     </script>';
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    echo "<script type='text/javascript'> var account_id = ".$GLOBALS['phpgw_info']['user']['account_id'].";var expresso_offline = false; var mail_archive_host = '127.0.0.1';</script>\n";
+    echo "<script type='text/javascript'> var account_id = ".$GLOBALS['phpgw_info']['user']['account_id'].";var expresso_offline = false;</script>\n";
 
 	$obj = createobject("expressoMail.functions");
 
