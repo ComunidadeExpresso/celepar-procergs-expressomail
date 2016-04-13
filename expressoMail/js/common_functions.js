@@ -20,16 +20,6 @@ window.onresize = resizeWindow;
 
 var message = "Não Informado";
 
-//MAILARCHIVER-01
-try{
-   var ArchiveServices = new web_service_mailarchiver_serpro__ArchiveServices();
-   ArchiveServices.url = mail_archive_protocol + "://" + mail_archive_host + ":" + mail_archive_port + "/arcserv/ArchiveServices";
-   ArchiveServices.synchronous = true;
-}
-catch (e){
-    var ArchiveServices = null;
-}
-
 function config_events(pObj, pEvent, pHandler)
 {
     if( typeof pObj == 'object')
@@ -105,7 +95,7 @@ function initMessenger( event )
 
 function openMessenger( event )
 {
-	var _content_folders_height = $('#content_folders').height();
+	var _attr = { 'content_folders_height' 	: $('#content_folders').height() };
 
 	$( '#content_folders' ).hide();
 	
@@ -114,12 +104,12 @@ function openMessenger( event )
 	
 	$( '#content_messenger #_menu' ).off( 'click', openMessenger ).on( 'click', closeMessenger );
 	
-	resizeWindow( _content_folders_height );
+	resizeWindow( _attr );
 }
 
 function closeMessenger()
 {
-	var _content_messenger_height = $('#content_messenger').height();
+	var _attr = { 'content_folders_height' 	: $('#content_folders').height() };
 
 	$( '#content_messenger #_plugin ').hide();
 	
@@ -127,7 +117,7 @@ function closeMessenger()
 	
 	$( '#content_messenger #_menu' ).off( 'click', closeMessenger ).on( 'click', openMessenger );
 	
-	resizeWindow( _content_messenger_height );
+	resizeWindow( _attr );
 }
 
 function resizeWindow()
@@ -136,8 +126,6 @@ function resizeWindow()
 	var clientHeight 		= $(window).innerHeight();
 	var table_message 		= $("#table_message");
 	var content_folders 	= $("#content_folders");
-	var content_messenger 	= $("#content_messenger");
-
 	var _all_borders = $("td[id^='border_id']");
 
 	$.each( _all_borders, function(index, value)
@@ -164,9 +152,16 @@ function resizeWindow()
 		}
 	});
 
-	var _height = $("#folderscol").height() - ( $("#folderscol").find("td.content-menu").height() + 40 );
+	var _height = 0;
 
-	_height = ( arguments.length > 0 ) ? arguments[0] : _height ;
+	if( arguments.length  > 0 )
+	{
+		_height	= arguments[0].content_folders_height;
+	}
+	else
+	{
+		_height = $("#folderscol").height() - ( $("#folderscol").find("td.content-menu").height() + 41 );
+	}
 
 	if( content_folders.length > 0 && content_folders.is(":visible") )
 	{
@@ -174,7 +169,9 @@ function resizeWindow()
 	}
 	else
 	{
-		if( content_messenger.length > 1 && content_messenger.find("#_plugin").is(":visible") )
+		var content_messenger 	= $("#content_messenger");
+
+		if( content_messenger.length > 0 && content_messenger.find("#_plugin").is(":visible") )
 		{
 			content_messenger.height( _height );
 
@@ -183,9 +180,7 @@ function resizeWindow()
 				_heights[1] = parseInt(content_messenger.find("div.chat-list-title").height());
 				_heights[2] = parseInt(content_messenger.find("#_menu").height());
 
-			_height = _height - ( _heights[0] + _heights[1] + _heights[2] ) ;
-
-			_height = _height - 12;
+			_height = _height - ( _heights[0] + _heights[1] + _heights[2] ) - 12;
 
 			content_messenger.find("#_plugin ul.chat-list").height( _height );
 		}
@@ -195,7 +190,6 @@ function resizeWindow()
 
 	resizeMailList();
 }
-
 
 // END: FUNCTION RESIZE WINDOW
 
